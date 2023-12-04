@@ -17,10 +17,10 @@ import lombok.ToString;
 public class UserVO {
     private String userId;      // 아이디
     private String userPw;      // 비밀번호
-    private String userTel;     // 전화번호
-    private String userEmail;   // 이메일
-    private String userBod;     //
-    private String userSxds;
-
-
+    private String celph;       // 전화번호
+    private String email;       // 이메일
+    private String cretDate;    // 생성일자
+    private String cretTime;    // 생성시간
+    private String chgDate;     // 수정일자
+    private String chgTime;     // 수정시간
 }
