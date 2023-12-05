@@ -25,11 +25,14 @@
                         <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')" type="number" name="eno" value=""></td>
                         <td>
                             <button class="btn btn-primary searchBtn" type="button" id="getUserInfo">검색</button>
-                            <button class="btn btn-primary searchReset" type="button" id="searchReset">검색초기화</button>
+                            <button class="btn btn-primary searchReset" type="button" id="searchReset">초기화</button>
                         </td>
                     </tr>
                 </table>
                 <input type="hidden" name="paging" value="0">
+                <div style="float:right;">
+                    <a class="btn btn-success" href='<c:url value="/addEno.do"/>'>등록하기</a>
+                </div>
             </form>
         <div>
             <table class="table table-bordered table-hover">
