@@ -46,6 +46,13 @@ public class UserController {
         return "main/mainPage";
 	}
 
+    @GetMapping(value="/addEno.do")
+    public String addEnoPage(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		LOGGER.info("addEno Page View");
+       
+        return "main/addEnoPage";
+	}
+
     @ResponseBody
     @RequestMapping(value="/getUserInfo.do", method=RequestMethod.GET)
     public  ResponseEntity getUserInfo(HttpSession session, HttpServletRequest request
