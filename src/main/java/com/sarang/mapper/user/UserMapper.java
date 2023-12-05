@@ -9,6 +9,6 @@ import com.sarang.model.user.EnoVO;
 
 @Mapper
 public interface UserMapper {
-    List<EnoVO> getUserInfo();
+    HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);
     List<EnoVO> searchUserInfo(HashMap<String,Object> reqMap);
 }

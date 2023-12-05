@@ -6,6 +6,6 @@ import java.util.List;
 import com.sarang.model.user.EnoVO;
 
 public interface UserService{
-    List<EnoVO> getUserInfo();
+    HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);
     List<EnoVO> searchUserInfo(HashMap<String,Object> reqMap);
 }

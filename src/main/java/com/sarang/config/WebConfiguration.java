@@ -12,5 +12,5 @@ public class WebConfiguration implements WebMvcConfigurer{
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(new CertificationInterceptor())
         .excludePathPatterns("/css/**","/images/**","/asset/**","/error/**");
-    }
+	}
 }

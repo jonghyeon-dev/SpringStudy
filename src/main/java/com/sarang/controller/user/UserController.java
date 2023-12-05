@@ -28,11 +28,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    private static final int pageSize = 10;
+
     @GetMapping(value="/main.do")
 	public String mainPage(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		LOGGER.info("Check Main Page View");
-        List<EnoVO> userInfoList = userService.getUserInfo();
-        model.addAttribute("userInfoList", userInfoList);
+        HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("start",0);
+        reqMap.put("size",pageSize);
+        List<EnoVO> userInfoList = userService.searchUserInfo(reqMap);
+        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
+
+        HashMap<String, Object> totalContents = new HashMap<>();
+        totalContents.put("userInfoList", userInfoList);
+        totalContents.put("totalPages", pageInfo.get("totalPage"));
+        model.addAttribute("totalContents", totalContents);
         return "main/mainPage";
 	}
 
@@ -40,22 +50,29 @@ public class UserController {
     @RequestMapping(value="/getUserInfo.do", method=RequestMethod.GET)
     public  ResponseEntity getUserInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
-        , String seq, String eno) throws Exception {
+        , String seq, String eno, String page) throws Exception {
         ResponseEntity js = new ResponseEntity();
 
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
         reqMap.put("seq",seq);
         reqMap.put("eno",eno);
-
-        List<EnoVO> userInfoList = userService.searchUserInfo(reqMap);
-        for(EnoVO userInfo : userInfoList){
-            System.out.println(userInfo.toHashMap().toString());
-            System.out.println(userInfo.toJsonObj().toString());
-            System.out.println(userInfo.toString());
+        reqMap.put("start",Integer.parseInt(page));
+        reqMap.put("size",pageSize);
+        if(page != null){
+            reqMap.put("start",Integer.parseInt(page)*10);
+        }else{
+            reqMap.put("start",0);
         }
 
+        List<EnoVO> userInfoList = userService.searchUserInfo(reqMap);
+        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
+        
+        HashMap <String, Object> totalContents = new HashMap<>();
+        totalContents.put("userInfoList", userInfoList);
+        totalContents.put("totalPages", pageInfo.get("totalPage"));
+
         js.setSucceed(true);
-        js.setData(userInfoList);
+        js.setData(totalContents);
         return js;
     }
 }

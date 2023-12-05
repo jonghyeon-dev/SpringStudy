@@ -17,8 +17,8 @@ public class UserServiceImpl implements UserService{
     private UserMapper userMapper; 
 
     @Override
-    public List<EnoVO> getUserInfo(){
-        return userMapper.getUserInfo();
+    public HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap){
+        return userMapper.getUserPageInfo(reqMap);
     }
 
     @Override
