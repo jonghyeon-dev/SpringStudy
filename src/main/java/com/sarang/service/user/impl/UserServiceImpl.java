@@ -25,4 +25,14 @@ public class UserServiceImpl implements UserService{
     public List<EnoVO> searchUserInfo(HashMap<String,Object> reqMap){
         return userMapper.searchUserInfo(reqMap);
     }
+
+    @Override
+    public Integer insertEnoInfo(EnoVO enoVO){
+        return userMapper.insertEnoInfo(enoVO);
+    }
+
+    @Override
+    public Integer deleteEnoInfo(List<String> deleteList){
+        return userMapper.deleteEnoInfo(deleteList);
+    }
 }
