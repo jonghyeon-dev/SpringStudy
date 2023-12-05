@@ -6,13 +6,19 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.sarang.config.SecureUtil;
 import com.sarang.model.common.ResponseEntity;
 import com.sarang.model.user.EnoVO;
 import com.sarang.service.user.UserService;
@@ -27,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SecureUtil secureutil;
 
     private static final int pageSize = 10;
 
@@ -51,6 +60,34 @@ public class UserController {
 		LOGGER.info("addEno Page View");
        
         return "main/addEnoPage";
+	}
+
+    @PostMapping(value="/insertEno.do")
+    public String insertEno(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		LOGGER.info("insertEno Data");
+        EnoVO enoVO = new EnoVO();
+        String eno = request.getParameter("eno");
+        String enoPw = request.getParameter("enoPw");
+        String celph = request.getParameter("celph");
+        String email = request.getParameter("email");
+
+        if(eno.trim().isEmpty() || eno == null){
+            model.addAttribute("errorMsg","사원번호는 필수 값입니다.");
+            return "redirect:/addEno.do";
+        }
+        if(enoPw.trim().isEmpty() || eno == null){
+            model.addAttribute("errorMsg","사원 비밀번호는 필수 값입니다.");
+            return "redirect:/addEno.do";
+        }
+        enoVO.setEno(eno);
+        enoVO.setEnoPw(secureutil.encryptSHA256(enoPw));
+        enoVO.setCelph(celph);
+        enoVO.setEmail(email);
+        userService.insertEnoInfo(enoVO);
+
+        // HashMap<String,Object> resMap = new HashMap<>();
+        // model.addAttribute("responseData",resMap);
+        return "redirect:/main.do";
 	}
 
     @ResponseBody
@@ -80,6 +117,19 @@ public class UserController {
 
         js.setSucceed(true);
         js.setData(totalContents);
+        return js;
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/deleteEnoInfo.do", method={RequestMethod.GET,RequestMethod.POST})
+    public  ResponseEntity deleteEnoInfo(HttpSession session, HttpServletRequest request
+        , HttpServletResponse response, Model model
+        , @RequestParam(value="delList", required=false) List<String> delList
+        ) throws Exception {
+        ResponseEntity js = new ResponseEntity();
+        userService.deleteEnoInfo(delList);
+        js.setSucceed(true);
+        js.setMessage("1");
         return js;
     }
 }

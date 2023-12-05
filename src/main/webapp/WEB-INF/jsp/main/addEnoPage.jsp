@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form id="addEnoForm" method="post" action="<c:url value='/addEno.do'/>">
+            <form id="addEnoForm" method="post" action="<c:url value='/insertEno.do'/>">
                 <table class="table table-bordered">
                     <colgroup>
                         <col width="20%">
@@ -30,6 +30,9 @@
                         <td><input type="email" name="email" value=""></td>
                     </tr>
                 </table>
+                <c:if test="${!empty errorMsg}">
+                    <span style="color:red">${errorMsg}</span>
+                </c:if>
                 <input type="hidden" name="paging" value="0">
                 <button class="btn btn-primary" type="button" id="reset">초기화</button>
                 <a href='<c:url value="/main.do"/>' class="btn btn-warning">돌아가기</button></a>

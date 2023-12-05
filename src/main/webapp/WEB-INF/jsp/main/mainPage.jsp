@@ -32,12 +32,14 @@
                 <input type="hidden" name="paging" value="0">
                 <div style="float:right;">
                     <a class="btn btn-success" href='<c:url value="/addEno.do"/>'>등록하기</a>
+                    <button class="btn btn-danger" type="button" id="deleteEno">삭제하기</button>
                 </div>
             </form>
         <div>
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr class="text-center">
+                        <th class="table-info"><input type="checkBox" id="checkAll"></th>
                         <th class="table-info">번호</th>
                         <th class="table-info">ID</th>
                         <th class="table-info">휴대폰번호</th>
@@ -51,6 +53,7 @@
                 <tbody id="tbodyUserInfoList">
                     <c:forEach items="${totalContents.userInfoList}" var="items">
                     <tr>
+                        <td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td>
                         <td><c:out value="${items.seq}"/></td>
                         <td><c:out value="${items.eno}"/></td>
                         <td><c:out value="${items.celph}"/></td>
@@ -110,21 +113,24 @@
         var init = function(){
 
         };
-
+        //ENO 데이터 출력
         var searchUserInfo = function(seq,eno,paging){
             $.ajax({
                     url: '<c:url value="getUserInfo.do"/>',
                     type: "GET",
                     dataType: "json",
+                    traditional:true,
                     data: {"seq":seq,
                             "eno":eno,
                             "page":paging},
                     success: response=>{
                         if(response.succeed){
+                            $("#checkAll").prop('checked',false);
                             let data = response.data.userInfoList;
                             let dataText = "";
                             for(i=0;i<data.length;i++){
                                 dataText = dataText + "<tr>";
+                                dataText = dataText + "<td class='delCheck'><input type='checkbox' name='delCheck' value="+data[i].seq+"></td>";
                                 dataText = dataText + "<td>"+data[i].seq+"</td>";
                                 dataText = dataText + "<td>"+data[i].eno+"</td>";
                                 dataText = dataText + "<td>"+data[i].celph+"</td>";
@@ -138,6 +144,7 @@
                             if(data.length<10){
                                 for(i=0;i<(10 - data.length);i++){
                                     dataText = dataText + "<tr>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
@@ -243,22 +250,47 @@
                         }
                     },
                     error: e=>{
-                        console.log("Ajax Get Data Error :: ", e);
+                        console.log("Get UserInfoList Ajax Get Data Error :: ", e);
                     }
                 })
         };
 
+        //ENO 데이터 삭제
+        var deleteEno = function(delList){
+            console.log("deleteEno Start :: " + delList);
+            $.ajax({
+                url:"<c:url value='deleteEnoInfo.do'/>",
+                type:"POST",
+                dataType:"json",
+                traditional:true,
+                data:{"delList": delList},
+                // data:{"delListData": JSON.stringify(delList)},
+                success: response=>{
+                    let seq=$("#searchUserForm input[name='seq']").val();
+                    let eno=$("#searchUserForm input[name='eno']").val();
+                    searchUserInfo(seq,eno,0);
+                    $("#checkAll").prop('checked',false);
+                },
+                error: e=>{
+                    console.log("Delete Eno Ajax Get Data Error :: ", e);
+                }
+            })
+        }
+
         var registerEvent = function(){
+            //초기화 버튼 클릭 시
             $("#searchReset").click(e=>{
                 $("#searchUserForm")[0].reset();
             });
 
+            //검색 버튼 클릭 시
             $("#getUserInfo").click(e=>{
                 let seq=$("#searchUserForm input[name='seq']").val();
                 let eno=$("#searchUserForm input[name='eno']").val();
-                searchUserInfo(seq,eno,0)
+                searchUserInfo(seq,eno,0);
             });
 
+            //하단 페이지 숫자 클릭 시
             $("#userInfoPagination li:not(.disabled.active)").on("click",function(){
                 let seq=$("#searchUserForm input[name='seq']").val();
                 let eno=$("#searchUserForm input[name='eno']").val();
@@ -272,6 +304,37 @@
                     }
                 }
                 searchUserInfo(seq,eno,selectedPage);
+            })
+
+            //삭제하기 버튼 클릭 시
+            $("#deleteEno").click(function(){
+                if($("#tbodyUserInfoList input:checkbox[name='delCheck']:checked").length <= 0){
+                    alert("삭제할 데이터가 선택되지 않았습니다.");
+                };
+                var delList = new Array();
+                $("#tbodyUserInfoList input:checkbox[name='delCheck']:checked").each(
+                    function(e){
+                        delList.push($(this).val());
+                    }
+                )
+                deleteEno(delList);
+            });
+            //전체 선택 체크박스 클릭 시
+            $("#checkAll").click(e=>{
+                var checked = $("#checkAll").is(":checked");
+                if(checked){
+                    $("#tbodyUserInfoList input:checkbox[name='delCheck']").each(
+                        function(e){
+                            $(this).prop('checked',true);
+                        }
+                    );
+                }else{
+                    $("#tbodyUserInfoList input:checkbox[name='delCheck']").each(
+                        function(e){
+                            $(this).prop('checked',false);
+                        }
+                    );
+                }
             })
         };
         return {

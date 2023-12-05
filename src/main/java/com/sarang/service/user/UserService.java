@@ -8,4 +8,6 @@ import com.sarang.model.user.EnoVO;
 public interface UserService{
     HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);
     List<EnoVO> searchUserInfo(HashMap<String,Object> reqMap);
+    Integer insertEnoInfo(EnoVO enoVO);
+    Integer deleteEnoInfo(List<String> deleteList);
 }

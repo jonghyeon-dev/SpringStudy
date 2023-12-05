@@ -27,4 +27,33 @@
 		  AND ENO LIKE CONCAT('%',#{eno},'%')
 		  </if>
 	</select>
+	<insert id="insertEnoInfo" parameterType="com.sarang.model.user.EnoVO">
+		INSERT INTO TADM00100(
+			ENO,
+			ENO_PW,
+			CELPH,
+			EMAIL,
+			CRET_DT,
+			CRET_TM,
+			CHG_DT,
+			CHG_TM
+		)VALUE(
+			#{eno},
+			#{enoPw},
+			#{celph},
+			#{email},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<delete id="deleteEnoInfo" parameterType="java.util.List">
+		DELETE FROM TADM00100 WHERE SEQ IN
+		<foreach collection="deleteList" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+
 </mapper>
