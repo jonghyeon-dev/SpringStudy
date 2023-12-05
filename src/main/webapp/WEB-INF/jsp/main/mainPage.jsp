@@ -7,6 +7,7 @@
 </head>
 <body class="bg-light">
     <div class="container">
+        <%@include file="../layouts/top.jsp"%> 
         <div>
             <form class="searchForm" id="searchUserForm">
                 <table class="table table-bordered searchTable text-center">
@@ -98,12 +99,13 @@
                 </ul>
             </nav>
         </div>
+        <%@include file="../layouts/bottom.jsp"%> 
     </div>
 </body>
 <script>
     var mainPage = (function(){
         var init = function(){
-            
+
         };
 
         var searchUserInfo = function(seq,eno,paging){
