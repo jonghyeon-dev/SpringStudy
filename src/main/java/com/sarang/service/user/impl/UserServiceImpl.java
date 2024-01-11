@@ -27,12 +27,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Integer insertEnoInfo(EnoVO enoVO){
-        return userMapper.insertEnoInfo(enoVO);
+    public Integer insertUserInfo(EnoVO enoVO){
+        return userMapper.insertUserInfo(enoVO);
     }
 
     @Override
-    public Integer deleteEnoInfo(List<String> deleteList){
-        return userMapper.deleteEnoInfo(deleteList);
+    public Integer deleteUserInfo(List<String> deleteList){
+        return userMapper.deleteUserInfo(deleteList);
     }
 }

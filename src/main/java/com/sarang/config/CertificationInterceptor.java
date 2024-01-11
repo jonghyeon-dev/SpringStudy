@@ -5,7 +5,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.sarang.model.user.UserVO;
+import com.sarang.model.admin.AdminVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ public class CertificationInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         HttpSession session = request.getSession();
-        UserVO loginVO = (UserVO) session.getAttribute("loginUser"); 
+        AdminVO loginVO = (AdminVO) session.getAttribute("loginUser"); 
         if(ObjectUtils.isEmpty(loginVO)){
             // response.sendRedirect("/moveLogin.go");
             // return false;

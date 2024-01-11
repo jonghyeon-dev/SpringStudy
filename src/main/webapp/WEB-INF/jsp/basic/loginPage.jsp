@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form id="addEnoForm" method="post" action="<c:url value='/insertEno.do'/>">
+            <form id="CheckAdminForm" method="post" action="<c:url value='/admin/checkAdmin.do'/>">
                 <table class="table table-bordered">
                     <colgroup>
                         <col width="20%">
@@ -35,22 +35,22 @@
                 </c:if>
                 <input type="hidden" name="paging" value="0">
                 <button class="btn btn-primary" type="button" id="reset">초기화</button>
-                <a href='<c:url value="/main.do"/>' class="btn btn-warning">돌아가기</button></a>
+                <a href='<c:url value="/userMain.do"/>' class="btn btn-warning">돌아가기</button></a>
                 <button class="btn btn-success" type="submit">등록</button>
             </form>
         <div>
-        <%@include file="../layouts/bottom.jsp"%> 
+        <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>
 <script>
-    var joinPage = (function(){
+    var loginPage = (function(){
         var init = function(){
 
         };
 
         var registerEvent = function(){
             $("#reset").click(function(){
-                $("#joinUserForm")[0].reset();
+                $("#loginUserForm")[0].reset();
             });
         };
 
@@ -63,7 +63,7 @@
     }());
 
     $(document).ready(e=>{
-        joinPage.init();
+        loginPage.init();
     });
 </script>
 </html>

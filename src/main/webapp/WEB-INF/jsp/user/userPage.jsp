@@ -19,10 +19,10 @@
                         <col width="20%">
                     </colgroup>
                     <tr>
-                        <th class="table-success"><span class="form-label">번호 :</span></th>
+                        <th class="table-success pt-3"><span class="form-label">번호 :</span></th>
                         <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')"  type="number" name="seq" value=""></td>
-                        <th class="table-success"><span class="form-label">ID :</span></th>
-                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')" type="number" name="eno" value=""></td>
+                        <th class="table-success pt-3"><span class="form-label">ID :</span></th>
+                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')" type="text" name="eno" value=""></td>
                         <td>
                             <button class="btn btn-primary searchBtn" type="button" id="getUserInfo">검색</button>
                             <button class="btn btn-primary searchReset" type="button" id="searchReset">초기화</button>
@@ -31,8 +31,8 @@
                 </table>
                 <input type="hidden" name="paging" value="0">
                 <div style="float:right;">
-                    <a class="btn btn-success" href='<c:url value="/addEno.do"/>'>등록하기</a>
-                    <button class="btn btn-danger" type="button" id="deleteEno">삭제하기</button>
+                    <a class="btn btn-success" href='<c:url value="/addUser.do"/>'>등록하기</a>
+                    <button class="btn btn-danger" type="button" id="deleteUser">삭제하기</button>
                 </div>
             </form>
         <div>
@@ -42,6 +42,7 @@
                         <th class="table-info"><input type="checkBox" id="checkAll"></th>
                         <th class="table-info">번호</th>
                         <th class="table-info">ID</th>
+                        <th class="table-info">이름</th>
                         <th class="table-info">휴대폰번호</th>
                         <th class="table-info">E-MAIL</th>
                         <th class="table-info">생성일자</th>
@@ -56,6 +57,7 @@
                         <td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td>
                         <td><c:out value="${items.seq}"/></td>
                         <td><c:out value="${items.eno}"/></td>
+                        <td><c:out value="${items.name}"/></td>
                         <td><c:out value="${items.celph}"/></td>
                         <td><c:out value="${items.email}"/></td>
                         <td><c:out value="${items.cretDt}"/></td>
@@ -104,8 +106,8 @@
                     </c:choose>
                 </ul>
             </nav>
-        </div>
-        <%@include file="../layouts/bottom.jsp"%> 
+        </div> 
+        <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>
 <script>
@@ -113,7 +115,7 @@
         var init = function(){
 
         };
-        //ENO 데이터 출력
+        //사용자 데이터 출력
         var searchUserInfo = function(seq,eno,paging){
             $.ajax({
                     url: '<c:url value="getUserInfo.do"/>',
@@ -133,6 +135,7 @@
                                 dataText = dataText + "<td class='delCheck'><input type='checkbox' name='delCheck' value="+data[i].seq+"></td>";
                                 dataText = dataText + "<td>"+data[i].seq+"</td>";
                                 dataText = dataText + "<td>"+data[i].eno+"</td>";
+                                dataText = dataText + "<td>"+data[i].name+"</td>";
                                 dataText = dataText + "<td>"+data[i].celph+"</td>";
                                 dataText = dataText + "<td>"+data[i].email+"</td>";
                                 dataText = dataText + "<td>"+data[i].cretDt+"</td>";
@@ -144,6 +147,7 @@
                             if(data.length<10){
                                 for(i=0;i<(10 - data.length);i++){
                                     dataText = dataText + "<tr>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
@@ -256,10 +260,10 @@
         };
 
         //ENO 데이터 삭제
-        var deleteEno = function(delList){
-            console.log("deleteEno Start :: " + delList);
+        var deleteUser = function(delList){
+            console.log("deleteUser Start :: " + delList);
             $.ajax({
-                url:"<c:url value='deleteEnoInfo.do'/>",
+                url:"<c:url value='deleteUserInfo.do'/>",
                 type:"POST",
                 dataType:"json",
                 traditional:true,
@@ -272,7 +276,7 @@
                     $("#checkAll").prop('checked',false);
                 },
                 error: e=>{
-                    console.log("Delete Eno Ajax Get Data Error :: ", e);
+                    console.log("Delete User Ajax Get Data Error :: ", e);
                 }
             })
         }
@@ -281,6 +285,8 @@
             //초기화 버튼 클릭 시
             $("#searchReset").click(e=>{
                 $("#searchUserForm")[0].reset();
+                $("#getUserInfo").trigger('click');
+                $
             });
 
             //검색 버튼 클릭 시
@@ -307,7 +313,7 @@
             })
 
             //삭제하기 버튼 클릭 시
-            $("#deleteEno").click(function(){
+            $("#deleteUser").click(function(){
                 if($("#tbodyUserInfoList input:checkbox[name='delCheck']:checked").length <= 0){
                     alert("삭제할 데이터가 선택되지 않았습니다.");
                 };
@@ -317,7 +323,7 @@
                         delList.push($(this).val());
                     }
                 )
-                deleteEno(delList);
+                deleteUser(delList);
             });
             //전체 선택 체크박스 클릭 시
             $("#checkAll").click(e=>{

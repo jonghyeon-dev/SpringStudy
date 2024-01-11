@@ -1,4 +1,4 @@
-package com.sarang.model.user;
+package com.sarang.model.admin;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import lombok.ToString;
 
 /** 
  * @Class UserVO
- * @Description 사용자정보 객체
+ * @Description 관리자정보 객체
  * 
  * @author 박종현
  * 
@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserVO {
+public class AdminVO {
     private String userId;      // 아이디
     private String userPw;      // 비밀번호
     private String celph;       // 전화번호

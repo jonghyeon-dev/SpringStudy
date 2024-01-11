@@ -17,6 +17,7 @@ public class EnoVO {
     private Integer seq;
     private String eno;
     private String enoPw;
+    private String name;
     private String celph;
     private String email;
     private String cretDt;
@@ -29,6 +30,7 @@ public class EnoVO {
         retMap.put("seq",this.getSeq());
         retMap.put("eno",this.getEno());
         retMap.put("enoPw",this.getEnoPw());
+        retMap.put("name",this.getName());
         retMap.put("celph",this.getCelph());
         retMap.put("email",this.getEmail());
         retMap.put("cretDt",this.getCretDt());
@@ -44,10 +46,11 @@ public class EnoVO {
         }
         this.setEno(String.valueOf(reqMap.get("eno")));
         this.setEnoPw(String.valueOf(reqMap.get("enoPw")));
+        this.setName(String.valueOf(reqMap.get("name")));
         this.setCelph(String.valueOf(reqMap.get("celph")));
-        this.setEmail(String.valueOf(reqMap.get("eno")));
-        this.setCretDt(String.valueOf(reqMap.get("CretDt")));
-        this.setCretTm(String.valueOf(reqMap.get("CretTm")));
+        this.setEmail(String.valueOf(reqMap.get("email")));
+        this.setCretDt(String.valueOf(reqMap.get("cretDt")));
+        this.setCretTm(String.valueOf(reqMap.get("cretTm")));
         this.setChgDt(String.valueOf(reqMap.get("chgDt")));
         this.setChgTm(String.valueOf(reqMap.get("chgTm")));
     }
@@ -57,6 +60,7 @@ public class EnoVO {
         jsonObj.put("seq", this.getSeq());
         jsonObj.put("eno",this.getEno());
         jsonObj.put("enoPw",this.getEnoPw());
+        jsonObj.put("name",this.getName());
         jsonObj.put("celph",this.getCelph());
         jsonObj.put("email",this.getEmail());
         jsonObj.put("cretDt",this.getCretDt());
@@ -72,10 +76,11 @@ public class EnoVO {
         }
         this.setEno(String.valueOf(jsonObj.get("eno")));
         this.setEnoPw(String.valueOf(jsonObj.get("enoPw")));
+        this.setName(String.valueOf(jsonObj.get("name")));
         this.setCelph(String.valueOf(jsonObj.get("celph")));
-        this.setEmail(String.valueOf(jsonObj.get("eno")));
-        this.setCretDt(String.valueOf(jsonObj.get("CretDt")));
-        this.setCretTm(String.valueOf(jsonObj.get("CretTm")));
+        this.setEmail(String.valueOf(jsonObj.get("email")));
+        this.setCretDt(String.valueOf(jsonObj.get("cretDt")));
+        this.setCretTm(String.valueOf(jsonObj.get("cretTm")));
         this.setChgDt(String.valueOf(jsonObj.get("chgDt")));
         this.setChgTm(String.valueOf(jsonObj.get("chgTm")));
     }
