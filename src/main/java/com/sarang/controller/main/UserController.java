@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sarang.config.SecureUtil;
 import com.sarang.model.common.ResponseEntity;
 import com.sarang.model.user.EnoVO;
-import com.sarang.service.admin.AdminService;
 import com.sarang.service.user.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +28,8 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping(value="/user")
 public class UserController {
 
-    @Autowired
-    private AdminService adminService;
+    // @Autowired
+    // private AdminService adminService;
 
     @Autowired
     private UserService userService;
@@ -45,7 +44,7 @@ public class UserController {
     @GetMapping(value="/userMain.do")
 	public String userMainPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception {
-		LOGGER.info("Check Main Page View");
+		LOGGER.info("Check User Main Page View");
         HashMap<String,Object> reqMap = new HashMap<>();
         reqMap.put("start",0);
         reqMap.put("size",pageSize);
