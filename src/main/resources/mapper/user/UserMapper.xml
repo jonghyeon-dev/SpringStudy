@@ -53,7 +53,7 @@
 		)
 	</insert>
 
-	<update id="updateUserInfo" parameterType="com.sarang.model.user.EnoVO">
+	<update id="updateUserInfo" parameterType="com.sarang.model.EnoVO">
 		UPDATE TUSR00100 SET
 			ENO = #{eno},
 			NAME = #{name},
@@ -64,7 +64,7 @@
 		WHERE SEQ = #{seq}
 	</update>
 
-	<update id="changeUserPass" parameterType="com.sarang.model.user.EnoVO">
+	<update id="changeUserPass" parameterType="com.sarang.model.EnoVO">
 		UPDATE TUSR00100 SET
 			ENO_PW = #{enoPw}
 			CHG_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
