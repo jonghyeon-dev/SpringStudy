@@ -36,7 +36,7 @@ public class UserController {
 
     private static final int pageSize = 10;
 
-    @GetMapping(value="/main.do")
+    @GetMapping(value="/userMain.do")
 	public String mainPage(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		LOGGER.info("Check Main Page View");
         HashMap<String,Object> reqMap = new HashMap<>();
@@ -49,7 +49,7 @@ public class UserController {
         totalContents.put("userInfoList", userInfoList);
         totalContents.put("totalPages", pageInfo.get("totalPage"));
         model.addAttribute("totalContents", totalContents);
-        return "main/mainPage";
+        return "main/userMainPage";
 	}
 
     @GetMapping(value="/addEno.do")
@@ -84,7 +84,7 @@ public class UserController {
 
         // HashMap<String,Object> resMap = new HashMap<>();
         // model.addAttribute("responseData",resMap);
-        return "redirect:/main.do";
+        return "redirect:/userMain.do";
 	}
 
     @ResponseBody
