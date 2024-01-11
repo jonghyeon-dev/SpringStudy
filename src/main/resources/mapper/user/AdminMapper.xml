@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sarang.mapper.user.UserMapper">
-	<select id="searchAdminInfo" resultType="com.sarang.model.admin.AdminVO">
+<mapper namespace="com.sarang.mapper.AdminMapper">
+	<select id="searchAdminInfo" resultType="com.sarang.model.AdminVO">
 		SELECT * FROM TADM00100
 		WHERE 1=1
 		  AND USER_ID = #{userId}
@@ -10,7 +10,7 @@
 		ORDER BY SEQ desc LIMIT #{start}, #{size}
 	</select>
 
-    <update id="updateAdminInfo" parameterType="com.sarang.model.admin.AdminVO">
+    <update id="updateAdminInfo" parameterType="com.sarang.model.AdminVO">
         UPDATE TADM00100 SET
             USER_ID = #{userId},
             USER_PW = #{userPw},
@@ -21,7 +21,7 @@
         WHERE SEQ = #{seq}
     </update>
 
-    <update id="resetAdminPw" parameterType="com.sarang.model.admin.AdminVO">
+    <update id="resetAdminPw" parameterType="com.sarang.model.AdminVO">
         UPDATE TADM00100 SET
             USER_PW = #{userPw},
             CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
@@ -29,7 +29,7 @@
         WHERE SEQ = #{seq}
     </update>
 
-    <insert id="insertAdminInfo" parameterType="com.sarang.model.admin.AdminVO">
+    <insert id="insertAdminInfo" parameterType="com.sarang.model.AdminVO">
 		INSERT INTO TADM00100(
             USER_ID,
             USER_PW,

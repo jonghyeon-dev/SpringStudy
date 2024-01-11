@@ -1,4 +1,4 @@
-package com.sarang.model.user;
+package com.sarang.model;
 
 
 

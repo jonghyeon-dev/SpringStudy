@@ -1,4 +1,4 @@
-package com.sarang.service.user.impl;
+package com.sarang.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sarang.mapper.user.UserMapper;
-import com.sarang.model.user.EnoVO;
-import com.sarang.service.user.UserService;
+import com.sarang.mapper.UserMapper;
+import com.sarang.model.EnoVO;
+import com.sarang.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService{

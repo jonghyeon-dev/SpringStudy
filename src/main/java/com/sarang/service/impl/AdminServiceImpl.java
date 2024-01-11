@@ -1,4 +1,4 @@
-package com.sarang.service.admin.impl;
+package com.sarang.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sarang.mapper.admin.AdminMapper;
-import com.sarang.model.admin.AdminVO;
-import com.sarang.service.admin.AdminService;
+import com.sarang.mapper.AdminMapper;
+import com.sarang.model.AdminVO;
+import com.sarang.service.AdminService;
 
 @Service
 public class AdminServiceImpl implements AdminService{

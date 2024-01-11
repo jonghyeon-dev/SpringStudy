@@ -1,4 +1,4 @@
-package com.sarang.controller.main;
+package com.sarang.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sarang.config.SecureUtil;
+import com.sarang.model.EnoVO;
 import com.sarang.model.common.ResponseEntity;
-import com.sarang.model.user.EnoVO;
-import com.sarang.service.user.UserService;
+import com.sarang.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

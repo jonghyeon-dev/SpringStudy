@@ -1,14 +1,11 @@
-package com.sarang.mapper.user;
+package com.sarang.service;
 
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
+import com.sarang.model.EnoVO;
 
-import com.sarang.model.user.EnoVO;
-
-@Mapper
-public interface UserMapper {
+public interface UserService{
     HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);
     List<EnoVO> searchUserInfo(HashMap<String,Object> reqMap);
     Integer insertUserInfo(EnoVO enoVO);

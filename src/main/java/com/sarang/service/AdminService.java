@@ -1,9 +1,9 @@
-package com.sarang.service.admin;
+package com.sarang.service;
 
 import java.util.HashMap;
 import java.util.List;
 
-import com.sarang.model.admin.AdminVO;
+import com.sarang.model.AdminVO;
 
 public interface AdminService{
     List<AdminVO> searchAdminInfo(HashMap<String,Object> reqMap);
