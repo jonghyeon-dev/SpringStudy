@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sarang.config.SecureUtil;
 import com.sarang.model.AdminVO;
-import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseEntity;
 import com.sarang.service.AdminService;
 

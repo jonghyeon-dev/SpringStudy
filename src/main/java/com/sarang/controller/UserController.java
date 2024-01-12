@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.sarang.config.SecureUtil;
 import com.sarang.model.UserVO;
@@ -34,7 +33,7 @@ public class UserController {
     @Autowired
     private SecureUtil secureutil;
 
-    private static final int pageSize = 10;
+    // private static final int pageSize = 10;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 

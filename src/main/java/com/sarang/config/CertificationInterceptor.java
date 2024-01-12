@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,7 +19,7 @@ import com.sarang.model.UserVO;
 public class CertificationInterceptor implements HandlerInterceptor{
  
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler)
             throws Exception {
         HttpSession session = request.getSession();
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
@@ -39,15 +41,15 @@ public class CertificationInterceptor implements HandlerInterceptor{
     }
  
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler,
+    @Nullable ModelAndView modelAndView) throws Exception {
 
         
     }
  
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response
+    , @NonNull Object handler, @Nullable Exception ex) throws Exception{
 
         
     }
