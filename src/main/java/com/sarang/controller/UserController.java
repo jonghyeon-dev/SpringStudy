@@ -55,7 +55,7 @@ public class UserController {
         return "redirect:/main.do";
     }
 
-    @PostMapping(value="/checkUserLogin.do")
+    @PostMapping(value="/checkUser.do")
     public String checkLogin(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, RedirectAttributes redirectAttributes){
         LOGGER.info("Check User Login Process");

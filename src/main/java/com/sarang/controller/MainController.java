@@ -27,11 +27,4 @@ public class MainController {
           LOGGER.info("About Page View");
           return "main/aboutPage";
     }
-
-    @GetMapping(value="/error.do")
-    public String errorPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model)throws Exception {
-      LOGGER.info("Error Page View");
-      return "main/errorPage";
-}
 }

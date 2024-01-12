@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form id="CheckUserForm" method="post" action="<c:url value='/user/checkUserLogin.do'/>">
+            <form id="CheckUserForm" method="post" action="<c:url value='/checkUser.do'/>">
                 <table class="table table-bordered">
                     <colgroup>
                         <col width="20%">
