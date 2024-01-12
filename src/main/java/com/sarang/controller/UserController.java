@@ -1,35 +1,32 @@
 package com.sarang.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sarang.config.SecureUtil;
-import com.sarang.model.EnoVO;
-import com.sarang.model.common.ResponseEntity;
+import com.sarang.model.UserVO;
 import com.sarang.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+
 
 @Controller
-@RequestMapping(value="/user")
 public class UserController {
-
-    // @Autowired
-    // private AdminService adminService;
 
     @Autowired
     private UserService userService;
@@ -39,110 +36,48 @@ public class UserController {
 
     private static final int pageSize = 10;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
-    @GetMapping(value="/userMain.do")
-	public String userMainPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model) throws Exception {
-		LOGGER.info("Check User Main Page View");
-        HashMap<String,Object> reqMap = new HashMap<>();
-        reqMap.put("start",0);
-        reqMap.put("size",pageSize);
-        List<EnoVO> userInfoList = userService.searchUserInfo(reqMap);
-        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
-
-        HashMap<String, Object> totalContents = new HashMap<>();
-        totalContents.put("userInfoList", userInfoList);
-        totalContents.put("totalPages", pageInfo.get("totalPage"));
-        model.addAttribute("totalContents", totalContents);
-        return "user/userPage";
-	}
-
-    @GetMapping(value="/addUser.do")
-    public String addEnoPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model) throws Exception {
-		LOGGER.info("addUser Page View");
-       
-        return "user/addUserPage";
-	}
-
-    @PostMapping(value="/insertUser.do")
-    public String insertEno(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response, Model model) throws Exception {
-		LOGGER.info("insertUser Data");
-        EnoVO enoVO = new EnoVO();
-        String eno = request.getParameter("eno").trim();
-        String enoPw = request.getParameter("enoPw").trim();
-        String name = request.getParameter("name").trim();
-        String celph = request.getParameter("celph").trim();
-        String email = request.getParameter("email").trim();
-
-        if(eno.trim().isEmpty() || eno == null){
-            model.addAttribute("errorMsg","아이디는 필수 값입니다.");
-            return "redirect:/addUser.do";
-        }else if(enoPw.trim().isEmpty() || eno == null){
-            model.addAttribute("errorMsg","패스워드는 필수 값입니다.");
-            return "redirect:/addUser.do";
-        }else if(name.trim().isEmpty() || name == null){
-             model.addAttribute("errorMsg","이름은 필수 값입니다.");
-            return "redirect:/addUser.do";
+    @GetMapping(value="/login.do")
+    public String loginPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model, @RequestParam(value="errorMsg", required=false) String errorMsg) {
+        LOGGER.info("User Login Page View");
+        if(errorMsg != null && !errorMsg.isEmpty()){
+            model.addAttribute("errorMsg", errorMsg);
         }
-        //아이디 중복체크 체크루틴 추가 할 것 Start
+        return "user/loginPage";
+    }
 
-        //아이디 중복체크 체크루틴 추가 할 것 End
-        enoVO.setEno(eno);
-        enoVO.setEnoPw(secureutil.encryptSHA256(enoPw));
-        enoVO.setName(name);
-        enoVO.setCelph(celph);
-        enoVO.setEmail(email);
-        userService.insertUserInfo(enoVO);
+    @GetMapping(value="/logout.do")
+    public String logout(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model){
+        LOGGER.info("Logout Process");
+        session.invalidate();
+        return "redirect:/main.do";
+    }
 
-        // HashMap<String,Object> resMap = new HashMap<>();
-        // model.addAttribute("responseData",resMap);
-        return "redirect:/userMain.do";
-	}
-
-    @ResponseBody
-    @RequestMapping(value="/getUserInfo.do", method=RequestMethod.GET)
-    public  ResponseEntity getUserInfo(HttpSession session, HttpServletRequest request
-        , HttpServletResponse response, Model model
-        , String seq, String eno, String page) throws Exception {
-        ResponseEntity js = new ResponseEntity();
-
+    @PostMapping(value="/checkUserLogin.do")
+    public String checkLogin(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response, RedirectAttributes redirectAttributes){
+        LOGGER.info("Check User Login Process");
+        String userId = request.getParameter("userId").trim();
+        String userPw = request.getParameter("userPw").trim();
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
-        reqMap.put("seq",seq);
-        reqMap.put("eno",eno);
-        reqMap.put("start",Integer.parseInt(page));
-        reqMap.put("size",pageSize);
-        if(page != null){
-            reqMap.put("start",Integer.parseInt(page)*10);
-        }else{
-            reqMap.put("start",0);
+        reqMap.put("userId",userId);
+        try {
+            reqMap.put("userPw",secureutil.encryptSHA256(userPw));
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
+            reqMap.put("userPw","");
         }
-
-        List<EnoVO> userInfoList = userService.searchUserInfo(reqMap);
-        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
         
-        HashMap <String, Object> totalContents = new HashMap<>();
-        totalContents.put("userInfoList", userInfoList);
-        totalContents.put("totalPages", pageInfo.get("totalPage"));
-
-        js.setSucceed(true);
-        js.setData(totalContents);
-        return js;
+        UserVO userVO = userService.checkUserLogin(reqMap);
+        if(ObjectUtils.isEmpty(userVO)){
+            redirectAttributes.addFlashAttribute("errorMsg"
+                , "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다.");
+            return "redirect:/user/login.do";
+        }
+        session.setAttribute("userLogin", userVO);
+        return "redirect:/main.do";
     }
-
-    @ResponseBody
-    @RequestMapping(value="/deleteUserInfo.do", method={RequestMethod.GET,RequestMethod.POST})
-    public  ResponseEntity deleteEnoInfo(HttpSession session, HttpServletRequest request
-        , HttpServletResponse response, Model model
-        , @RequestParam(value="delList", required=false) List<String> delList
-        ) throws Exception {
-        ResponseEntity js = new ResponseEntity();
-        userService.deleteUserInfo(delList);
-        js.setSucceed(true);
-        js.setMessage("1");
-        return js;
-    }
-    
 }

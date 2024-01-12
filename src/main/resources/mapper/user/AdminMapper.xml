@@ -2,46 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sarang.mapper.AdminMapper">
+
+	<select id="checkAdminLogin" resultType="com.sarang.model.AdminVO">
+		SELECT * FROM TADM00100
+		WHERE 1=1
+		  AND ENO = #{eno}
+		  AND ENO_PW = #{enoPw}
+	</select>
+	
 	<select id="searchAdminInfo" resultType="com.sarang.model.AdminVO">
 		SELECT * FROM TADM00100
 		WHERE 1=1
-		  AND USER_ID = #{userId}
-		  AND USER_PW = #{userPw}
+		  <if test='seq != null and !seq.equals("")'>
+		  AND SEQ LIKE CONCAT('%',#{seq},'%')
+		  </if>
+		  <if test='eno != null and !eno.equals("")'>
+		  AND ENO LIKE CONCAT('%',#{eno},'%')
+		  </if>
 		ORDER BY SEQ desc LIMIT #{start}, #{size}
 	</select>
 
-    <update id="updateAdminInfo" parameterType="com.sarang.model.AdminVO">
-        UPDATE TADM00100 SET
-            USER_ID = #{userId},
-            USER_PW = #{userPw},
-            CELPH = #{celph},
-            EMAIL = #{email},
-            CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
-            CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
-        WHERE SEQ = #{seq}
-    </update>
-
-    <update id="resetAdminPw" parameterType="com.sarang.model.AdminVO">
-        UPDATE TADM00100 SET
-            USER_PW = #{userPw},
-            CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
-            CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
-        WHERE SEQ = #{seq}
-    </update>
-
-    <insert id="insertAdminInfo" parameterType="com.sarang.model.AdminVO">
+	<select id="getAdminPageInfo" resultType="HashMap">
+		SELECT 
+			count(*) AS totalCnt,
+			CEIL((count(*)/#{size})) as totalPage
+		FROM TADM00100
+		WHERE 1=1
+		  <if test='seq != null and !seq.equals("")'>
+		  AND SEQ LIKE CONCAT('%',#{seq},'%')
+		  </if>
+		  <if test='eno != null and !eno.equals("")'>
+		  AND ENO LIKE CONCAT('%',#{eno},'%')
+		  </if>
+	</select>
+	
+	<insert id="insertUserInfo" parameterType="com.sarang.model.AdminVO">
 		INSERT INTO TADM00100(
-            USER_ID,
-            USER_PW,
-            CELPH,
-            EMAIL,
-            CRET_DATE,
-            CRET_TIME,
-            CHG_DATE,
-            CHG_TIME
+			ENO,
+			ENO_PW,
+			NAME,
+			CELPH,
+			EMAIL,
+			CRET_DT,
+			CRET_TM,
+			CHG_DT,
+			CHG_TM
 		)VALUE(
-			#{userId},
-			#{userPw},
+			#{eno},
+			#{enoPw},
+			#{name},
 			#{celph},
 			#{email},
 			DATE_FORMAT(NOW(),'%Y%m%d'),
@@ -50,4 +59,31 @@
 			DATE_FORMAT(NOW(),'%H%i%s')
 		)
 	</insert>
+
+	<update id="updateAdminInfo" parameterType="com.sarang.model.AdminVO">
+		UPDATE TADM00100 SET
+			ENO = #{eno},
+			NAME = #{name},
+			CELPH = #{celph},
+			EMAIL = #{email},
+			CHG_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TM = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE SEQ = #{seq}
+	</update>
+
+	<update id="resetAdminPass" parameterType="com.sarang.model.AdminVO">
+		UPDATE TADM00100 SET
+			ENO_PW = #{enoPw}
+			CHG_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TM = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE SEQ = #{seq}
+	</update>
+
+	<delete id="deleteAdminInfo" parameterType="java.util.List">
+		DELETE FROM TADM00100 WHERE SEQ IN
+		<foreach collection="deleteList" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+
 </mapper>

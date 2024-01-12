@@ -1,15 +1,14 @@
 package com.sarang.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.GetMapping;
-
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
@@ -28,4 +27,11 @@ public class MainController {
           LOGGER.info("About Page View");
           return "main/aboutPage";
     }
+
+    @GetMapping(value="/error.do")
+    public String errorPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model)throws Exception {
+      LOGGER.info("Error Page View");
+      return "main/errorPage";
+}
 }

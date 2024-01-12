@@ -12,12 +12,32 @@ import com.sarang.service.AdminService;
 
 @Service
 public class AdminServiceImpl implements AdminService{
+
     @Autowired
-    AdminMapper adminMapper;
+    private AdminMapper adminMapper; 
+
+    @Override
+    public HashMap<String,Object> getAdminPageInfo(HashMap<String,Object> reqMap){
+        return adminMapper.getAdminPageInfo(reqMap);
+    }
 
     @Override
     public List<AdminVO> searchAdminInfo(HashMap<String,Object> reqMap){
         return adminMapper.searchAdminInfo(reqMap);
     }
-}
 
+    @Override
+    public Integer insertAdminInfo(AdminVO enoVO){
+        return adminMapper.insertAdminInfo(enoVO);
+    }
+
+    @Override
+    public Integer deleteAdminInfo(List<String> deleteList){
+        return adminMapper.deleteAdminInfo(deleteList);
+    }
+
+    @Override
+    public AdminVO checkAdminLogin(HashMap<String,Object> reqMap){
+        return adminMapper.checkAdminLogin(reqMap);
+    }
+}

@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form id="addUserForm" method="post" action="<c:url value='/insertUser.do'/>" onsubmit="return validationForm()">
+            <form id="addAdminForm" method="post" action="<c:url value='/admin/insertAdmin.do'/>" onsubmit="return validationForm()">
                 <table class="table table-bordered">
                     <colgroup>
                         <col width="20%">
@@ -47,7 +47,7 @@
                 <input type="hidden" name="paging" value="0">
                 <div class="button-area text-center mb-2">
                     <button class="btn btn-primary" type="button" id="reset">초기화</button>
-                    <a href='<c:url value="/userMain.do"/>' class="btn btn-warning">돌아가기</button></a>
+                    <a href='<c:url value="/admin/adminAccountMain.do"/>' class="btn btn-warning">돌아가기</button></a>
                     <button class="btn btn-success" type="submit">등록</button>
                 </div>
             </form>
@@ -63,17 +63,17 @@
 
         var registerEvent = function(){
             $("#reset").click(function(){
-                $("#adduserForm")[0].reset();
+                $("#addAdminForm")[0].reset();
             });
 
             //모달창 오픈
-            $("#addUserForm button[name='checkDuplication']").click(function(){
+            $("#addAdminForm button[name='checkDuplication']").click(function(){
                 $("#modalTitle").append("중복체크");
                 $("#modalContent").append("중복체크 완료");
                 $("#modalInfo").show();
             })
 
-            $("#addUserForm input[name='checkDup']").keypress(function(e){
+            $("#addAdminForm input[name='checkDup']").keypress(function(e){
                 this.empty();
             });
         };
@@ -91,30 +91,30 @@
     });
     
     function validationForm(){
-        const eno = $('#addUserForm input[name="eno"]').val(); // 아이디
-        const enoPw = $('#addUserForm input[name="enoPw"]').val(); // 패스워드
-        const name = $('#addUserForm input[name="name"]').val(); // 이름
-        const cehckDup = $('#addUserForm input[name="checkDup"]').val(); // 중복체크 여부
+        const eno = $('#addAdminForm input[name="eno"]').val(); // 아이디
+        const enoPw = $('#addAdminForm input[name="enoPw"]').val(); // 패스워드
+        const name = $('#addAdminForm input[name="name"]').val(); // 이름
+        const cehckDup = $('#addAdminForm input[name="checkDup"]').val(); // 중복체크 여부
         console.log("실행?");
         if(eno.trim() == "" || eno == null){
             $("#modalTitle").append("ID값이 없습니다.");
             $("#modalContent").append("ID값은 필수 값 입니다.");
-            $('#addUserForm input[name="eno"]').focus();
+            $('#addAdminForm input[name="eno"]').focus();
             return false;
         }else if(enoPw.trim() == "" || enoPw == null){
             $("#modalTitle").append("패스워드 값이 없습니다.");
             $("#modalContent").append("패스워드 값은 필수 값 입니다.");
-            $('#addUserForm input[name="enoPw"]').focus();
+            $('#addAdminForm input[name="enoPw"]').focus();
             return false;
         }else if(name.trim() == "" || name == null){
             $("#modalTitle").append("이름 값이 없습니다.");
             $("#modalContent").append("이름 값은 필수 값 입니다.");
-            $('#addUserForm input[name="name"]').focus();
+            $('#addAdminForm input[name="name"]').focus();
             return false;
         }else if(cehckDup != "true"){
             $("#modalTitle").append("중복체크가 되지 않았습니다.");
             $("#modalContent").append("중복체크 버튼을 클릭하여 아이디가 중복되었는지 확인 부탁드립니다.");
-            $('#addUserForm input[name="eno"]').focus();
+            $('#addAdminForm input[name="eno"]').focus();
             return false;
         }
 

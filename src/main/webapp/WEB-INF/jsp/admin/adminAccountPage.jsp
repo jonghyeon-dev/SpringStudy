@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form class="searchForm" id="searchUserForm">
+            <form class="searchForm" id="searchAdminForm">
                 <table class="table table-bordered searchTable text-center">
                     <colgroup>
                         <col width="15%">
@@ -20,19 +20,19 @@
                     </colgroup>
                     <tr>
                         <th class="table-success pt-3"><span class="form-label">번호 :</span></th>
-                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')"  type="number" name="seq" value=""></td>
+                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getAdminInfo')"  type="number" name="seq" value=""></td>
                         <th class="table-success pt-3"><span class="form-label">ID :</span></th>
-                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getUserInfo')" type="text" name="eno" value=""></td>
+                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getAdminInfo')" type="text" name="eno" value=""></td>
                         <td>
-                            <button class="btn btn-primary searchBtn" type="button" id="getUserInfo">검색</button>
+                            <button class="btn btn-primary searchBtn" type="button" id="getAdminInfo">검색</button>
                             <button class="btn btn-primary searchReset" type="button" id="searchReset">초기화</button>
                         </td>
                     </tr>
                 </table>
                 <input type="hidden" name="paging" value="0">
                 <div style="float:right;">
-                    <a class="btn btn-success" href='<c:url value="/addUser.do"/>'>등록하기</a>
-                    <button class="btn btn-danger" type="button" id="deleteUser">삭제하기</button>
+                    <a class="btn btn-success" href='<c:url value="/admin/addAdmin.do"/>'>등록하기</a>
+                    <button class="btn btn-danger" type="button" id="deleteAdmin">삭제하기</button>
                 </div>
             </form>
         <div>
@@ -51,8 +51,8 @@
                         <th class="table-info">변경시간</th>
                     </tr>
                 </thead>
-                <tbody id="tbodyUserInfoList">
-                    <c:forEach items="${totalContents.userInfoList}" var="items">
+                <tbody id="tbodyAdminInfoList">
+                    <c:forEach items="${totalContents.adminInfoList}" var="items">
                     <tr>
                         <td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td>
                         <td><c:out value="${items.seq}"/></td>
@@ -71,7 +71,7 @@
         </div>
         <div>
             <nav aria-label="Page navigation example">
-                <ul class="pagination" style="justify-content: center;" id="userInfoPagination">
+                <ul class="pagination" style="justify-content: center;" id="adminInfoPagination">
                     <c:set var="totalPage" value="${totalContents.totalPages}"/>
                     <c:choose>
                         <c:when test="${totalPage > 10}">
@@ -111,14 +111,14 @@
     </div>
 </body>
 <script>
-    var mainPage = (function(){
+    var adminAccountPage = (function(){
         var init = function(){
 
         };
         //사용자 데이터 출력
-        var searchUserInfo = function(seq,eno,paging){
+        var searchAdminInfo = function(seq,eno,paging){
             $.ajax({
-                    url: '<c:url value="getUserInfo.do"/>',
+                    url: '<c:url value="/admin/getAdminInfo.do"/>',
                     type: "GET",
                     dataType: "json",
                     traditional:true,
@@ -128,7 +128,7 @@
                     success: response=>{
                         if(response.succeed){
                             $("#checkAll").prop('checked',false);
-                            let data = response.data.userInfoList;
+                            let data = response.data.adminInfoList;
                             let dataText = "";
                             for(i=0;i<data.length;i++){
                                 dataText = dataText + "<tr>";
@@ -160,9 +160,9 @@
                                     dataText = dataText + "<tr>";
                                 }
                             }
-                            $("#tbodyUserInfoList").empty();
+                            $("#tbodyAdminInfoList").empty();
                             if(dataText != ""){
-                                $("#tbodyUserInfoList").append(dataText);
+                                $("#tbodyAdminInfoList").append(dataText);
                             }
 
                             // paging 처리
@@ -213,14 +213,14 @@
                             }else{
                                 pageText = pageText + '<li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>'
                             }
-                            $("#userInfoPagination").empty();
+                            $("#adminInfoPagination").empty();
                             if(pageText != null){
-                                $("#userInfoPagination").append(pageText);
-                                $("#userInfoPagination li:not(.disabled.active)").on("click",function(){
+                                $("#adminInfoPagination").append(pageText);
+                                $("#adminInfoPagination li:not(.disabled.active)").on("click",function(){
                                     let selectedPage=$(this).find("input[name='page']").val();
                                     let oldData;
                                     if(selectedPage === "prev"){
-                                        $("#userInfoPagination li").each(function(){
+                                        $("#adminInfoPagination li").each(function(){
                                             let pageData = $(this).find("input[name='page']").val();
                                             if(oldData === "prev"){
                                                 if(Number(pageData) === 0){
@@ -234,7 +234,7 @@
                                             }
                                         });
                                     }else if(selectedPage === "next"){
-                                        $("#userInfoPagination li").each(function(){
+                                        $("#adminInfoPagination li").each(function(){
                                             let pageData = $(this).find("input[name='page']").val();
                                             if(pageData === "next"){
                                                 if(Number(oldData) === (Number(totalPages)-1)){
@@ -248,35 +248,35 @@
                                             }
                                         });
                                     }
-                                    searchUserInfo(seq,eno,selectedPage);
+                                    searchAdminInfo(seq,eno,selectedPage);
                                 })
                             }
                         }
                     },
                     error: e=>{
-                        console.log("Get UserInfoList Ajax Get Data Error :: ", e);
+                        console.log("Get AdminInfoList Ajax Get Data Error :: ", e);
                     }
                 })
         };
 
         //ENO 데이터 삭제
-        var deleteUser = function(delList){
-            console.log("deleteUser Start :: " + delList);
+        var deleteAdmin = function(delList){
+            // console.log("deleteAdmin Start :: " + delList);
             $.ajax({
-                url:"<c:url value='deleteUserInfo.do'/>",
+                url:"<c:url value='/admin/deleteAdminInfo.do'/>",
                 type:"POST",
                 dataType:"json",
                 traditional:true,
                 data:{"delList": delList},
                 // data:{"delListData": JSON.stringify(delList)},
                 success: response=>{
-                    let seq=$("#searchUserForm input[name='seq']").val();
-                    let eno=$("#searchUserForm input[name='eno']").val();
-                    searchUserInfo(seq,eno,0);
+                    let seq=$("#searchAdminForm input[name='seq']").val();
+                    let eno=$("#searchAdminForm input[name='eno']").val();
+                    searchAdminInfo(seq,eno,0);
                     $("#checkAll").prop('checked',false);
                 },
                 error: e=>{
-                    console.log("Delete User Ajax Get Data Error :: ", e);
+                    console.log("Delete Admin Ajax Get Data Error :: ", e);
                 }
             })
         }
@@ -284,24 +284,24 @@
         var registerEvent = function(){
             //초기화 버튼 클릭 시
             $("#searchReset").click(e=>{
-                $("#searchUserForm")[0].reset();
-                $("#getUserInfo").trigger('click');
+                $("#searchAdminForm")[0].reset();
+                $("#getAdminInfo").trigger('click');
                 $
             });
 
             //검색 버튼 클릭 시
-            $("#getUserInfo").click(e=>{
-                let seq=$("#searchUserForm input[name='seq']").val();
-                let eno=$("#searchUserForm input[name='eno']").val();
+            $("#getAdminInfo").click(e=>{
+                let seq=$("#searchAdminForm input[name='seq']").val();
+                let eno=$("#searchAdminForm input[name='eno']").val();
                 searchUserInfo(seq,eno,0);
             });
 
             //하단 페이지 숫자 클릭 시
-            $("#userInfoPagination li:not(.disabled.active)").on("click",function(){
-                let seq=$("#searchUserForm input[name='seq']").val();
-                let eno=$("#searchUserForm input[name='eno']").val();
+            $("#adminInfoPagination li:not(.disabled.active)").on("click",function(){
+                let seq=$("#searchAdminForm input[name='seq']").val();
+                let eno=$("#searchAdminForm input[name='eno']").val();
                 let selectedPage=$(this).find("input[name='page']").val();
-                let totalPages = '<c:out value="${userInfoList.totalPages}"/>';
+                let totalPages = '<c:out value="${adminInfoList.totalPages}"/>';
                 if(selectedPage === "next"){
                     if(Number(totalPages) > 10){
                         selectedPage = 6;
@@ -309,33 +309,33 @@
                         selectedPage = Number(totalPages)-1;
                     }
                 }
-                searchUserInfo(seq,eno,selectedPage);
+                searchAdminInfo(seq,eno,selectedPage);
             })
 
             //삭제하기 버튼 클릭 시
-            $("#deleteUser").click(function(){
-                if($("#tbodyUserInfoList input:checkbox[name='delCheck']:checked").length <= 0){
+            $("#deleteAdmin").click(function(){
+                if($("#tbodyAdminInfoList input:checkbox[name='delCheck']:checked").length <= 0){
                     alert("삭제할 데이터가 선택되지 않았습니다.");
                 };
                 var delList = new Array();
-                $("#tbodyUserInfoList input:checkbox[name='delCheck']:checked").each(
+                $("#tbodyAdminInfoList input:checkbox[name='delCheck']:checked").each(
                     function(e){
                         delList.push($(this).val());
                     }
                 )
-                deleteUser(delList);
+                deleteAdmin(delList);
             });
             //전체 선택 체크박스 클릭 시
             $("#checkAll").click(e=>{
                 var checked = $("#checkAll").is(":checked");
                 if(checked){
-                    $("#tbodyUserInfoList input:checkbox[name='delCheck']").each(
+                    $("#tbodyAdminInfoList input:checkbox[name='delCheck']").each(
                         function(e){
                             $(this).prop('checked',true);
                         }
                     );
                 }else{
-                    $("#tbodyUserInfoList input:checkbox[name='delCheck']").each(
+                    $("#tbodyAdminInfoList input:checkbox[name='delCheck']").each(
                         function(e){
                             $(this).prop('checked',false);
                         }
@@ -352,7 +352,7 @@
     }());
 
     $(document).ready(e=>{
-        mainPage.init();
+        adminAccountPage.init();
     });
 
     function enterBtnClick(event, id){

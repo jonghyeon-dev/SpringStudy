@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <form id="CheckAdminForm" method="post" action="<c:url value='/admin/checkAdmin.do'/>">
+            <form id="CheckAdminForm" method="post" action="<c:url value='/checkAdmin.do'/>">
                 <table class="table table-bordered">
                     <colgroup>
                         <col width="20%">
@@ -23,20 +23,11 @@
                         <th><span>PW :</span></th>
                         <td><input type="password" name="enoPw" value="" required="true"></td>
                     </tr>
-                    <tr>
-                        <th><span>휴대폰번호 :</span></th>
-                        <td><input type="number" name="celph" value=""></td>
-                        <th><span>이메일 :</span></th>
-                        <td><input type="email" name="email" value=""></td>
-                    </tr>
                 </table>
                 <c:if test="${!empty errorMsg}">
                     <span style="color:red">${errorMsg}</span>
                 </c:if>
-                <input type="hidden" name="paging" value="0">
-                <button class="btn btn-primary" type="button" id="reset">초기화</button>
-                <a href='<c:url value="/userMain.do"/>' class="btn btn-warning">돌아가기</button></a>
-                <button class="btn btn-success" type="submit">등록</button>
+                <button class="btn btn-primary" type="submit">로그인</button>
             </form>
         <div>
         <%@include file="../layouts/bottom.jsp"%>
@@ -49,9 +40,6 @@
         };
 
         var registerEvent = function(){
-            $("#reset").click(function(){
-                $("#loginUserForm")[0].reset();
-            });
         };
 
         return {

@@ -20,10 +20,10 @@
                                         <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
                                         <div class="h2 fw-bolder">헤드 컨텐츠</div>
                                         <p>내용 작성</p>
-                                        <!-- <a class="stretched-link text-decoration-none" href="#!">
-                                            Read more
+                                        <a class="stretched-link text-decoration-none" href="#!">
+                                            More
                                             <i class="bi bi-arrow-right"></i>
-                                        </a> -->
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-xl-7"><div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div></div>
