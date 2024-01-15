@@ -16,7 +16,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UserVO {
-    private String seq;         // 순차번호
+    private Integer seq;         // 순차번호
     @NonNull
     private String userId;      // 사용자아이디
     @NonNull
