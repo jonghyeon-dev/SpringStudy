@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.json.JSONObject;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -15,8 +16,11 @@ import lombok.ToString;
 @ToString
 public class AdminVO {
     private Integer seq;
+    @NonNull
     private String eno;
+    @NonNull
     private String enoPw;
+    @NonNull
     private String name;
     private String celph;
     private String email;

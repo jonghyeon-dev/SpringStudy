@@ -1,6 +1,7 @@
 package com.sarang.model;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -15,8 +16,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UserVO {
-    private String userId;      // 아이디
-    private String userPw;      // 비밀번호
+    private String seq;         // 순차번호
+    @NonNull
+    private String userId;      // 사용자아이디
+    @NonNull
+    private String userPw;      // 사용자비밀번호
+    @NonNull
     private String userNm;      // 사용자별칭
     private String celph;       // 전화번호
     private String email;       // 이메일
