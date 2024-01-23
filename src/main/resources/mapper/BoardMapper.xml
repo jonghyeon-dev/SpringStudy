@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sarang.mapper.BoardMapper">
+    <select id="getBoardList" resultType="com.sarang.model.BoardVO">
+		SELECT * FROM TBRD00100
+		WHERE 1=1
+          AND BOARD_CATE = #{boardCate}
+		  <if test='boardTitle != null and !boardTitle.equals("")'>
+		  AND BOARD_TITLE LIKE CONCAT('%',#{boardTitle},'%')
+		  </if>
+		  <if test='cretUser != null and !cretUser.equals("")'>
+		  AND CRET_USER LIKE CONCAT('%',#{cretUser},'%')
+		  </if>
+		ORDER BY BOARD_ID desc LIMIT #{start}, #{size}
+	</select>
+
+	<select id="getBoardPageInfo" resultType="HashMap">
+		SELECT 
+			count(*) AS totalCnt,
+			CEIL((count(*)/#{size})) as totalPage
+		FROM TBRD00100
+		WHERE 1=1
+          AND BOARD_CATE = #{boardCate}
+		  <if test='boardTitle != null and !boardTitle.equals("")'>
+		  AND BOARD_TITLE LIKE CONCAT('%',#{boardTitle},'%')
+		  </if>
+		  <if test='cretUser != null and !cretUser.equals("")'>
+		  AND CRET_USER LIKE CONCAT('%',#{cretUser},'%')
+		  </if>
+	</select>
+</mapper>

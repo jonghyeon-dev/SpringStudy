@@ -9,12 +9,22 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" href="<c:url value='/main.do'/>">홈</a></li>
                 <li class="nav-item"><a class="nav-link" href="<c:url value='/about.do'/>">소개</a></li>
-                <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?category=notice'/>">공지사항</a></li> -->
-                <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?category=news'/>">소식</a></li> -->
-                <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?cetegory=comunnity'/>">게시판테스트</a></li> -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">게시판</a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                        <li><a class="dropdown-item" href="<c:url value='/board/notice.do'/>">공지사항</a></li>
+                        <li><a class="dropdown-item" href="<c:url value='/board/news.do'/>">최근소식</a></li>
+                        <li><a class="dropdown-item" href="<c:url value='/board/community.do'/>">자유게시판</a></li>
+                    </ul>
+                </li>
                 <c:if test="${adminLogin ne null}">
-                    <li class="nav-item"><a class="nav-link" href="<c:url value='/admin/adminAccountMain.do'/>">관리자목록</a></li>
-                    <!-- <li class-"nav-item"><a class="nav-link" href="<c:url value='/user/userAccountMain.do'/>">사용자목록</a></li> --> 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자항목</a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                            <li><a class="dropdown-item" href="<c:url value='/admin/adminAccountMain.do'/>">관리자목록</a></li>
+                            <li><a class="dropdown-item" href="<c:url value='/admin/mainContents.do'/>">메인화면관리</a></li>
+                        </ul>
+                    </li>
                 </c:if>
                 <c:choose>
                     <c:when test="${adminLogin ne null || userLogin ne null}">

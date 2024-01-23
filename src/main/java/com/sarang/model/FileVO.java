@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FileVO {
-    private Integer fileId;      //파일ID
+    private Integer fileId;     //파일ID
     @NonNull
-    private Integer boardId;     //게시판ID
+    private Integer boardId;    //게시판ID
     @NonNull
     private String filePath;    //파일경로
     @NonNull

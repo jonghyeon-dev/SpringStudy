@@ -3,16 +3,15 @@ package com.sarang.model;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class BoardAnswerVO {
     private Integer boardComntId;   //게시판댓글ID
     @NonNull
     private Integer boardId;        //게시판ID
     private Integer parntComntId;   //부모댓글ID
+    @NonNull
     private String boardComnt;      //댓글내용
     private String cretUser;        //생성자
     private String cretDate;        //생성일자
