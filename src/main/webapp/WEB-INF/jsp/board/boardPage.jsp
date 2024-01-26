@@ -8,7 +8,7 @@
 <body class="bg-light">
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
-        <div>
+        <div class="grid bg-white dark:bg-gray-800 rounded-md p-4 gap-14">
             <table class="table table-hover table-striped text_center" style="border: 1px solid">
                 <thead>
                     <th class="table-info">번호</th>
@@ -46,6 +46,7 @@
                     </tr>
                 </tbody>
             </table>
+            <a class="btn btn-outline-info float-right" href="#" id="boardWrite">글쓰기</a>
         </div>
         <div>
             <nav aria-label="Page navigation example">
@@ -84,7 +85,6 @@
                     </c:choose>
                 </ul>
             </nav>
-            <a class="btn btn-outline-info float-right" href="#" id="boardWrite">글쓰기</a>
         <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>

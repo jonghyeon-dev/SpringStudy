@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.sarang.model.BoardVO;
 import com.sarang.service.BoardService;
@@ -27,13 +27,12 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
-    
-    @GetMapping(value="/board/{category}.do")
+    // MultipartHttpServletRequest
+    @GetMapping(value="/board/{category}")
     public String adminLoginPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
         LOGGER.info("boardPage View");
 
-        // category = request.getParameter("category"); // notice news community
         if(category.isEmpty() || category == null){
             category = "community";
         }
