@@ -3,7 +3,7 @@
 
 <mapper namespace="com.sarang.mapper.FileMapper">
 
-	<select id="insertUploadedFileInfo" resultType="com.sarang.model.FileVO">
+	<select id="getDownloadFileInfo" resultType="com.sarang.model.FileVO">
 		SELECT 
             FILE_ID,
             BOARD_ID,
@@ -19,7 +19,7 @@
 		WHERE FILE_ID = #{fileId}
 	</select>
 	
-	<insert id="getDownloadFileInfo" parameterType="com.sarang.model.FileVO">
+	<insert id="insertUploadedFileInfo" parameterType="com.sarang.model.FileVO">
 		INSERT INTO TBRD00101(
             BOARD_ID,
             FILE_PATH,
