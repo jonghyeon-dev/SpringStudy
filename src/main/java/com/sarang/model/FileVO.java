@@ -13,7 +13,11 @@ public class FileVO {
     @NonNull
     private String filePath;    //파일경로
     @NonNull
-    private String fileName;    //파일명칭
+    private String fileName;    //원본 파일명칭
+    @NonNull
+    private String fileCutName; //확장자없는 파일명칭
+    @NonNull
+    private String saveFileName;//저장될 파일명칭
     @NonNull
     private String fileExt;     //파일확장자
     private String cretUser;    //생성자
