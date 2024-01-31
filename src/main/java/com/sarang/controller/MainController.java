@@ -27,4 +27,12 @@ public class MainController {
           LOGGER.info("About Page View");
           return "main/aboutPage";
     }
-}
+
+    @GetMapping(value="/thymeleafTest")
+    public String hellothymeleaf(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception{
+      model.addAttribute("name", "thymeleaf Study");
+
+      return "thymeleaf/hello";
+    }
+} 

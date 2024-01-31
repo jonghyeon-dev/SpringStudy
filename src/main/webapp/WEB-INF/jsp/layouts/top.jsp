@@ -9,6 +9,7 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" href="<c:url value='/main.do'/>">홈</a></li>
                 <li class="nav-item"><a class="nav-link" href="<c:url value='/about.do'/>">소개</a></li>
+                <li class="nav-item"><a class="nav-link" href="<c:url value='/thymeleafTest'/>">타임리프테스트</a></li>
                 <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?category=notice'/>">공지사항</a></li> -->
                 <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?category=news'/>">소식</a></li> -->
                 <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/board/board.do?cetegory=comunnity'/>">게시판테스트</a></li> -->

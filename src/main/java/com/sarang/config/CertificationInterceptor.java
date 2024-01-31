@@ -26,7 +26,7 @@ public class CertificationInterceptor implements HandlerInterceptor{
         AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
         if(request.getRequestURI().indexOf("/user/") >= 0){
             if(ObjectUtils.isEmpty(loginVO)){
-                response.sendRedirect("/error");
+                response.sendRedirect("/login.do");
                 return false;
             }
         }
