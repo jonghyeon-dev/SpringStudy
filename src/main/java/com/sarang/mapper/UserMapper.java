@@ -9,4 +9,6 @@ import com.sarang.model.UserVO;
 @Mapper
 public interface UserMapper {
     UserVO checkUserLogin(HashMap<String,Object> reqMap);
+    String checkUserDuplication(String userId);
+    int insertUserInfo(UserVO userVO);
 }

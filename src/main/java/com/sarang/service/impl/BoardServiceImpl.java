@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sarang.mapper.BoardMapper;
 import com.sarang.model.BoardVO;
+import com.sarang.model.FileVO;
 import com.sarang.service.BoardService;
 
 @Service
@@ -21,7 +22,17 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public HashMap<String,Object> getBoardPageInfo(HashMap<String,Object> reqMap){
+    public Integer getBoardPageInfo(HashMap<String,Object> reqMap){
         return boardMapper.getBoardPageInfo(reqMap);
+    }
+
+    @Override
+    public BoardVO getBoardDetailInfo(HashMap<String,Object> reqMap){
+        return boardMapper.getBoardDetailInfo(reqMap);
+    }
+
+    @Override
+    public List<FileVO> getBoardFileList(HashMap<String,Object> reqMap){
+        return boardMapper.getBoardFileList(reqMap);
     }
 }

@@ -24,10 +24,10 @@ public class AdminVO {
     private String name;
     private String celph;
     private String email;
-    private String cretDt;
-    private String cretTm;
-    private String chgDt;
-    private String chgTm;
+    private String cretDate;
+    private String cretTime;
+    private String chgDate;
+    private String chgTime;
 
     public HashMap<String, Object> toHashMap(){
         HashMap<String,Object> retMap = new HashMap<String,Object>();
@@ -37,10 +37,10 @@ public class AdminVO {
         retMap.put("name",this.getName());
         retMap.put("celph",this.getCelph());
         retMap.put("email",this.getEmail());
-        retMap.put("cretDt",this.getCretDt());
-        retMap.put("cretTm",this.getCretTm());
-        retMap.put("chgDt",this.getChgDt());
-        retMap.put("chgTm",this.getChgTm());
+        retMap.put("cretDate",this.getCretDate());
+        retMap.put("cretTime",this.getCretTime());
+        retMap.put("chgDate",this.getChgDate());
+        retMap.put("chgTime",this.getChgTime());
         return retMap;
     }
 
@@ -53,10 +53,10 @@ public class AdminVO {
         this.setName(String.valueOf(reqMap.get("name")));
         this.setCelph(String.valueOf(reqMap.get("celph")));
         this.setEmail(String.valueOf(reqMap.get("email")));
-        this.setCretDt(String.valueOf(reqMap.get("cretDt")));
-        this.setCretTm(String.valueOf(reqMap.get("cretTm")));
-        this.setChgDt(String.valueOf(reqMap.get("chgDt")));
-        this.setChgTm(String.valueOf(reqMap.get("chgTm")));
+        this.setCretDate(String.valueOf(reqMap.get("cretDate")));
+        this.setCretTime(String.valueOf(reqMap.get("cretTime")));
+        this.setChgDate(String.valueOf(reqMap.get("chgDate")));
+        this.setChgTime(String.valueOf(reqMap.get("chgTime")));
     }
 
     public JSONObject toJsonObj() throws Exception{
@@ -67,10 +67,10 @@ public class AdminVO {
         jsonObj.put("name",this.getName());
         jsonObj.put("celph",this.getCelph());
         jsonObj.put("email",this.getEmail());
-        jsonObj.put("cretDt",this.getCretDt());
-        jsonObj.put("cretTm",this.getCretTm());
-        jsonObj.put("chgDt",this.getChgDt());
-        jsonObj.put("chgTm",this.getChgTm());
+        jsonObj.put("cretDate",this.getCretDate());
+        jsonObj.put("cretTime",this.getCretTime());
+        jsonObj.put("chgDate",this.getChgDate());
+        jsonObj.put("chgTime",this.getChgTime());
         return jsonObj;
     }
 
@@ -83,9 +83,9 @@ public class AdminVO {
         this.setName(String.valueOf(jsonObj.get("name")));
         this.setCelph(String.valueOf(jsonObj.get("celph")));
         this.setEmail(String.valueOf(jsonObj.get("email")));
-        this.setCretDt(String.valueOf(jsonObj.get("cretDt")));
-        this.setCretTm(String.valueOf(jsonObj.get("cretTm")));
-        this.setChgDt(String.valueOf(jsonObj.get("chgDt")));
-        this.setChgTm(String.valueOf(jsonObj.get("chgTm")));
+        this.setCretDate(String.valueOf(jsonObj.get("cretDate")));
+        this.setCretTime(String.valueOf(jsonObj.get("cretTime")));
+        this.setChgDate(String.valueOf(jsonObj.get("chgDate")));
+        this.setChgTime(String.valueOf(jsonObj.get("chgTime")));
     }
 }

@@ -43,10 +43,10 @@
 			NAME,
 			CELPH,
 			EMAIL,
-			CRET_DT,
-			CRET_TM,
-			CHG_DT,
-			CHG_TM
+			CRET_DATE,
+			CRET_TIME,
+			CHG_DATE,
+			CHG_TIME
 		)VALUE(
 			#{eno},
 			#{enoPw},
@@ -66,16 +66,16 @@
 			NAME = #{name},
 			CELPH = #{celph},
 			EMAIL = #{email},
-			CHG_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
-			CHG_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
 		WHERE SEQ = #{seq}
 	</update>
 
 	<update id="resetAdminPass" parameterType="com.sarang.model.AdminVO">
 		UPDATE TADM00100 SET
 			ENO_PW = #{enoPw}
-			CHG_DT = DATE_FORMAT(NOW(),'%Y%m%d'),
-			CHG_TM = DATE_FORMAT(NOW(),'%H%i%s')
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
 		WHERE SEQ = #{seq}
 	</update>
 

@@ -41,32 +41,32 @@
                                 <div id="newsItems">
                                     <!-- News item-->
                                     <div class="border">
-                                        <a class="link-dark" href="<c:url value='/board/boardContent.do?boardSeq=1'/>"><h5>공지사항1</h5></a>
+                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/1'/>"><h5>공지사항1</h5></a>
                                         <div class="small text-muted">(날짜)yyyy-mm-dd</div>
                                     </div>
                                     <!-- News item-->
                                     <div class="border">
-                                        <a class="link-dark" href="<c:url value='/board/boardContent.do?boardSeq=2'/>"><h5>공지사항2</h5></a>
+                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/2'/>"><h5>공지사항2</h5></a>
                                         <div class="small text-muted">(날짜)yyyy-mm-dd</div>
                                     </div>
                                     <!-- News item-->
                                     <div class="border">
-                                        <a class="link-dark" href="<c:url value='/board/boardContent.do?boardSeq=3'/>"><h5>공지사항3</h5></a>
+                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/3'/>"><h5>공지사항3</h5></a>
                                         <div class="small text-muted">(날짜)yyyy-mm-dd</div>
                                     </div>
                                     <!-- News item-->
                                     <div class="border">
-                                        <a class="link-dark" href="<c:url value='/board/boardContent.do?boardSeq=4'/>"><h5>공지사항4</h5></a>
+                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/4'/>"><h5>공지사항4</h5></a>
                                         <div class="small text-muted">(날짜)yyyy-mm-dd</div>
                                     </div>
                                     <!-- News item-->
                                     <div class="border">
-                                        <a class="link-dark" href="<c:url value='/board/boardContent.do?boardSeq=5'/>"><h5>공지사항5</h5></a>
+                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/5'/>"><h5>공지사항5</h5></a>
                                         <div class="small text-muted">(날짜)yyyy-mm-dd</div>
                                     </div>
                                 </div>
                                 <div class="text-end mb-5 mb-xl-0">
-                                    <a class="text-decoration-none" href="<c:url value='/board/boardMain.do?category=news'/>">
+                                    <a class="text-decoration-none" href="<c:url value='/boardDetail/notice'/>">
                                         More
                                         <i class="bi bi-arrow-right"></i>
                                     </a>
@@ -86,7 +86,7 @@
                                                 HP&nbsp;:&nbsp;<a href="#!">012-3456-7890</a>
                                             </p>
                                             <div class="h6 fw-bolder">Follow us</div>
-                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter-x"></i></a>
                                             <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-facebook"></i></a>
                                             <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-linkedin"></i></a>
                                             <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-youtube"></i></a>

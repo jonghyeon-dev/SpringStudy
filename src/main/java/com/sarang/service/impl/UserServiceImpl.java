@@ -18,5 +18,15 @@ public class UserServiceImpl implements UserService{
     public UserVO checkUserLogin(HashMap<String,Object> reqMap){
         return userMapper.checkUserLogin(reqMap);
     }
+
+    @Override
+    public String checkUserDuplication(String userId){
+        return userMapper.checkUserDuplication(userId);
+    }
+
+    @Override
+    public int insertUserInfo(UserVO userVO){
+        return userMapper.insertUserInfo(userVO);
+    }
 }
 

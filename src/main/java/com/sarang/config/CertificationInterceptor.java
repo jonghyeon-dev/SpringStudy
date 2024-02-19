@@ -24,14 +24,23 @@ public class CertificationInterceptor implements HandlerInterceptor{
         HttpSession session = request.getSession();
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+        // 사용자만
         if(request.getRequestURI().indexOf("/user/") >= 0){
             if(ObjectUtils.isEmpty(loginVO)){
                 response.sendRedirect("/error");
                 return false;
             }
         }
+        // 관리자만
         if(request.getRequestURI().indexOf("/admin/") >= 0){
             if(ObjectUtils.isEmpty(adminVO)){
+                response.sendRedirect("/error");
+                return false;
+            }
+        }
+        // 둘다 포함
+        if(request.getRequestURI().indexOf("/file/") >= 0){
+            if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
                 response.sendRedirect("/error");
                 return false;
             }

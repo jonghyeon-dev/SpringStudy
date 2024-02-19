@@ -9,51 +9,60 @@
 		  AND USER_PW = #{userPw}
 	</select>
 
-    <select id="getUserInfo" resultType="com.sarang.model.UserVO">
+  <select id="checkUserDuplication" resultType="String">
+		SELECT userId FROM TUSR00100
+		WHERE 1=1
+		  AND USER_ID = #{userId}
+	</select>
+
+  <select id="getUserInfo" resultType="com.sarang.model.UserVO">
 		SELECT * FROM TUSR00100
 		WHERE 1=1
 		  AND USER_ID like concat('%', #{userId} ,'%')
 		ORDER BY SEQ desc LIMIT #{start}, #{size}
 	</select>
 
-    <update id="updateUserInfo" parameterType="com.sarang.model.UserVO">
-        UPDATE TUSR00100 SET
-            USER_ID = #{userId},
-            USER_PW = #{userPw},
-            CELPH = #{celph},
-            EMAIL = #{email},
-            CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
-            CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
-        WHERE SEQ = #{seq}
-    </update>
+  <update id="updateUserInfo" parameterType="com.sarang.model.UserVO">
+    UPDATE TUSR00100 SET
+        USER_ID = #{userId},
+        USER_PW = #{userPw},
+        CELPH = #{celph},
+        EMAIL = #{email},
+        CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+        CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+    WHERE SEQ = #{seq}
+  </update>
 
-    <update id="resetUserPw" parameterType="com.sarang.model.UserVO">
-        UPDATE TUSR00100 SET
-            USER_PW = #{userPw},
-            CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
-            CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
-        WHERE SEQ = #{seq}
-    </update>
+  <update id="resetUserPw" parameterType="com.sarang.model.UserVO">
+    UPDATE TUSR00100 SET
+        USER_PW = #{userPw},
+        CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+        CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+    WHERE SEQ = #{seq}
+  </update>
 
-    <insert id="insertUserInfo" parameterType="com.sarang.model.UserVO">
-		INSERT INTO TUSR00100(
-            USER_ID,
-            USER_PW,
-            CELPH,
-            EMAIL,
-            CRET_DATE,
-            CRET_TIME,
-            CHG_DATE,
-            CHG_TIME
-		)VALUE(
-			#{userId},
-			#{userPw},
-			#{celph},
-			#{email},
-			DATE_FORMAT(NOW(),'%Y%m%d'),
-			DATE_FORMAT(NOW(),'%H%i%s'),
-			DATE_FORMAT(NOW(),'%Y%m%d'),
-			DATE_FORMAT(NOW(),'%H%i%s')
-		)
-	</insert>
+  <insert id="insertUserInfo" parameterType="com.sarang.model.UserVO">
+    INSERT INTO TUSR00100
+      (
+        USER_ID,
+        USER_PW,
+        USER_NM
+        CELPH,
+        EMAIL,
+        CRET_DATE,
+        CRET_TIME,
+        CHG_DATE,
+        CHG_TIME
+      )VALUE(
+        #{userId},
+        #{userPw},
+        #{userNm},
+        #{celph},
+        #{email},
+        DATE_FORMAT(NOW(),'%Y%m%d'),
+        DATE_FORMAT(NOW(),'%H%i%s'),
+        DATE_FORMAT(NOW(),'%Y%m%d'),
+        DATE_FORMAT(NOW(),'%H%i%s')
+      )
+  </insert>
 </mapper>

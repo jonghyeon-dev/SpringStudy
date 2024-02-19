@@ -3,30 +3,109 @@
 
 <mapper namespace="com.sarang.mapper.BoardMapper">
     <select id="getBoardList" resultType="com.sarang.model.BoardVO">
-		SELECT * FROM TBRD00100
+		SELECT 
+			BOARD_ID,
+			BOARD_CATE,
+			BOARD_TITLE,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		FROM TBRD00100
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
-		  <if test='boardTitle != null and !boardTitle.equals("")'>
-		  AND BOARD_TITLE LIKE CONCAT('%',#{boardTitle},'%')
+		  <if test='"title".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
 		  </if>
-		  <if test='cretUser != null and !cretUser.equals("")'>
-		  AND CRET_USER LIKE CONCAT('%',#{cretUser},'%')
+		  <if test='"content".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+		  </if>
+		  <if test='"titCont".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+		  </if>
+		  <if test='"user".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
 		  </if>
 		ORDER BY BOARD_ID desc LIMIT #{start}, #{size}
 	</select>
 
-	<select id="getBoardPageInfo" resultType="HashMap">
+	<select id="getBoardPageInfo" resultType="Integer">
 		SELECT 
-			count(*) AS totalCnt,
-			CEIL((count(*)/#{size})) as totalPage
+			count(*) AS totalCnt
 		FROM TBRD00100
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
-		  <if test='boardTitle != null and !boardTitle.equals("")'>
-		  AND BOARD_TITLE LIKE CONCAT('%',#{boardTitle},'%')
+		  <if test='"title".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
 		  </if>
-		  <if test='cretUser != null and !cretUser.equals("")'>
-		  AND CRET_USER LIKE CONCAT('%',#{cretUser},'%')
+		  <if test='"content".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+		  </if>
+		  <if test='"titCont".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+		  </if>
+		  <if test='"user".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
+		  	AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
 		  </if>
 	</select>
+
+	<select id="getBoardDetailInfo" resultType="com.sarang.model.BoardVO">
+		SELECT 
+			*
+		FROM TBRD00100
+		WHERE 1=1
+          AND BOARD_ID = #{boardId}
+	</select>
+
+	<select id="getBoardFileList" resultType="com.sarang.model.FileVO">
+		SELECT
+			*
+		FROM TBRD00101
+		WHERE BOARD_ID = #{boardId}
+	</select>
+
+	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId">
+		INSERT INTO TBRD00100(
+			BOARD_CATE,
+			BOARD_TITLE,
+			BOARD_CNTNT,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		)VALUES(
+			#{boardCate},
+			#{boardTitle},
+			#{boardCntnt},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			#{chgUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<update id="updateBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00100 SET
+			BOARD_CATE = #{boardCate},
+			BOARD_TITLE = #{boardTitle},
+			BOARD_CNTNT= #{boardCntnt},
+			CHG_USER = #{chgUser},
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE BOARD_ID = #{boardId}
+	</update>
+
+	<delete id="deleteBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
+		DELETE FROM TBRD00100 WHERE BOARD_ID = #{boardId}
+	</delete>
+
+	<delete id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
+		DELETE FROM TBRD00101 WHERE BOARD_ID = #{boardId}
+	</delete>
 </mapper>

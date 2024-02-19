@@ -60,10 +60,10 @@
                         <td><c:out value="${items.name}"/></td>
                         <td><c:out value="${items.celph}"/></td>
                         <td><c:out value="${items.email}"/></td>
-                        <td><c:out value="${items.cretDt}"/></td>
-                        <td><c:out value="${items.cretTm}"/></td>
-                        <td><c:out value="${items.chgDt}"/></td>
-                        <td><c:out value="${items.chgTm}"/></td>
+                        <td><c:out value="${items.cretDate}"/></td>
+                        <td><c:out value="${items.cretTime}"/></td>
+                        <td><c:out value="${items.chgDate}"/></td>
+                        <td><c:out value="${items.chgTime}"/></td>
                     </tr>
                     </c:forEach>
                 </tbody>
@@ -138,10 +138,10 @@
                                 dataText = dataText + "<td>"+data[i].name+"</td>";
                                 dataText = dataText + "<td>"+data[i].celph+"</td>";
                                 dataText = dataText + "<td>"+data[i].email+"</td>";
-                                dataText = dataText + "<td>"+data[i].cretDt+"</td>";
-                                dataText = dataText + "<td>"+data[i].cretTm+"</td>";
-                                dataText = dataText + "<td>"+data[i].chgDt+"</td>";
-                                dataText = dataText + "<td>"+data[i].chgTm+"</td>";
+                                dataText = dataText + "<td>"+data[i].cretDate+"</td>";
+                                dataText = dataText + "<td>"+data[i].cretTime+"</td>";
+                                dataText = dataText + "<td>"+data[i].chgDate+"</td>";
+                                dataText = dataText + "<td>"+data[i].chgTime+"</td>";
                                 dataText = dataText + "<tr>";
                             }
                             if(data.length<10){

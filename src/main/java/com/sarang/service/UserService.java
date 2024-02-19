@@ -6,5 +6,7 @@ import com.sarang.model.UserVO;
 
 public interface UserService{
     UserVO checkUserLogin(HashMap<String,Object> reqMap);
+    String checkUserDuplication(String userId);
+    int insertUserInfo(UserVO userVO);
 }
 

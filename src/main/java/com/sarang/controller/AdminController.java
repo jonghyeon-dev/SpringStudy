@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sarang.config.SecureUtil;
 import com.sarang.model.AdminVO;
+import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseEntity;
 import com.sarang.service.AdminService;
 
@@ -44,6 +45,11 @@ public class AdminController {
     public String adminLoginPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model, @RequestParam(value="errorMsg",required = false) String errorMsg) throws Exception{
         LOGGER.info("adminLogin View");
+        AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(!ObjectUtils.isEmpty(adminVO) || !ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
         if(errorMsg != null && !errorMsg.isEmpty()){
             model.addAttribute("errorMsg", errorMsg);
         }

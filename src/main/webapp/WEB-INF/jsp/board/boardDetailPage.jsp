@@ -9,46 +9,60 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            
-        </div>
-        <div>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination" style="justify-content: center;" id="boardInfoPagination">
-                    <c:set var="totalPage" value="${totalContents.totalPages}"/>
-                    <c:choose>
-                        <c:when test="${totalPage > 10}">
-                            <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>
-                            <li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="0">1</a></li>
-                            <c:forEach var="cnt" begin="2" end="10" step="1">
-                                <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
-                            </c:forEach>
-                            <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>
-                            <c:forEach var="cnt" begin="1" end="${totalPage}" step="1">
+            <div class="text-center">
+                <div class="insertArea">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">제목:&nbsp;</span>
+                        </div>
+                        <p class="form-control"><c:out value='${boardInfo.boardTitle}'/></p>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">첨부파일</span>
+                        </div>
+                        <div id="fileList" class="ms-2">
+                            <c:forEach items="${boardFileList}" var="items">
                                 <c:choose>
-                                    <c:when test="${cnt eq 1}">
-                                        <li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
+                                    <c:when test="${userLogin ne null or adminLogin ne null}">
+                                        <a class="link-dark" href="<c:url value='/file/download?fileId=${items.fileId}'/>"><c:out value="${items.fileName}"/></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
+                                        <a class="link-dark"><c:out value="${items.fileName}"/></a>
                                     </c:otherwise>
                                 </c:choose>
                             </c:forEach>
-                            <c:choose>
-                                <c:when test="${totalPage <= 1}">
-                                    <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:otherwise>
-                    </c:choose>
-                </ul>
-            </nav>
-            <a class="btn btn-outline-info float-right" href="#" id="boardWrite">글쓰기</a>
+                        </div>
+                    </div>
+                    <div class="form-control">
+                        <p><c:out value='${boardInfo.boardCntnt}'/></p>
+                    </div>
+                </div>
+            </div>
+            <div class="buttonArea text-right">
+                <c:choose>
+                    <c:when test="${page ne null && page ne ''}">
+                        <a href='<c:url value="/board/${category}/${page}?searchOption=${searchOption}&searchWord=${searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href='<c:url value="/board/${category}/1?searchOption=${searchOption}&searchWord=${searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${category eq 'community'}">
+                        <c:if test="${userLogin.userId eq boardInfo.cretUser || adminLogin.eno eq boardInfo.cretUser}">
+                            <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${adminLogin.eno eq boardInfo.cretUser}">
+                            <a href='<c:url value="/board/${category}/admin/boardModify/${boardId}"/>' class="btn btn-ountline-warning text-center">수정</a>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+            
         <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>

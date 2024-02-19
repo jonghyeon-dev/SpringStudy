@@ -1,7 +1,5 @@
 package com.sarang.config;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.util.Iterator;
@@ -11,25 +9,19 @@ import java.util.UUID;
 
 import java.io.File;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URLEncoder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.sarang.mapper.FileMapper;
 import com.sarang.model.AdminVO;
 import com.sarang.model.FileVO;
+import com.sarang.model.UserVO;
 
 @Component
 public class FileUtil {
@@ -44,6 +36,10 @@ public class FileUtil {
 
     public boolean MultiFileUpload(HttpSession session, Integer boardId, MultipartHttpServletRequest request){
         AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
+            return false;
+        }
         // DB에 저장될 정보
         FileVO fileVO = new FileVO();
         try{
@@ -122,7 +118,12 @@ public class FileUtil {
                 fileVO.setFileCutName(fileCutName);
                 fileVO.setSaveFileName(saveFileName);
                 fileVO.setFileExt(fileExt);
-                fileVO.setCretUser(adminVO.getEno());
+                if(ObjectUtils.isEmpty(loginVO)){
+                    fileVO.setCretUser(adminVO.getEno());
+                }else{
+                    fileVO.setCretUser(loginVO.getUserId());
+                }
+
                 
                 fileMapper.insertUploadedFileInfo(fileVO);
             }

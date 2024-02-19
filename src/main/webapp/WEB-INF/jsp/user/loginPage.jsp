@@ -28,6 +28,7 @@
                     <span style="color:red">${errorMsg}</span><br/>
                 </c:if>
                 <button class="btn btn-primary" type="submit">로그인</button>
+                <a class="btn btn-primary" href="/createAccount.do">회원가입</a>
             </form>
         <div>
         <%@include file="../layouts/bottom.jsp"%>
