@@ -6,25 +6,25 @@ server:
 spring:
     profiles:
         active: ${server.Active} # jvm arguments 사용, 환경 별 사용 설정파일 세팅용
-    # DataBase Setting
+    #DataBase Setting
     # datasource:
     #     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy # Logging용 driver 운용 시 변경 => com.mysql.cj.jdbc.Driver 
     #     url: jdbc:log4jdbc:mysql://ip:port/dbName(Schema)?characterEncoding=UTF-8&serverTimezone=UTC # Logging용 url
     #     username: id
     #     password: pw
-    # JSP Setting
+    #JSP Setting
     mvc:
         view:
             prefix: /WEB-INF/jsp/
             suffix: .jsp
-    # thymeleaf
+    #thymeleaf
     thymeleaf:
         cache: false
         prefix: classpath:templates/
         suffix: .html
-        # view-names는 jsp와 같이 사용할 경우 구분 짓기 위하여 사용 thymeleaf로 시작하는 경우는 thymeleaf로 처리
+        #view-names는 jsp와 같이 사용할 경우 구분 짓기 위하여 사용 thymeleaf로 시작하는 경우는 thymeleaf로 처리
         view-names: thymeleaf/*
-    # devtools 설정
+    #devtools 설정
     # devtools:
     #     restart:
     #         enabled: true
@@ -32,7 +32,7 @@ spring:
     #         enabled: true
 
 
-# Mybatis Setting
+#Mybatis Setting
 mybatis: 
     type-aliases-package: com.sarang.model # 매핑할 모델의 패키지 기본경로
     mapper-locations: classpath:/mapper/**/*.xml # mapper.xml 위치 명시
