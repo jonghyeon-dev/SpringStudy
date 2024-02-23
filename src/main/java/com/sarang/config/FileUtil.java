@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.sarang.mapper.FileMapper;
 import com.sarang.model.AdminVO;
-import com.sarang.model.FileVO;
 import com.sarang.model.UserVO;
+import com.sarang.model.common.FileVO;
 
 @Component
 public class FileUtil {
