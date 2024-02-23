@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div class="text-center">
-            <form id="boardInsertForm" method="post" action="<c:url value='/board/${middle}/insert'/>" enctype="multipart/form-data" onsubmit="return validationForm()">
+            <form id="boardInsertForm" method="post" action="<c:url value='/board/${middle}/insertBoard'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
                 <div class="insertArea">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -48,47 +48,41 @@ let ckeditor;
         var init = function(){
             ClassicEditor.create(document.querySelector('#ckeditor'), {
                 toolbar:[
-                    'Undo', 'Redo', 'Heading' , '|'
+                    'Undo', 'Redo', '|'
                     , 'FontSize', 'FontFamily', 'FontColor', 'FontBackgroundColor' , '|'
-                    , 'Alignment', 'Bold', 'Italic', 'UnderLine', 'Highlight', '|'
+                    , 'Alignment', 'Bold', 'Italic', 'UnderLine',  '|'
                     , 'BlockQuote', 'Outdent', 'Indent', 'BulletedList', 'NumberedList', 'TodoList', '|'
                     , 'InsertTable', 'Link', 'ImageInsert', 'MediaEmbed', '|'
-                    , 'FindAndReplace', 'PageBreak', '|'
-                    // , 'ImageUpload', 'SelectAll', 'SourceEditing', 'RemoveFormat', 'HtmlEmbed', '|'
+                    , 'FindAndReplace', 'PageBreak', 'RemoveFormat', '|'
+                    // , 'Heading', 'ImageUpload', 'SelectAll', 'SourceEditing', 'HtmlEmbed', 'Highlight', '|'
                     // , 'SpecialCharacters', 'Subscript', 'Superscript', '|'
                     // , 'ShowBlocks', 'CodeBlock', 'TextPartLanguage' 
-                ],
-                heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
-                    ]
-                }
-                // ,removePlugins:[
-                //     'Base64UploadAdapter'
-                // ]
+                ]
+                ,removePlugins:[
+                    'Autoformat', 'Markdown', 'MediaEmbedToolbar'
+                ]
+                ,mediaEmbed: {
+                    previewsInData:true
+                },
             }). then(newEditor => {
                 ckeditor = newEditor;
             })
-            .catch(erorr => {
+            .catch(error => {
                 console.error(error)
             });
         };
 
         var registerEvent = function(){
             $("#btnSubmit").click(()=>{
-                $("#boardInsertForm textarea[name='boardCntnt']").val(ckeditor.getData());
+                //$("#boardInsertForm textarea[name='boardCntnt']").val(ckeditor.getData());
                 var str = $("#boardInsertForm").serialize();
                 console.log(str);
             })
 
             $("#uploadFiles").change((e) => {
-
                 const files = $("#uploadFiles")[0].files
                 var filesText = "";
                 for(var i=0;i<files.length;i++){
-                    // console.log(files[i].name);
                     filesText = filesText + "<span>" + files[i].name + "</span><br>";
                 }
                 $("#uploadResult").empty();
@@ -117,6 +111,7 @@ let ckeditor;
         if(boardTitle.trim() == "" || boardTitle == null){
             $("#modalTitle").append("제목이 없습니다.");
             $("#modalContent").append("제목은 필수 값 입니다.");
+            $("#modalInfo").show();
             $('#boardInsertForm input[name="boardTitle"]').focus();
             return false;
         }

@@ -9,7 +9,7 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
-            <div class="text-center">
+            <div>
                 <div class="insertArea">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -34,8 +34,8 @@
                             </c:forEach>
                         </div>
                     </div>
-                    <div class="form-control">
-                        <p><c:out value='${boardInfo.boardCntnt}'/></p>
+                    <div class="form-control ck-content">
+                        <c:out value='${boardInfo.boardCntnt}' escapeXml="false"/>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-package com.sarang.model;
+package com.sarang.model.common;
 
 import lombok.Getter;
 import lombok.Setter;

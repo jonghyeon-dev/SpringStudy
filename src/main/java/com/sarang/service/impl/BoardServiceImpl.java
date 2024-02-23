@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sarang.mapper.BoardMapper;
 import com.sarang.model.BoardVO;
-import com.sarang.model.FileVO;
+import com.sarang.model.common.FileVO;
 import com.sarang.service.BoardService;
 
 @Service
@@ -34,5 +34,29 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public List<FileVO> getBoardFileList(HashMap<String,Object> reqMap){
         return boardMapper.getBoardFileList(reqMap);
+    }
+
+    @Override
+    public Integer insertBoardDetailInfo(BoardVO boardVO){
+        return boardMapper.insertBoardDetailInfo(boardVO);
+
+    }
+
+    @Override
+    public Integer updateBoardDetailInfo(BoardVO boardVO){
+        return boardMapper.updateBoardDetailInfo(boardVO);
+
+    }
+
+    @Override
+    public Integer deleteBoardDetailInfo(BoardVO boardVO){
+        return boardMapper.deleteBoardDetailInfo(boardVO);
+
+    }
+
+    @Override
+    public Integer resetBoardFileList(BoardVO boardVO){
+        return boardMapper.resetBoardFileList(boardVO);
+
     }
 }

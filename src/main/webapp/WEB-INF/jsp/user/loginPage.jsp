@@ -31,12 +31,27 @@
                 <a class="btn btn-primary" href="/createAccount.do">회원가입</a>
             </form>
         <div>
+        <input type="hidden" id="errorMsg" value="${errorMsg}">
+        <input type="hidden" id="successMsg" value="${successMsg}">
         <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>
 <script>
     var loginPage = (function(){
         var init = function(){
+            const errorMsg = $("#errorMsg").val()
+            if(errorMsg != null && errorMsg != ""){
+                $("#modalTitle").append("Error");
+                $("#modalContent").append(errorMsg);
+                $("#modalInfo").show();
+            }
+
+            const successMsg = $("#successMsg").val()
+            if(successMsg != null && successMsg != ""){
+                $("#modalTitle").append("가입 완료");
+                $("#modalContent").append(successMsg);
+                $("#modalInfo").show();
+            }
 
         };
 

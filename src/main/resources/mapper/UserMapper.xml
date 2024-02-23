@@ -9,8 +9,8 @@
 		  AND USER_PW = #{userPw}
 	</select>
 
-  <select id="checkUserDuplication" resultType="String">
-		SELECT userId FROM TUSR00100
+  <select id="checkUserDuplication" resultType="String" parameterType="String">
+		SELECT USER_ID FROM TUSR00100
 		WHERE 1=1
 		  AND USER_ID = #{userId}
 	</select>
@@ -46,7 +46,7 @@
       (
         USER_ID,
         USER_PW,
-        USER_NM
+        USER_NM,
         CELPH,
         EMAIL,
         CRET_DATE,

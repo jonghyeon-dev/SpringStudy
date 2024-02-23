@@ -144,8 +144,8 @@ public class AdminController {
 
     @ResponseBody
     @RequestMapping(value="/admin/getAdminInfo.do", method=RequestMethod.GET)
-    public  ResponseEntity getAdminInfo(javax.servlet.http.HttpSession session, javax.servlet.http.HttpServletRequest request
-        , javax.servlet.http.HttpServletResponse response, Model model
+    public  ResponseEntity getAdminInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
+        , HttpServletResponse response, Model model
         , String seq, String eno, String page) throws Exception {
         ResponseEntity js = new ResponseEntity();
 
@@ -167,7 +167,7 @@ public class AdminController {
         totalContents.put("adminInfoList", adminInfoList);
         totalContents.put("totalPages", pageInfo.get("totalPage"));
 
-        js.setSucceed(true);
+        js.setIsSucceed(true);
         js.setData(totalContents);
         return js;
     }
@@ -181,7 +181,7 @@ public class AdminController {
         ResponseEntity js = new ResponseEntity();
         // 관리자 아이디 1개 이하일 시 삭제 불가 체크루틴 추가 
         adminService.deleteAdminInfo(delList);
-        js.setSucceed(true);
+        js.setIsSucceed(true);
         js.setMessage("1");
         return js;
     }

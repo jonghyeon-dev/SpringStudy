@@ -18,11 +18,16 @@ import org.springframework.util.ObjectUtils;
 import com.sarang.config.SecureUtil;
 import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
+import com.sarang.model.common.ResponseEntity;
 import com.sarang.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 
 @Controller
 public class UserController {
@@ -32,8 +37,6 @@ public class UserController {
 
     @Autowired
     private SecureUtil secureutil;
-
-    // private static final int pageSize = 10;
 
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
@@ -97,15 +100,38 @@ public class UserController {
         return "redirect:/main.do";
     }
 
+    @ResponseBody
+    @RequestMapping(value="/checkUserDup.do",method=RequestMethod.POST)
+    public ResponseEntity checkUserDuplication(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response, String userId) {
+        ResponseEntity js = new ResponseEntity();
+        System.out.println(userId);
+        String checkId = userService.checkUserDuplication(userId);
+        if(checkId == null || "".equals(checkId)){
+            js.setIsSucceed(true);
+            js.setMessage("중복 없음");
+        }else{
+            js.setIsSucceed(false);
+            js.setMessage("중복 있음");
+        }
+        return js;
+    }
+    
+
     @PostMapping(value="/insertUser.do")
     public String addUser(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, RedirectAttributes redirectAttributes) {
         logger.info("Add User Process");
         String userId = request.getParameter("userId").trim();
+        System.out.println(userId);
         String userPw = request.getParameter("userPw").trim();
+        System.out.println(userPw);
         String userNm = request.getParameter("userNm").trim();
+        System.out.println(userNm);
         String celph = request.getParameter("celph").trim();
+        System.out.println(celph);
         String email = request.getParameter("email").trim();
+        System.out.println(email);
 
         if(userId == null || "".equals(userId)){
             redirectAttributes.addFlashAttribute("errorMsg"
@@ -122,13 +148,14 @@ public class UserController {
         }
 
         String checkDup = userService.checkUserDuplication(userId);
-        if(checkDup != null || !"".equals(checkDup)){
+        if(checkDup != null){
+            System.out.println("isRun?");
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "중복되는 ID가 있습니다.");
             return "redirect:/createAccount.do";
         }
 
-        String regPhone = "/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/"; // 한국 휴대폰 번호 정규식
+        String regPhone = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$"; // 한국 휴대폰 번호 정규식
         if(celph != null && !"".equals(celph)){
             if(Pattern.matches(regPhone, celph) == false){
                 redirectAttributes.addFlashAttribute("errorMsg"
@@ -160,8 +187,10 @@ public class UserController {
                 , "500 서버 오류가 발생하였습니다.");
             return "redirect:/login.do";
         }
-        
+        redirectAttributes.addFlashAttribute("successMsg"
+                , "가입을 완료하였습니다.<br>가입한 아이디로 로그인 해주세요.");
         return "redirect:/login.do";
     }
     
 }
+

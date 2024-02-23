@@ -1,11 +1,13 @@
 # Server Setting
 server:
     port: 8080
+    tomcat:
+        max-http-form-post-size: 30MB # Form Post Size
 
 #Spring Setting
 spring:
     profiles:
-        active: ${server.Active} # jvm arguments 사용, 환경 별 사용 설정파일 세팅용
+        active: ${server.Active} # jvm arguments 사용, 환경 별 설정파일 세팅용
     #DataBase Setting
     # datasource:
     #     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy # Logging용 driver 운용 시 변경 => com.mysql.cj.jdbc.Driver 
@@ -30,8 +32,13 @@ spring:
     #         enabled: true
     #     livereload: 
     #         enabled: true
+    servlet:
+        multipart:
+            maxFileSize: 15MB # 파일 하나의 최대 크기
+            maxRequestSize: 30MB  # 한 번에 최대 업로드 가능 용량
+            
 
-
+    
 #Mybatis Setting
 mybatis: 
     type-aliases-package: com.sarang.model # 매핑할 모델의 패키지 기본경로
@@ -47,12 +54,12 @@ mybatis:
 # warn  - 경고성 로그
 # error - 에러 로그
 # fatal - 심각한 문제 로그
-# logging:
-#     level:
-#         jdbc: 
-#             sqlonly: off # SQL문을 보여준다.
-#             sqltiming: off # SQL문과 이 SQL문을 수행하는 시간(ms)을 같이 보여준다
-#             resultsettable: off # SQL의 결과로 조회된 데이터를 table 형태로 로그를 보여준다.
-#             audit: off # ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 보여준다. 상당히 많은 양의 로그가 나오기 때문에 권장하지 않음.
-#             resultset: off # ResultSet 을 포함한 모든 JDBC 호출 정보를 로그로 보여준다. audit 처럼 많은 로그가 나오기 때문에 권장하지 않음.
-#             connection: off # DB 연결, 연결 해제와 관련된 로그를 보여준다
+logging:
+    level:
+        jdbc: 
+            sqlonly: off # SQL문을 보여준다.
+            sqltiming: off # SQL문과 이 SQL문을 수행하는 시간(ms)을 같이 보여준다
+            resultsettable: off # SQL의 결과로 조회된 데이터를 table 형태로 로그를 보여준다.
+            audit: off # ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 보여준다. 상당히 많은 양의 로그가 나오기 때문에 권장하지 않음.
+            resultset: off # ResultSet 을 포함한 모든 JDBC 호출 정보를 로그로 보여준다. audit 처럼 많은 로그가 나오기 때문에 권장하지 않음.
+            connection: off # DB 연결, 연결 해제와 관련된 로그를 보여준다

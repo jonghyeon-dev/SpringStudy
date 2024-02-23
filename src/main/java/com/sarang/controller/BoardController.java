@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.sarang.mapper.FileMapper;
 import com.sarang.model.AdminVO;
 import com.sarang.model.BoardVO;
-import com.sarang.model.FileVO;
-import com.sarang.model.PageVO;
 import com.sarang.model.UserVO;
+import com.sarang.model.common.FileVO;
+import com.sarang.model.common.PageVO;
 import com.sarang.model.common.ResponseEntity;
 import com.sarang.service.BoardService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -156,22 +156,24 @@ public class BoardController {
 		HashMap<String, Object> totalContents = new HashMap<>();
         totalContents.put("boardList", boardList);
 		totalContents.put("pageInfo", pageVO);
-		js.setSucceed(true);
+		js.setIsSucceed(true);
 		js.setData(totalContents);
 		return js;
 	}
 	
 
-	@GetMapping(value="/board/{category}/boardWrite")
+	@GetMapping(value="/board/community/boardWrite")
 	public String boardInsertPage(HttpSession session, HttpServletRequest request
-	, HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
+	, HttpServletResponse response , Model model) throws Exception{
 		logger.info("boardWritePage View");
+		String category = "community";
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("admionLogin");
-		if(ObjectUtils.isEmpty(loginVO) || ObjectUtils.isEmpty(adminVO)){
+		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
             return "redirect:/board/"+category;
         }
 		model.addAttribute("middle", category);
+		model.addAttribute("category", category);
 		return "board/boardWritePage";
 	}
 
@@ -195,30 +197,48 @@ public class BoardController {
 	@GetMapping(value="/board/{category}/admin/boardWrite")
 	public String adminBoardInsertPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
-		AdminVO adminVO = (AdminVO) session.getAttribute("admionLogin");
+		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
 		if(ObjectUtils.isEmpty(adminVO)){
             return "redirect:/board/"+category;
         }
 		model.addAttribute("middle", category + "/admin");
+		model.addAttribute("category", category);
 		return "board/boardWritePage";
 	}
 
-	@RequestMapping(value="/board/{category}/insert", method=RequestMethod.POST)
+	@RequestMapping(value="/board/community/insertBoard", method=RequestMethod.POST)
 	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request
-    , HttpServletResponse response, @PathVariable("category") String category) throws Exception {
+    , HttpServletResponse response) throws Exception {
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("admionLogin");
+		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
 		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-            return "redirect:/board/"+category;
+            return "redirect:/board/community";
         }
-		if(category != "comuunity"){
-			return "redirect:/error";
+		String boardTitle = request.getParameter("boardTitle");
+		String boardCntnt = request.getParameter("boardCntnt");
+		String boardCate = "community";
+		String cretUser ="";
+		if(ObjectUtils.isEmpty(loginVO)){
+			cretUser = adminVO.getEno();
+		}else{
+			cretUser = loginVO.getUserId();
 		}
+		BoardVO boardVO = new BoardVO();
+		boardVO.setBoardCate(boardCate);
+		boardVO.setBoardTitle(boardTitle);
+		boardVO.setBoardCntnt(boardCntnt);
+		boardVO.setCretUser(cretUser);
+		boardVO.setChgUser(cretUser);
 
-		return "redirect:/board/"+category;
+		System.out.println(boardCntnt);
+		Integer boardId = boardService.insertBoardDetailInfo(boardVO);
+
+		System.out.println("getBoardId Is : " + boardId);
+
+		return "redirect:/board/community";
 	}
 
-	@RequestMapping(value="/board/{category}/admin/insert", method=RequestMethod.POST)
+	@RequestMapping(value="/board/{category}/admin/insertBoard", method=RequestMethod.POST)
 	public String insertAdminBoardInfo(HttpSession session, MultipartHttpServletRequest request
     , HttpServletResponse response, @PathVariable("category") String category) throws Exception {
 		AdminVO adminVO = (AdminVO)session.getAttribute("adminLogin");
