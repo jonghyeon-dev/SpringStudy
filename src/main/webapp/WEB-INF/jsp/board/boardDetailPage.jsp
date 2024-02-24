@@ -17,23 +17,25 @@
                         </div>
                         <p class="form-control"><c:out value='${boardInfo.boardTitle}'/></p>
                     </div>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">첨부파일</span>
+                    <c:if test="${not empty boardFileList}">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">첨부파일</span>
+                            </div>
+                            <div id="fileList" class="ms-2">
+                                <c:forEach items="${boardFileList}" var="items">
+                                    <c:choose>
+                                        <c:when test="${userLogin ne null or adminLogin ne null}">
+                                            <a class="link-dark" href="<c:url value='/file/download?fileId=${items.fileId}'/>"><c:out value="${items.fileName}"/></a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a class="link-dark"><c:out value="${items.fileName}"/></a>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </div>
                         </div>
-                        <div id="fileList" class="ms-2">
-                            <c:forEach items="${boardFileList}" var="items">
-                                <c:choose>
-                                    <c:when test="${userLogin ne null or adminLogin ne null}">
-                                        <a class="link-dark" href="<c:url value='/file/download?fileId=${items.fileId}'/>"><c:out value="${items.fileName}"/></a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a class="link-dark"><c:out value="${items.fileName}"/></a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </div>
-                    </div>
+                    </c:if>
                     <div class="form-control ck-content">
                         <c:out value='${boardInfo.boardCntnt}' escapeXml="false"/>
                     </div>

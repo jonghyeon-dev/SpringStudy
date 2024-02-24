@@ -59,14 +59,14 @@
           AND BOARD_ID = #{boardId}
 	</select>
 
-	<select id="getBoardFileList" resultType="com.sarang.model.FileVO">
+	<select id="getBoardFileList" resultType="com.sarang.model.common.FileVO">
 		SELECT
 			*
 		FROM TBRD00101
 		WHERE BOARD_ID = #{boardId}
 	</select>
 
-	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId">
+	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId" keyColumn="BOARD_ID">
 		INSERT INTO TBRD00100(
 			BOARD_CATE,
 			BOARD_TITLE,

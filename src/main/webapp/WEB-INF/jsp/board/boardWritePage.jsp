@@ -9,7 +9,13 @@
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div class="text-center">
-            <form id="boardInsertForm" method="post" action="<c:url value='/board/${middle}/insertBoard'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
+            <c:if test="${status eq 'insert'}">
+                <c:set var="actionUrl" value="insertBoard"/>
+            </c:if>
+            <c:if test="${status eq 'update'}">
+                <c:set var="actionUrl" value="modifyBoard/${boardInfo.boardId}"/>
+            </c:if>
+            <form id="boardInsertForm" method="post" action="<c:url value='/board/${middle}/${actionUrl}'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
                 <div class="insertArea">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -26,14 +32,27 @@
                             </span>
                         </div>
                         <input class="d-none form-control" type="file" id="uploadFiles" name="uploadFiles" multiple>
-                        <div id="uploadResult" class="ms-2"></div>
+                        <div id="uploadResult" class="ms-2">
+                            <c:if test="${status eq 'update'}">
+                                <c:forEach items="${boardFileList}" var="items">
+                                    <span>${items.fileName}</span><br>
+                                </c:forEach>
+                            </c:if>
+                        </div>
                     </div>
                     <div class="form-control">
                         <textarea name="boardCntnt" id="ckeditor"></textarea>
                     </div>
                 </div>
                 <div class="buttonArea">
-                    <button type="submit" id="btnSubmit" class="btn btn-success text-center">등록</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-success text-center">
+                        <c:if test="${status eq 'insert'}">
+                            등록
+                        </c:if>
+                        <c:if test="${status eq 'update'}">
+                            수정
+                        </c:if>
+                    </button>
                     <a href='<c:url value="/board/${category}"/>' class="btn btn-danger text-center">취소</a>
                 </div>
             </form>
@@ -66,19 +85,22 @@ let ckeditor;
                 },
             }). then(newEditor => {
                 ckeditor = newEditor;
+                const pageStatus = '<c:out value="${status}"/>'
+                if(pageStatus === "update"){
+                    const boardTitle = '<c:out value="${boardInfo.boardTitle}"/>';
+                    const boardCntnt = '<c:out value="${boardInfo.boardCntnt}"/>';
+                    const fileList = '';
+                    $("#boardInsertForm input[name='boardTitle']").val(boardTitle);
+                    ckeditor.setData(unescapeHtml(boardCntnt));
+                }
             })
             .catch(error => {
                 console.error(error)
             });
+            
         };
 
         var registerEvent = function(){
-            $("#btnSubmit").click(()=>{
-                //$("#boardInsertForm textarea[name='boardCntnt']").val(ckeditor.getData());
-                var str = $("#boardInsertForm").serialize();
-                console.log(str);
-            })
-
             $("#uploadFiles").change((e) => {
                 const files = $("#uploadFiles")[0].files
                 var filesText = "";
@@ -116,6 +138,19 @@ let ckeditor;
             return false;
         }
         return true;
+    }
+
+    function unescapeHtml(str){
+        if(str == null){
+            return "";
+        }
+        return str.replace(/&amp;/g,'&')
+                .replace(/&lt;/g,'<')
+                .replace(/&gt;/g,'>')
+                .replace(/&quot;/g,'"')
+                .replace(/&#034;/g,'"')
+                .replace(/&#039;/g,"'")
+                .replace(/&#39/g,"'")
     }
 </script>
 </html>

@@ -39,12 +39,12 @@ public class CertificationInterceptor implements HandlerInterceptor{
             }
         }
         // 둘다 포함
-        if(request.getRequestURI().indexOf("/file/") >= 0){
-            if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
-                response.sendRedirect("/error");
-                return false;
-            }
-        }
+        // if(request.getRequestURI().indexOf("/file/") >= 0){
+        //     if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
+        //         response.sendRedirect("/error");
+        //         return false;
+        //     }
+        // }
 
         return true;
     }

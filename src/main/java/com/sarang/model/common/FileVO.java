@@ -3,12 +3,13 @@ package com.sarang.model.common;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class FileVO {
     private Integer fileId;     //파일ID
-    @NonNull
     private Integer boardId;    //게시판ID
     @NonNull
     private String filePath;    //파일경로

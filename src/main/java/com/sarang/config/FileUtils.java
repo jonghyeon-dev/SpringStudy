@@ -2,9 +2,8 @@ package com.sarang.config;
 
 import javax.servlet.http.HttpSession;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.sarang.mapper.FileMapper;
 import com.sarang.model.AdminVO;
@@ -24,41 +22,33 @@ import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
 
 @Component
-public class FileUtil {
-    private Logger logger = LoggerFactory.getLogger(FileUtil.class);
+public class FileUtils {
+    private Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    // 파일이 업로드 될 경로를 지정한다.
-    @Value("${uploadSet.filePath}")
+    // 파일d 경로를 지정한다.
+    @Value("${spring.servlet.multipart.location}")
     private String filePath;
 
     @Autowired
     FileMapper fileMapper;
 
-    public boolean MultiFileUpload(HttpSession session, Integer boardId, MultipartHttpServletRequest request){
+    public boolean MultiFileUpload(HttpSession session, Integer boardId, List<MultipartFile> uploadFiles){
         AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
             return false;
         }
-        // DB에 저장될 정보
-        FileVO fileVO = new FileVO();
+        
         try{
-            // 파라미터 이름을 키로 파라미터에 해당하는 파일 정보를 값으로 하는 Map을 가져온다.
-            Map<String, MultipartFile> files = request.getFileMap();
-
-            // files.entrySet()의 요소를 읽어온다.
-            Iterator<Entry <String,MultipartFile>> itr = files.entrySet().iterator();
-            
-            MultipartFile mFile;
+            // DB에 저장될 정보
+            FileVO fileVO = new FileVO();
+            List<FileVO> fileList = new ArrayList<>();
 
             // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
-            while(itr.hasNext()){
-                Entry<String, MultipartFile> entry = itr.next();
-
-                mFile = entry.getValue();
+            for(MultipartFile file : uploadFiles){
 
                 // 원본 파일명(확장자 포함)
-                String fileName = mFile.getOriginalFilename();
+                String fileName = file.getOriginalFilename();
                 
                 // 확장자를 제외한 파일명
                 String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -107,9 +97,9 @@ public class FileUtil {
                     }
                     saveFile = new File(saveFilePath);
                     // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
-                    mFile.transferTo(saveFile);
+                    file.transferTo(saveFile);
                 } else{
-                    mFile.transferTo(saveFile);
+                    file.transferTo(saveFile);
                 }
 
                 
@@ -118,6 +108,7 @@ public class FileUtil {
                 fileVO.setFileCutName(fileCutName);
                 fileVO.setSaveFileName(saveFileName);
                 fileVO.setFileExt(fileExt);
+                fileVO.setFilePath(filePath);
                 if(ObjectUtils.isEmpty(loginVO)){
                     fileVO.setCretUser(adminVO.getEno());
                 }else{

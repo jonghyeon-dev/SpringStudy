@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> 
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -39,34 +41,24 @@
                             <div class="card-body">
                                 <h2 class="fw-bolder fs-5 mb-4 card-title">공지사항</h2>
                                 <div id="newsItems">
-                                    <!-- News item-->
-                                    <div class="border">
-                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/1'/>"><h5>공지사항1</h5></a>
-                                        <div class="small text-muted">(날짜)yyyy-mm-dd</div>
-                                    </div>
-                                    <!-- News item-->
-                                    <div class="border">
-                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/2'/>"><h5>공지사항2</h5></a>
-                                        <div class="small text-muted">(날짜)yyyy-mm-dd</div>
-                                    </div>
-                                    <!-- News item-->
-                                    <div class="border">
-                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/3'/>"><h5>공지사항3</h5></a>
-                                        <div class="small text-muted">(날짜)yyyy-mm-dd</div>
-                                    </div>
-                                    <!-- News item-->
-                                    <div class="border">
-                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/4'/>"><h5>공지사항4</h5></a>
-                                        <div class="small text-muted">(날짜)yyyy-mm-dd</div>
-                                    </div>
-                                    <!-- News item-->
-                                    <div class="border">
-                                        <a class="link-dark" href="<c:url value='/boardDetail/notice/5'/>"><h5>공지사항5</h5></a>
-                                        <div class="small text-muted">(날짜)yyyy-mm-dd</div>
-                                    </div>
+                                    <c:forEach items="${noticeBoardList}" var="items">
+                                        <div class="border-bottom border-top d-flex flex-row justify-content-between" style="height:2.5rem;">
+                                            <a class="link-dark col" href="<c:url value='/boardDetail/notice/${items.boardId}'/>"><h5><c:out value="${items.boardTitle}"/></h5></a>
+                                            <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
+                                            <div class="small text-muted col-sm-auto"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></div>
+                                        </div>
+                                    </c:forEach>
+                                    <c:if test="${fn:length(noticeBoardList) < 5}">
+                                        <c:forEach var="i" begin="${fn:length(noticeBoardList)}" end="4" step="1">
+                                            <div class="border-bottom border-top" style="height:2.5rem;">
+                                                <a class="link-dark col-xl-auto"><h5></h5></a>
+                                                <div class="small text-muted col-sm-auto"></div>
+                                            </div>
+                                        </c:forEach>
+                                    </c:if>
                                 </div>
                                 <div class="text-end mb-5 mb-xl-0">
-                                    <a class="text-decoration-none" href="<c:url value='/boardDetail/notice'/>">
+                                    <a class="text-decoration-none" href="<c:url value='/board/notice'/>">
                                         More
                                         <i class="bi bi-arrow-right"></i>
                                     </a>
@@ -82,8 +74,8 @@
                                             <p class="text-muted mb-4">
                                                 하단의 연락처를 통해 연락해 주세요.
                                                 <br />
-                                                Email&nbsp;:&nbsp;<a href="#!">email@domain.com</a><br />
-                                                HP&nbsp;:&nbsp;<a href="#!">012-3456-7890</a>
+                                                Email&nbsp;:&nbsp;<a>email@domain.com</a><br />
+                                                HP&nbsp;:&nbsp;<a>02-123-1234</a>
                                             </p>
                                             <div class="h6 fw-bolder">Follow us</div>
                                             <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter-x"></i></a>
@@ -141,7 +133,7 @@
                         </a>
                     </div>
                 </div>
-            </section>
+            </section> 
             <%@include file="../layouts/bottom.jsp"%> 
         </div>
     </body>

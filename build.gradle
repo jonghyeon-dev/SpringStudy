@@ -33,6 +33,7 @@ dependencies {
 	implementation 'org.json:json:20231013'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 	implementation 'commons-fileupload:commons-fileupload:1.5'
+	implementation 'com.google.code.gson:gson:2.10.1' // gson
 	// implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'// spring boot oauth2
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
