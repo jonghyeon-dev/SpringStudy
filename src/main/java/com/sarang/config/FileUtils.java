@@ -2,8 +2,8 @@ package com.sarang.config;
 
 import javax.servlet.http.HttpSession;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import java.io.File;
@@ -42,7 +42,6 @@ public class FileUtils {
         try{
             // DB에 저장될 정보
             FileVO fileVO = new FileVO();
-            List<FileVO> fileList = new ArrayList<>();
 
             // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
             for(MultipartFile file : uploadFiles){
@@ -124,6 +123,101 @@ public class FileUtils {
                 logger.error("#Exception Message : {}", e.getMessage());
             }
             return false;
+        }
+    }
+
+    public List<FileVO> EditorFileUpload(HttpSession session, List<MultipartFile> uploadFiles){
+        AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        List<FileVO> uploadedFileVO = new ArrayList<>();
+        if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
+            return uploadedFileVO;
+        }
+        System.out.println("isrun?");
+        System.out.println(filePath);
+        try{
+            // DB에 저장될 정보
+            FileVO fileVO = new FileVO();
+            System.out.println("isrun?2");
+            // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
+            for(MultipartFile file : uploadFiles){
+                System.out.println("isrun?3");
+                // 원본 파일명(확장자 포함)
+                String fileName = file.getOriginalFilename();
+                
+                // 확장자를 제외한 파일명
+                String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
+
+                // 확장자
+                String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+                // 실제 서버에 저장될 파일명
+                String saveFileName = UUID.randomUUID().toString();
+                
+                // 저장될 경로와 파일명
+                String saveFilePath = filePath + File.separator + saveFileName + '.' + fileExt;
+
+                // filePath에 해당되는 파일의 File 객체를 생성
+                File fileFolder = new File(filePath);
+
+                if(!fileFolder.exists()){
+                    // 부모 폴더까지 포함하여 경로에 폴더 생성
+                    if(fileFolder.mkdirs()){
+                        logger.info("[file.mkdir] : Success");
+                    }else{
+                        logger.error("[file.mkdir] : Fail");
+                    }
+                }
+
+                File saveFile = new File(saveFilePath);
+                System.out.println("isrun?4");
+                // saveFile이 File이면 true, 아니면 false
+                // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
+                if(saveFile.isFile()){
+                    boolean _exist = true;
+
+                    int index = 0;
+
+                    // 동일한 파일명이 존재하지 않을때가지 반복한다.
+                    while(_exist){
+                        index++;
+
+                        String dictFile = filePath + File.separator + saveFileName + "("+ index+ ")." + fileExt;
+
+                        _exist = new File(dictFile).isFile();
+
+                        if(!_exist){
+                            saveFilePath = dictFile;
+                        }
+                    }
+                    saveFile = new File(saveFilePath);
+                    // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
+                    file.transferTo(saveFile);
+                } else{
+                    file.transferTo(saveFile);
+                }
+
+                fileVO.setFileName(fileName);
+                fileVO.setFileCutName(fileCutName);
+                fileVO.setSaveFileName(saveFileName);
+                fileVO.setFileExt(fileExt);
+                fileVO.setFilePath(filePath);
+                if(ObjectUtils.isEmpty(loginVO)){
+                    fileVO.setCretUser(adminVO.getEno());
+                }else{
+                    fileVO.setCretUser(loginVO.getUserId());
+                }
+
+                uploadedFileVO.add(fileVO);
+                fileMapper.insertUploadedFileInfo(fileVO);
+            }
+            return uploadedFileVO;
+        } catch(Exception e){
+            e.printStackTrace();
+            if(logger.isErrorEnabled()){
+                logger.error("#Exception Message : {}", e.getMessage());
+            }
+            return uploadedFileVO;
         }
     }
 }

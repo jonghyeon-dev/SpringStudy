@@ -8,8 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,20 +23,26 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.sarang.config.FileUtils;
 import com.sarang.mapper.FileMapper;
 import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
-import com.sarang.model.common.ResponseEntity;
+import com.sarang.model.common.ResponseData;
 
 @Controller
 public class FileController {
@@ -51,32 +61,67 @@ public class FileController {
 
 	@ResponseBody
 	@PostMapping("/file/imageUpload")
-	public ResponseEntity imageUpload(HttpSession session, MultipartHttpServletRequest request
-	, HttpServletResponse response, List<MultipartFile> uploadFiles, Model model) throws Exception{
-		ResponseEntity js = new ResponseEntity();
+	public Map<String,Object> imageUpload(HttpSession session, MultipartHttpServletRequest request
+	, HttpServletResponse response, Model model) throws Exception{
+		Map<String,Object> result = new HashMap<>();
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
 		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
 		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-			js.setMessage("File Upload Failed");
-			js.setIsSucceed(false);
-            return js;
+			
+			result.put("uploaded",false);
+			HashMap<String,Object> message = new HashMap<>();
+			message.put("message","file upload Fail");
+			result.put("error",message);
+            return result;
         }
+		MultipartFile uploadFile = request.getFile("upload");
+		List<MultipartFile> uploadFiles = new ArrayList<>();
+		uploadFiles.add(uploadFile);
 		List<FileVO> fileList = new ArrayList<>();
 		try{
-			fileUtils.MultiFileUpload(session, null, uploadFiles);
+			fileList = fileUtils.EditorFileUpload(session, uploadFiles);
 		}catch(Exception e){
 			logger.error("File Upload Error : {}",e.getMessage());
 		}
-		js.setData(fileList);
-		js.setMessage("File Upload Succeessed");
-		js.setIsSucceed(true);
-		return js;
+		if(fileList.isEmpty()){
+			result.put("uploaded",false);
+			HashMap<String,Object> message = new HashMap<>();
+			message.put("message","file upload Fail");
+			result.put("error",message);
+		}else{
+			FileVO retFile = fileList.get(0);
+			result.put("uploaded",true);
+			result.put("filename",retFile.getFileName());
+			result.put("url","/image/display/"+retFile.getFileId());
+		}
+		return result;
 	}
 
-	@GetMapping("/imageLoad/{fileId}")
-	public void imageLoad(HttpSession session, HttpServletRequest request, HttpServletResponse response,
+	@GetMapping("/image/display/{fileId}")
+	public ResponseEntity<byte[]> getImage(HttpSession session, HttpServletRequest request, HttpServletResponse response,
 	@PathVariable("fileId") Integer fileId) throws Exception{
+		
+		ResponseEntity<byte[]> result = null;
+		try{
+			FileVO fileVO = fileMapper.getDownloadFileInfo(fileId);
 
+			// 경로와 파일명으로 파일 객체를 생성한다.
+			File dFile  = new File(fileVO.getFilePath(), fileVO.getSaveFileName() + "." + fileVO.getFileExt());
+				
+			// 파일 길이를 가져온다.
+			int fSize = (int) dFile.length();
+			
+			// 파일이 존재
+			if (fSize > 0) {
+				HttpHeaders header = new HttpHeaders();
+				header.add("Content-type", Files.probeContentType(dFile.toPath()));
+
+				result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(dFile), header, HttpStatus.OK);
+			}
+		}catch(Exception e){
+			logger.error("Error is : {}",e.getMessage());
+		}
+		return result;
 	}
 
     @GetMapping("/file/download")

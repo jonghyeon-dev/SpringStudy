@@ -15,7 +15,7 @@
             <c:if test="${status eq 'update'}">
                 <c:set var="actionUrl" value="modifyBoard/${boardInfo.boardId}"/>
             </c:if>
-            <form id="boardInsertForm" method="post" action="<c:url value='/board/${middle}/${actionUrl}'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
+            <form id="boardInsertForm" method="post" action="<c:url value='/board/${category}/${actionUrl}'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
                 <div class="insertArea">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="form-control">
-                        <textarea name="boardCntnt" id="ckeditor"></textarea>
+                        <textarea name="boardCntnt" id="ckeditor" name="ckeditor"></textarea>
                     </div>
                 </div>
                 <div class="buttonArea">
@@ -53,7 +53,12 @@
                             수정
                         </c:if>
                     </button>
-                    <a href='<c:url value="/board/${category}"/>' class="btn btn-danger text-center">취소</a>
+                    <c:if test="${status eq 'insert'}">
+                        <a href='<c:url value="/board/${category}"/>' class="btn btn-danger text-center">취소</a>
+                    </c:if>
+                    <c:if test="${status eq 'update'}">
+                        <a href='<c:url value="/boardDetail/${category}/${boardInfo.boardId}"/>' class="btn btn-danger text-center">취소</a>
+                    </c:if>
                 </div>
             </form>
         </div>
@@ -61,43 +66,22 @@
     </div>
 </body>
 <script>
-let ckeditor;
-
+let ckeditor
  var boardInsertPage = (function(){
         var init = function(){
-            ClassicEditor.create(document.querySelector('#ckeditor'), {
-                toolbar:[
-                    'Undo', 'Redo', '|'
-                    , 'FontSize', 'FontFamily', 'FontColor', 'FontBackgroundColor' , '|'
-                    , 'Alignment', 'Bold', 'Italic', 'UnderLine',  '|'
-                    , 'BlockQuote', 'Outdent', 'Indent', 'BulletedList', 'NumberedList', 'TodoList', '|'
-                    , 'InsertTable', 'Link', 'ImageInsert', 'MediaEmbed', '|'
-                    , 'FindAndReplace', 'PageBreak', 'RemoveFormat', '|'
-                    // , 'Heading', 'ImageUpload', 'SelectAll', 'SourceEditing', 'HtmlEmbed', 'Highlight', '|'
-                    // , 'SpecialCharacters', 'Subscript', 'Superscript', '|'
-                    // , 'ShowBlocks', 'CodeBlock', 'TextPartLanguage' 
-                ]
-                ,removePlugins:[
-                    'Autoformat', 'Markdown', 'MediaEmbedToolbar'
-                ]
-                ,mediaEmbed: {
-                    previewsInData:true
-                },
-            }). then(newEditor => {
-                ckeditor = newEditor;
-                const pageStatus = '<c:out value="${status}"/>'
-                if(pageStatus === "update"){
-                    const boardTitle = '<c:out value="${boardInfo.boardTitle}"/>';
-                    const boardCntnt = '<c:out value="${boardInfo.boardCntnt}"/>';
-                    const fileList = '';
-                    $("#boardInsertForm input[name='boardTitle']").val(boardTitle);
-                    ckeditor.setData(unescapeHtml(boardCntnt));
-                }
-            })
-            .catch(error => {
-                console.error(error)
+            ckeditor = CKEDITOR.replace('ckeditor',{
+                filebrowserUploadUrl:'<c:url value="/file/imageUpload?type=Images"/>'
             });
-            
+
+            const pageStatus = '<c:out value="${status}"/>';
+
+            if(pageStatus === "update"){
+                const boardTitle = '<c:out value="${boardInfo.boardTitle}"/>';
+                const boardCntnt = `<c:out value='${boardInfo.boardCntnt}'/>`;
+                $("#boardInsertForm input[name='boardTitle']").val(boardTitle);
+                console.log(unescapeHtml(boardCntnt));
+                ckeditor.setData(unescapeHtml(boardCntnt));
+            }
         };
 
         var registerEvent = function(){
@@ -144,13 +128,17 @@ let ckeditor;
         if(str == null){
             return "";
         }
-        return str.replace(/&amp;/g,'&')
+        return str.replace(/&amp;lt;script&amp;gt;/g,'')
+                .replace(/&amp;lt;\/script&amp;gt;/g,'')
+                .replace(/javascript:/g,'')
+                .replace(/&amp;/g,'&')
                 .replace(/&lt;/g,'<')
                 .replace(/&gt;/g,'>')
                 .replace(/&quot;/g,'"')
                 .replace(/&#034;/g,'"')
                 .replace(/&#039;/g,"'")
                 .replace(/&#39/g,"'")
+                
     }
 </script>
 </html>

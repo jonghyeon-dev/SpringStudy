@@ -86,7 +86,7 @@
                 </c:when>
                 <c:otherwise>
                     <c:if test="${adminLogin ne null}">
-                        <a class="btn btn-outline-info flot-right" href="<c:url value='/board/${category}/admin/boardWrite'/>">글쓰기</a>
+                        <a class="btn btn-outline-info flot-right" href="<c:url value='/board/${category}/boardWrite'/>">글쓰기</a>
                     </c:if>
                 </c:otherwise>
             </c:choose>

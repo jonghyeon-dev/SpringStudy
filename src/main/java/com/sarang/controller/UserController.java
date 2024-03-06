@@ -18,7 +18,7 @@ import org.springframework.util.ObjectUtils;
 import com.sarang.config.SecureUtil;
 import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
-import com.sarang.model.common.ResponseEntity;
+import com.sarang.model.common.ResponseData;
 import com.sarang.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,8 +79,8 @@ public class UserController {
     public String checkLogin(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, RedirectAttributes redirectAttributes){
         logger.info("Check User Login Process");
-        String userId = request.getParameter("userId").trim();
-        String userPw = request.getParameter("userPw").trim();
+        String userId = request.getParameter("userId");
+        String userPw = request.getParameter("userPw");
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
         reqMap.put("userId",userId);
         try {
@@ -102,9 +102,9 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value="/checkUserDup.do",method=RequestMethod.POST)
-    public ResponseEntity checkUserDuplication(HttpSession session, HttpServletRequest request
+    public ResponseData checkUserDuplication(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, String userId) {
-        ResponseEntity js = new ResponseEntity();
+        ResponseData js = new ResponseData();
         System.out.println(userId);
         String checkId = userService.checkUserDuplication(userId);
         if(checkId == null || "".equals(checkId)){

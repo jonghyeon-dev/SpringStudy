@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.sarang.config.SecureUtil;
 import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
-import com.sarang.model.common.ResponseEntity;
+import com.sarang.model.common.ResponseData;
 import com.sarang.service.AdminService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,11 +144,10 @@ public class AdminController {
 
     @ResponseBody
     @RequestMapping(value="/admin/getAdminInfo.do", method=RequestMethod.GET)
-    public  ResponseEntity getAdminInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
+    public  ResponseData getAdminInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , String seq, String eno, String page) throws Exception {
-        ResponseEntity js = new ResponseEntity();
-
+        ResponseData js = new ResponseData();
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
         reqMap.put("seq",seq);
         reqMap.put("eno",eno);
@@ -174,11 +173,11 @@ public class AdminController {
 
     @ResponseBody
     @RequestMapping(value="/admin/deleteAdminInfo.do", method={RequestMethod.GET,RequestMethod.POST})
-    public  ResponseEntity deleteEnoInfo(HttpSession session, HttpServletRequest request
+    public  ResponseData deleteEnoInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , @RequestParam(value="delList", required=false) List<String> delList
         ) throws Exception {
-        ResponseEntity js = new ResponseEntity();
+        ResponseData js = new ResponseData();
         // 관리자 아이디 1개 이하일 시 삭제 불가 체크루틴 추가 
         adminService.deleteAdminInfo(delList);
         js.setIsSucceed(true);

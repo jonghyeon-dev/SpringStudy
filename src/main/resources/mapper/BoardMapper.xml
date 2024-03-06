@@ -6,6 +6,9 @@
 		SELECT 
 			BOARD_ID,
 			BOARD_CATE,
+			<if test='"news".equals(boardCate)'>
+			BOARD_CNTNT,
+			</if>
 			BOARD_TITLE,
 			CRET_USER,
 			CRET_DATE,
@@ -105,7 +108,9 @@
 		DELETE FROM TBRD00100 WHERE BOARD_ID = #{boardId}
 	</delete>
 
-	<delete id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
-		DELETE FROM TBRD00101 WHERE BOARD_ID = #{boardId}
-	</delete>
+	<update id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00101 SET
+			BOARD_ID = null
+		WHERE BOARD_ID = #{boardId}
+	</update>
 </mapper>

@@ -126,7 +126,7 @@
                             "eno":eno,
                             "page":paging},
                     success: response=>{
-                        if(response.succeed){
+                        if(response.isSucceed){
                             $("#checkAll").prop('checked',false);
                             let data = response.data.adminInfoList;
                             let dataText = "";

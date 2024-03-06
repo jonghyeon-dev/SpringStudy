@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sarang.config.FileUtils;
 import com.sarang.model.AdminVO;
@@ -23,7 +25,7 @@ import com.sarang.model.BoardVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
 import com.sarang.model.common.PageVO;
-import com.sarang.model.common.ResponseEntity;
+import com.sarang.model.common.ResponseData;
 import com.sarang.service.BoardService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -118,9 +120,9 @@ public class BoardController {
 
 	@ResponseBody
 	@RequestMapping(value="/board/{category}/getBoardList", method=RequestMethod.GET)
-	public ResponseEntity getMethodName(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	public ResponseData getMethodName(HttpSession session, HttpServletRequest request, HttpServletResponse response 
 	,  @PathVariable("category") String category, String page, String searchOption, String searchWord) throws Exception{
-		ResponseEntity js = new ResponseEntity();
+		ResponseData js = new ResponseData();
 		if(category.isEmpty() || category == null){
             category = "community";
         }
@@ -153,16 +155,15 @@ public class BoardController {
 	}
 	
 
-	@GetMapping(value="/board/community/boardWrite")
+	@GetMapping(value="/board/{category}/boardWrite")
 	public String boardInsertPage(HttpSession session, HttpServletRequest request
-	, HttpServletResponse response , Model model) throws Exception{
+	, HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
 		logger.info("boardWritePage View");
-		String category = "community";
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
 		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-            return "redirect:/board/"+category;
-        }
+		if(checkBoardLogin(loginVO,adminVO,category)){
+			return "redirect:/board"+category;
+		};
 		model.addAttribute("middle", category);
 		model.addAttribute("category", category);
 		model.addAttribute("status","insert");
@@ -180,36 +181,25 @@ public class BoardController {
 
 		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
 		List<FileVO> fileList = boardService.getBoardFileList(reqMap);
+		String boardCntnt = boardVO.getBoardCntnt();
+		boardVO.setBoardCntnt(StringEscapeUtils.unescapeHtml4(boardCntnt));
 
 		model.addAttribute("boardInfo", boardVO);
 		model.addAttribute("boardFileList", fileList);
 		return "board/boardDetailPage";
 	}
-	
-	@GetMapping(value="/board/{category}/admin/boardWrite")
-	public String adminBoardInsertPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(adminVO)){
-            return "redirect:/board/"+category;
-        }
-		model.addAttribute("middle", category + "/admin");
-		model.addAttribute("category", category);
-		model.addAttribute("status","insert");
-		return "board/boardWritePage";
-	}
 
-	@RequestMapping(value="/board/community/insertBoard", method=RequestMethod.POST)
-	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request
-    , HttpServletResponse response, List<MultipartFile> uploadFiles) throws Exception {
+	@RequestMapping(value="/board/{category}/insertBoard", method=RequestMethod.POST)
+	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
+	, List<MultipartFile> uploadFiles, @PathVariable("category") String category) throws Exception {
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
 		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-            return "redirect:/board/community";
-        }
+		if(checkBoardLogin(loginVO,adminVO,category)){
+			return "redirect:/board"+category;
+		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
-		String boardCate = "community";
+		String boardCate = category;
 		String cretUser ="";
 		if(ObjectUtils.isEmpty(loginVO)){
 			cretUser = adminVO.getEno();
@@ -219,38 +209,7 @@ public class BoardController {
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBoardCate(boardCate);
 		boardVO.setBoardTitle(boardTitle);
-		boardVO.setBoardCntnt(boardCntnt);
-		boardVO.setCretUser(cretUser);
-		boardVO.setChgUser(cretUser);
-
-		boardService.insertBoardDetailInfo(boardVO);
-		Integer boardId = boardVO.getBoardId();
-		if(!CollectionUtils.isEmpty(uploadFiles)){
-			try{
-				fileUtils.MultiFileUpload(session, boardId, uploadFiles);
-			}catch(Exception e){
-				logger.error("Board File Upload Error : {}",e.getMessage());
-				return "redirect:/error";
-			}
-		}
-		return "redirect:/board/community";
-	}
-
-	@RequestMapping(value="/board/{category}/admin/insertBoard", method=RequestMethod.POST)
-	public String insertAdminBoardInfo(HttpSession session, MultipartHttpServletRequest request
-    , HttpServletResponse response, @PathVariable("category") String category, List<MultipartFile> uploadFiles) throws Exception {
-		AdminVO adminVO = (AdminVO)session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(adminVO)){
-			return "redirect:/error";
-		}
-		String boardTitle = request.getParameter("boardTitle");
-		String boardCntnt = request.getParameter("boardCntnt");
-		String boardCate = category;
-		String cretUser = adminVO.getEno();
-		BoardVO boardVO = new BoardVO();
-		boardVO.setBoardCate(boardCate);
-		boardVO.setBoardTitle(boardTitle);
-		boardVO.setBoardCntnt(boardCntnt);
+		boardVO.setBoardCntnt(escapeQuoatHtmlTag(boardCntnt));
 		boardVO.setCretUser(cretUser);
 		boardVO.setChgUser(cretUser);
 
@@ -271,19 +230,33 @@ public class BoardController {
 	public String boardModifyPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model, @PathVariable("category") String category
 	, @PathVariable("boardId") String boardId) throws Exception{
+		// 로그인 체크
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
 		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-            return "redirect:/board/"+category;
-        }
-		if(!"community".equals(category) && ObjectUtils.isEmpty(adminVO)){
-			return "redirect:/board"+category;
-		}
+		if(checkBoardLogin(loginVO,adminVO,category)){
+			return "redirect:/board/"+category;
+		};
 		HashMap<String,Object> reqMap = new HashMap<>();
 		reqMap.put("boardId",boardId);
 		reqMap.put("boardCate",category);
 
 		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
+		// 게시물 존재 여부 확인
+		if(ObjectUtils.isEmpty(boardVO)){
+			return "redirect:/board/"+category;
+		}
+		// 작성자 여부 확인
+		String modifyUser = "";
+		if(ObjectUtils.isEmpty(loginVO)){
+			modifyUser = adminVO.getEno();
+		}else{
+			modifyUser = loginVO.getUserId();
+		}
+		if(!boardVO.getCretUser().equals(modifyUser)){
+			return "redirect:/board/"+category;
+		}
+		String boardCntnt = boardVO.getBoardCntnt();
+		boardVO.setBoardCntnt(StringEscapeUtils.unescapeHtml4(boardCntnt));
 		List<FileVO> boardFileList = boardService.getBoardFileList(reqMap);
 		String middle = category;
 		model.addAttribute("boardInfo", boardVO);
@@ -294,5 +267,82 @@ public class BoardController {
 		model.addAttribute("middle", middle);
 		model.addAttribute("status","update");
 		return "board/boardWritePage";
+	}
+
+	@PostMapping(value="/board/{category}/modifyBoard/{boardId}")
+	public String modifyBoardInfo(HttpSession session, MultipartHttpServletRequest request
+    , HttpServletResponse response, List<MultipartFile> uploadFiles, @PathVariable("category") String category
+	, @PathVariable("boardId") String boardId) throws Exception {
+		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+		if(checkBoardLogin(loginVO,adminVO,category)){
+			return "redirect:/board"+category;
+		};
+		String boardTitle = request.getParameter("boardTitle");
+		String boardCntnt = request.getParameter("boardCntnt");
+		String boardCate = category;
+
+		HashMap<String,Object> reqMap = new HashMap<>();
+		reqMap.put("boardId",boardId);
+		reqMap.put("boardCate",boardCate);
+
+		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
+		// 게시물 존재 여부 확인
+		if(ObjectUtils.isEmpty(boardVO)){
+			return "redirect:/board/"+category;
+		}
+		String chgUser = "";
+		if(ObjectUtils.isEmpty(loginVO)){
+			chgUser = adminVO.getEno();
+		}else{
+			chgUser = loginVO.getUserId();
+		}
+		// 작성자 여부 확인
+		if(!boardVO.getCretUser().equals(chgUser)){
+			return "redirect:/board/"+category;
+		}
+		boardVO.setBoardCate(boardCate);
+		boardVO.setBoardTitle(boardTitle);
+		boardVO.setBoardCntnt(escapeQuoatHtmlTag(boardCntnt));
+		boardVO.setChgUser(chgUser);
+		
+		boardService.updateBoardDetailInfo(boardVO);
+		if(!CollectionUtils.isEmpty(uploadFiles)){
+			try{
+				boardService.resetBoardFileList(boardVO);
+				fileUtils.MultiFileUpload(session, Integer.parseInt(boardId), uploadFiles);
+			}catch(Exception e){
+				logger.error("Board File Upload Error : {}",e.getMessage());
+				return "redirect:/error";
+			}
+		}
+		return "redirect:/boardDetail/"+category+"/"+boardId;
+	}
+
+	/**
+	 * 게시판 등록, 수정 시 사용자 권한 체크
+	 * @param loginVO
+	 * @param adminVO
+	 * @param category
+	 * @return boolean
+	 */
+	private boolean checkBoardLogin(UserVO loginVO, AdminVO adminVO, String category){
+		// 자유게시판 사용자 체크
+		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){ 
+			return true;
+		}
+		// 그 외 게시판 관리자 체크
+		if(!"community".equals(category) && ObjectUtils.isEmpty(adminVO)){
+			return true;
+		}
+		return false;
+	}
+
+	// 에디터 업로드 시 2중 escape된 태그 삭제 처리
+	// 프록시 툴을 사용해서 입력 시 어떻게 처리해야 하는지?
+	private String escapeQuoatHtmlTag(String args){
+		return args.replaceAll("&amp;lt;","").replaceAll("&amp;gt;","")
+		.replaceAll("&amp;quot;","").replaceAll("&amp;#034;","")
+		.replaceAll("&amp;#039;","").replaceAll("&amp;#39;","");
 	}
 }

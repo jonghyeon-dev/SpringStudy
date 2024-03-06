@@ -19,7 +19,7 @@
 		WHERE FILE_ID = #{fileId}
 	</select>
 	
-	<insert id="insertUploadedFileInfo" parameterType="com.sarang.model.common.FileVO">
+	<insert id="insertUploadedFileInfo" parameterType="com.sarang.model.common.FileVO" useGeneratedKeys="true" keyProperty="fileId" keyColumn="FILE_ID">
 		INSERT INTO TBRD00101(
             BOARD_ID,
             FILE_PATH,

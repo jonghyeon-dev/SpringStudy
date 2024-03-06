@@ -16,19 +16,67 @@
                     <!-- <h1 class="fw-bolder fs-5 mb-4">Company Blog</h1> -->
                     <div class="card border-0 shadow rounded-3 overflow-hidden">
                         <div class="card-body p-0">
-                            <div class="row gx-0">
-                                <div class="col-lg-6 col-xl-5 py-lg-5">
-                                    <div class="p-4 p-md-5">
-                                        <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
-                                        <div class="h2 fw-bolder">헤드 컨텐츠</div>
-                                        <p>내용 작성</p>
-                                        <a class="stretched-link text-decoration-none" href="#!">
-                                            More
-                                            <i class="bi bi-arrow-right"></i>
-                                        </a>
+                            <div class="swiper mySwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <div class="row gx-0">
+                                            <div class="col-lg-6 col-xl-5 py-lg-5">
+                                                <div class="p-4 p-md-5 slider s1">
+                                                    <div class="h2 fw-bolder">헤드 컨텐츠1</div>
+                                                    <p>내용 작성1</p>
+                                                    <a class="stretched-link text-decoration-none" href="#!">
+                                                        More
+                                                        <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-xl-7">
+                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="row gx-0">
+                                            <div class="col-lg-6 col-xl-5 py-lg-5">
+                                                <div class="p-4 p-md-5 slider s1">
+                                                    <div class="h2 fw-bolder">헤드 컨텐츠2</div>
+                                                    <p>내용 작성2</p>
+                                                    <a class="stretched-link text-decoration-none" href="#!">
+                                                        More
+                                                        <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-xl-7">
+                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <div class="row gx-0">
+                                            <div class="col-lg-6 col-xl-5 py-lg-5">
+                                                <div class="p-4 p-md-5 slider s1">
+                                                    <div class="h2 fw-bolder">헤드 컨텐츠3</div>
+                                                    <p>내용 작성3</p>
+                                                    <a class="stretched-link text-decoration-none" href="#!">
+                                                        More
+                                                        <i class="bi bi-arrow-right"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-xl-7">
+                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-xl-7"><div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div></div>
+                                <!-- If we need pagination -->
+                                <div class="swiper-pagination"></div>
+                                <!-- If we need navigation buttons -->
+                                <div class="swiper-button-prev"></div>
+                                <div class="swiper-button-next"></div>
+                                <!-- If we need scrollbar -->
+                                <!-- <div class="swiper-scrollbar"></div> -->
                             </div>
                         </div>
                     </div>
@@ -95,39 +143,38 @@
                 <div class="container px-5">
                     <h2 class="fw-bolder fs-5 mb-4">최근 소식</h2>
                     <div class="row gx-5">
-                        <div class="col-lg-4 mb-5">
-                            <div class="card h-100 shadow border-0">
-                                <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
-                                <div class="card-body p-4">
-                                    <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
-                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">제목1</div></a>
-                                    <p class="card-text mb-0">내용 간략(50 텍스트)...</p>
+                        <c:forEach items="${newsList}" var="items">
+                            <div class="col-lg-4 mb-5">
+                                <div class="card h-100 shadow border-0">
+                                    <c:if test="${items.thumbPath ne ''}">
+                                        <img class="card-img-top" src="${items.thumbPath}" alt="..." />
+                                    </c:if>
+                                    <div class="card-body p-4">
+                                        <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
+                                        <a class="text-decoration-none link-dark stretched-link" href="/boardDetail/news/${items.boardId}"><div class="h5 card-title mb-3">${items.title}</div></a>
+                                        <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
+                                        <p class="card-text mb-0"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4 mb-5">
-                            <div class="card h-100 shadow border-0">
-                                <img class="card-img-top" src="https://dummyimage.com/600x350/adb5bd/495057" alt="..." />
-                                <div class="card-body p-4">
-                                    <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">Media</div> -->
-                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">제목2</div></a>
-                                    <p class="card-text mb-0">내용 간략(50개 텍스트)...</p>
+                        </c:forEach>
+                        <c:if test="${fn:length(newsList) < 3}">
+                            <c:forEach var="i" begin="${fn:length(newsList)}" end="2" step="1">
+                                <div class="col-lg-4 mb-5">
+                                    <div class="card h-100 shadow border-0">
+                                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
+                                        <div class="card-body p-4">
+                                            <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
+                                            <a class="text-decoration-none link-dark stretched-link"><div class="h5 card-title mb-3">제목</div></a>
+                                            <p class="card-text mb-0">날짜</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 mb-5">
-                            <div class="card h-100 shadow border-0">
-                                <img class="card-img-top" src="https://dummyimage.com/600x350/6c757d/343a40" alt="..." />
-                                <div class="card-body p-4">
-                                    <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
-                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">제목3</div></a>
-                                    <p class="card-text mb-0">내용 간략(50개 텍스트)...</p>
-                                </div>
-                            </div>
-                        </div>
+                            </c:forEach>
+                        </c:if>
                     </div>
                     <div class="text-end mb-5 mb-xl-0">
-                        <a class="text-decoration-none" href="#!">
+                        <a class="text-decoration-none" href="<c:url value='/board/news'/>">
                             More
                             <i class="bi bi-arrow-right"></i>
                         </a>
@@ -136,5 +183,25 @@
             </section> 
             <%@include file="../layouts/bottom.jsp"%> 
         </div>
+        <script>
+            const swiper = new Swiper('.mySwiper', {
+                // Optional parameters
+                loop: true,
+                // If we need pagination
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                // Navigation arrows
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                // And if we need scrollbar
+                //   scrollbar: {
+                //     el: '.swiper-scrollbar',
+                //   },
+            });
+        </script>
     </body>
 </html>

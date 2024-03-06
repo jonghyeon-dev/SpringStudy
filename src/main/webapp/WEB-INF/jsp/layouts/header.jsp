@@ -16,7 +16,9 @@
 <script src='<c:url value="/assets/bootstrap5/js/bootstrap.bundle.min.js"/>'></script>
 <!-- Bootstrap icons-->
 <link href='<c:url value="/assets/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css"/>' rel="stylesheet" />
-
+<!-- Swiper -->
+<link rel="stylesheet" href="<c:url value='/assets/swiper/swiper-bundle.min.css'/>"/>
+<script src="<c:url value='/assets/swiper/swiper-bundle.min.js'/>"></script>
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="<c:url value='/css/styles.css'/>" rel="stylesheet" />
 <title>타이틀</title>

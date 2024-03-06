@@ -58,7 +58,7 @@
                     </c:when>
                     <c:otherwise>
                         <c:if test="${adminLogin.eno eq boardInfo.cretUser}">
-                            <a href='<c:url value="/board/${category}/admin/boardModify/${boardId}"/>' class="btn btn-ountline-warning text-center">수정</a>
+                            <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
                         </c:if>
                     </c:otherwise>
                 </c:choose>
