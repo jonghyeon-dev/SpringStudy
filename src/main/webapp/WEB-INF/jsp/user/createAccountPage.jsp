@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>회원가입</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -19,19 +20,19 @@
                     </colgroup>
                     <tr>
                         <th><span>ID :</span></th>
-                        <td colspan="2">
-                            <input class="form-control" type="text" name="userId" value="" required="true">
-                        </td>
                         <td>
+                            <input class="form-control" type="text" name="userId" value="" required="true">
                             <button class="btn btn-primary" type="button" name="checkDuplication">중복확인</button>
                             <input type="hidden" name="checkDup" value="" required="true">
                         </td>
+                        <th><span>닉네임 :</span></th>
+                        <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>PW :</span></th>
                         <td><input class="form-control" type="password" name="userPw" value="" required="true"></td>
-                        <th><span>닉네임 :</span></th>
-                        <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
+                        <th><span>PW확인 :</span></th>
+                        <td><input class="form-control" type="password" name="userPwCheck" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>휴대폰번호 :</span></th>
@@ -128,6 +129,7 @@
     function validationForm(){
         const userId = $('#addUserForm input[name="userId"]').val(); // 아이디
         const userPw = $('#addUserForm input[name="userPw"]').val(); // 패스워드
+        const pwCheck = $('#addUserForm input[name="userPwCheck"]').val(); // 패스워드확인
         const userNm = $('#addUserForm input[name="userNm"]').val(); // 이름
         const checkDup = $('#addUserForm input[name="checkDup"]').val(); // 중복체크 여부
 
@@ -146,6 +148,12 @@
             $('#addUserForm input[name="userPw"]').focus();
             $("#modalInfo").show();
             return false;
+        }else if(pwCheck.trim() == "" || pwCheck == null){
+            $("#modalTitle").append("패스워드 확인 값이 없습니다.");
+            $("#modalContent").append("패스워드 확인 값은 필수 값 입니다.");
+            $('#addUserForm input[name="userPwCheck"]').focus();
+            $("#modalInfo").show();
+            return false;
         }else if(userNm.trim() == "" || userNm == null){
             $("#modalTitle").append("닉네임 값이 없습니다.");
             $("#modalContent").append("닉네임 값은 필수 값 입니다.");
@@ -160,6 +168,13 @@
             return false;
         }
 
+        if(userPw != pwCheck){
+            $("#modalTitle").append("패스워드 값 확인");
+            $("#modalContent").append("패스워드 값과 확인 값이 같지 않습니다.");
+            $('#addUserForm input[name="userPw"]').focus();
+            $("#modalInfo").show();
+        }
+        
         const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/ // 한국 휴대폰 번호 정규식
         let celph = $('#addUserForm input[name="celph"]').val();
         if(celph != null && celph.trim() != ""){

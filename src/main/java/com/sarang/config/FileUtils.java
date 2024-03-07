@@ -3,11 +3,11 @@ package com.sarang.config;
 import javax.servlet.http.HttpSession;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import java.io.File;
 
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sarang.mapper.FileMapper;
-import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
 
@@ -33,9 +32,9 @@ public class FileUtils {
     FileMapper fileMapper;
 
     public boolean MultiFileUpload(HttpSession session, Integer boardId, List<MultipartFile> uploadFiles){
-        AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
+        if(ObjectUtils.isEmpty(loginVO)){
+            logger.error("empty Login Info MuiltiFileUpload Error");
             return false;
         }
         
@@ -74,7 +73,7 @@ public class FileUtils {
                 }
 
                 File saveFile = new File(saveFilePath);
-
+                checkFileMimeType(saveFile);
                 // saveFile이 File이면 true, 아니면 false
                 // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
                 if(saveFile.isFile()){
@@ -101,19 +100,13 @@ public class FileUtils {
                     file.transferTo(saveFile);
                 }
 
-                
                 fileVO.setBoardId(boardId);
                 fileVO.setFileName(fileName);
                 fileVO.setFileCutName(fileCutName);
                 fileVO.setSaveFileName(saveFileName);
                 fileVO.setFileExt(fileExt);
                 fileVO.setFilePath(filePath);
-                if(ObjectUtils.isEmpty(loginVO)){
-                    fileVO.setCretUser(adminVO.getEno());
-                }else{
-                    fileVO.setCretUser(loginVO.getUserId());
-                }
-
+                fileVO.setCretUser(loginVO.getUserId());
                 
                 fileMapper.insertUploadedFileInfo(fileVO);
             }
@@ -126,24 +119,18 @@ public class FileUtils {
         }
     }
 
-    public List<FileVO> EditorFileUpload(HttpSession session, List<MultipartFile> uploadFiles){
-        AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
+    public FileVO FileUpload(HttpSession session, MultipartFile uploadFile){
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        List<FileVO> uploadedFileVO = new ArrayList<>();
-        if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
-            return uploadedFileVO;
+        // DB에 저장될 정보
+        FileVO fileVO = new FileVO();
+        if(ObjectUtils.isEmpty(loginVO)){
+            return fileVO;
         }
-        System.out.println("isrun?");
         System.out.println(filePath);
         try{
-            // DB에 저장될 정보
-            FileVO fileVO = new FileVO();
-            System.out.println("isrun?2");
             // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
-            for(MultipartFile file : uploadFiles){
-                System.out.println("isrun?3");
                 // 원본 파일명(확장자 포함)
-                String fileName = file.getOriginalFilename();
+                String fileName = uploadFile.getOriginalFilename();
                 
                 // 확장자를 제외한 파일명
                 String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -170,7 +157,7 @@ public class FileUtils {
                 }
 
                 File saveFile = new File(saveFilePath);
-                System.out.println("isrun?4");
+                checkFileMimeType(saveFile);
                 // saveFile이 File이면 true, 아니면 false
                 // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
                 if(saveFile.isFile()){
@@ -192,9 +179,9 @@ public class FileUtils {
                     }
                     saveFile = new File(saveFilePath);
                     // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
-                    file.transferTo(saveFile);
+                    uploadFile.transferTo(saveFile);
                 } else{
-                    file.transferTo(saveFile);
+                    uploadFile.transferTo(saveFile);
                 }
 
                 fileVO.setFileName(fileName);
@@ -202,22 +189,31 @@ public class FileUtils {
                 fileVO.setSaveFileName(saveFileName);
                 fileVO.setFileExt(fileExt);
                 fileVO.setFilePath(filePath);
-                if(ObjectUtils.isEmpty(loginVO)){
-                    fileVO.setCretUser(adminVO.getEno());
-                }else{
-                    fileVO.setCretUser(loginVO.getUserId());
-                }
+                fileVO.setCretUser(loginVO.getUserId());
 
-                uploadedFileVO.add(fileVO);
                 fileMapper.insertUploadedFileInfo(fileVO);
-            }
-            return uploadedFileVO;
+            return fileVO;
         } catch(Exception e){
-            e.printStackTrace();
             if(logger.isErrorEnabled()){
                 logger.error("#Exception Message : {}", e.getMessage());
             }
-            return uploadedFileVO;
+            return fileVO;
         }
+    }
+
+    private static boolean checkFileMimeType(File file) throws Exception{
+        final String[] PERMISSION_FILE_MIME_TYPE = {"image/gif", "image/jpeg", "image/png", "image/bmp", "application/pdf", "video/mp4"};
+        boolean isPermision = false;
+        String mimeType = new Tika().detect(file);
+        System.out.println(mimeType);
+        for(int i=0;i<PERMISSION_FILE_MIME_TYPE.length;i++){
+            if(PERMISSION_FILE_MIME_TYPE[i].equals(mimeType)){
+
+                // isPermision = true;
+                break;
+            }
+        }
+        
+        return isPermision;
     }
 }

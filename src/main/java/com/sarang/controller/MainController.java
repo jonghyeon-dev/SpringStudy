@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.sarang.model.BoardVO;
+import com.sarang.model.common.FileVO;
 import com.sarang.service.BoardService;
 
 @Controller
@@ -44,17 +45,23 @@ public class MainController {
             if(!newsBoardList.isEmpty()){
                   for(int i=0;i<newsBoardList.size();i++){
                         HashMap<String,Object> result = new HashMap<>();
-                        String boardCntnt = newsBoardList.get(i).getBoardCntnt();
-                        System.out.println("boardCntnt: "+boardCntnt);
+                        Integer boardId = newsBoardList.get(i).getBoardId();
                         String thumbPath = "";
-                        if(boardCntnt.indexOf("img alt=&quot;&quot; src=&quot;") > -1){
-                              thumbPath = boardCntnt.substring(boardCntnt.indexOf("img alt=&quot;&quot; src=&quot;")).replace("img alt=&quot;&quot; src=&quot;","");
-                              thumbPath = thumbPath.substring(0,thumbPath.indexOf("&quot;")).replace("&quot;","");
+                        HashMap<String,Object> reqFileMap = new HashMap<>();
+                        reqFileMap.put("boardId",boardId);
+                        List<FileVO> fileList = boardService.getBoardFileList(reqFileMap);
+                        for(FileVO file : fileList){
+                              if("jpg".equals(file.getFileExt().toLowerCase()) 
+                                  || "jpeg".equals(file.getFileExt().toLowerCase()) 
+                                  || "png".equals(file.getFileExt().toLowerCase())){
+                                    thumbPath = "/image/display/" + file.getFileId();
+                              }
                         }
                         result.put("thumbPath",thumbPath);
                         result.put("title",newsBoardList.get(i).getBoardTitle());
                         result.put("cretDate",newsBoardList.get(i).getCretDate());
                         result.put("boardId",newsBoardList.get(i).getBoardId());
+                        result.put("asNew",newsBoardList.get(i).getAsNew());
                         newsList.add(result);
                   }
             }

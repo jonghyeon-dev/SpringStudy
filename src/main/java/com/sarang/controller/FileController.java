@@ -24,25 +24,18 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import com.sarang.config.FileUtils;
 import com.sarang.mapper.FileMapper;
-import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
-import com.sarang.model.common.ResponseData;
 
 @Controller
 public class FileController {
@@ -65,9 +58,7 @@ public class FileController {
 	, HttpServletResponse response, Model model) throws Exception{
 		Map<String,Object> result = new HashMap<>();
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
-			
+		if(ObjectUtils.isEmpty(loginVO)){
 			result.put("uploaded",false);
 			HashMap<String,Object> message = new HashMap<>();
 			message.put("message","file upload Fail");
@@ -75,24 +66,21 @@ public class FileController {
             return result;
         }
 		MultipartFile uploadFile = request.getFile("upload");
-		List<MultipartFile> uploadFiles = new ArrayList<>();
-		uploadFiles.add(uploadFile);
-		List<FileVO> fileList = new ArrayList<>();
+		FileVO fileInfo = new FileVO();
 		try{
-			fileList = fileUtils.EditorFileUpload(session, uploadFiles);
+			fileInfo = fileUtils.FileUpload(session, uploadFile);
 		}catch(Exception e){
 			logger.error("File Upload Error : {}",e.getMessage());
 		}
-		if(fileList.isEmpty()){
+		if(fileInfo == null){
 			result.put("uploaded",false);
 			HashMap<String,Object> message = new HashMap<>();
 			message.put("message","file upload Fail");
 			result.put("error",message);
 		}else{
-			FileVO retFile = fileList.get(0);
 			result.put("uploaded",true);
-			result.put("filename",retFile.getFileName());
-			result.put("url","/image/display/"+retFile.getFileId());
+			result.put("filename",fileInfo.getFileName());
+			result.put("url","/image/display/"+fileInfo.getFileId());
 		}
 		return result;
 	}
@@ -127,8 +115,7 @@ public class FileController {
     @GetMapping("/file/download")
     public void fileDownload(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		UserVO loginVO = (UserVO)session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO)session.getAttribute("adminLogin");
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){
+		if(ObjectUtils.isEmpty(loginVO)){
 			response.sendRedirect("/error");
 		}
         try{

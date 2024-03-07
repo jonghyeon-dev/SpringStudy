@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>글작성</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -10,10 +11,10 @@
         <%@include file="../layouts/top.jsp"%> 
         <div class="text-center">
             <c:if test="${status eq 'insert'}">
-                <c:set var="actionUrl" value="insertBoard"/>
+                <c:set var="actionUrl" value="boardInsert"/>
             </c:if>
             <c:if test="${status eq 'update'}">
-                <c:set var="actionUrl" value="modifyBoard/${boardInfo.boardId}"/>
+                <c:set var="actionUrl" value="boardUpdate/${boardInfo.boardId}"/>
             </c:if>
             <form id="boardInsertForm" method="post" action="<c:url value='/board/${category}/${actionUrl}'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
                 <div class="insertArea">

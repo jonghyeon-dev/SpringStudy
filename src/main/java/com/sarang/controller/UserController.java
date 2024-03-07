@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 
 import com.sarang.config.SecureUtil;
-import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseData;
 import com.sarang.service.UserService;
@@ -43,9 +42,8 @@ public class UserController {
     @GetMapping(value="/login.do")
     public String loginPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model, @RequestParam(value="errorMsg", required=false) String errorMsg) {
-        AdminVO adminVO =(AdminVO) session.getAttribute("adminLogin");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        if(!ObjectUtils.isEmpty(loginVO) || !ObjectUtils.isEmpty(adminVO)){
+        if(!ObjectUtils.isEmpty(loginVO)){
             return "redirect:/main.do";
         }
         logger.info("User Login Page View");
@@ -67,9 +65,8 @@ public class UserController {
     public String createAccount(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) {
         logger.info("createAccountPage View");
-        AdminVO adminVO =(AdminVO) session.getAttribute("adminLogin");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        if(!ObjectUtils.isEmpty(loginVO) || !ObjectUtils.isEmpty(adminVO)){
+        if(!ObjectUtils.isEmpty(loginVO)){
             return "redirect:/main.do";
         }
         return "user/createAccountPage";
@@ -123,15 +120,11 @@ public class UserController {
     , HttpServletResponse response, RedirectAttributes redirectAttributes) {
         logger.info("Add User Process");
         String userId = request.getParameter("userId").trim();
-        System.out.println(userId);
         String userPw = request.getParameter("userPw").trim();
-        System.out.println(userPw);
+        String pwCheck = request.getParameter("userPwCheck").trim();
         String userNm = request.getParameter("userNm").trim();
-        System.out.println(userNm);
         String celph = request.getParameter("celph").trim();
-        System.out.println(celph);
         String email = request.getParameter("email").trim();
-        System.out.println(email);
 
         if(userId == null || "".equals(userId)){
             redirectAttributes.addFlashAttribute("errorMsg"
@@ -141,15 +134,24 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "패스워드는 필수 값 입니다.");
             return "redirect:/createAccount.do";
+        }else if(pwCheck == null || "".equals(pwCheck) ){
+            redirectAttributes.addFlashAttribute("errorMsg"
+                , "패스워드확인은 필수 값 입니다.");
+            return "redirect:/createAccount.do";
         }else if(userNm == null || "".equals(userNm) ){
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "닉네임은 필수 값 입니다.");
             return "redirect:/createAccount.do";
         }
 
+        if(!userPw.equals(pwCheck)){
+            redirectAttributes.addFlashAttribute("errorMsg"
+                , "패스워드와 확인 값이 다릅니다.");
+            return "redirect:/createAccount.do";
+        }
+
         String checkDup = userService.checkUserDuplication(userId);
         if(checkDup != null){
-            System.out.println("isRun?");
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "중복되는 ID가 있습니다.");
             return "redirect:/createAccount.do";
@@ -176,6 +178,8 @@ public class UserController {
                 , "500 서버 오류가 발생하였습니다.");
             return "redirect:/login.do";
         }
+
+        userVO.setUserGrant("9");
         userVO.setUserNm(userNm);
         userVO.setCelph(celph);
         userVO.setEmail(email);

@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sarang.config.FileUtils;
-import com.sarang.model.AdminVO;
+import com.sarang.config.SecureUtil;
 import com.sarang.model.BoardVO;
+import com.sarang.model.BoardViewVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.FileVO;
 import com.sarang.model.common.PageVO;
@@ -45,6 +46,9 @@ public class BoardController {
 
 	@Autowired
 	private FileUtils fileUtils;
+
+	@Autowired
+	private SecureUtil secureUtil;
     
     @GetMapping(value="/board/{category}")
     public String boardMainPage(HttpSession session, HttpServletRequest request
@@ -153,15 +157,40 @@ public class BoardController {
 		js.setData(totalContents);
 		return js;
 	}
-	
+
+	@GetMapping(value="/board/{category}/detail/{boardId}")
+	public String boardDetailPage(HttpSession session, HttpServletRequest request
+	, HttpServletResponse response , Model model, @PathVariable("category") String category
+	, @PathVariable("boardId") Integer boardId) throws Exception{
+		logger.info("boardDetailPage View");
+		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+		HashMap<String,Object> reqMap = new HashMap<>();
+		reqMap.put("boardId",boardId);
+		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
+		List<FileVO> fileList = boardService.getBoardFileList(reqMap);
+		String boardCntnt = boardVO.getBoardCntnt();
+		boardVO.setBoardCntnt(StringEscapeUtils.unescapeHtml4(boardCntnt));
+
+		BoardViewVO viewVO = new BoardViewVO();
+		viewVO.setBoardId(boardId);
+		if(ObjectUtils.isEmpty(userVO)){
+			viewVO.setCretUser("guest:"+secureUtil.getClientIP(request));
+		}else{
+			viewVO.setCretUser(userVO.getUserId());
+		}
+		boardService.insertBoardViewInfo(viewVO);
+
+		model.addAttribute("boardInfo", boardVO);
+		model.addAttribute("boardFileList", fileList);
+		return "board/boardDetailPage";
+	}
 
 	@GetMapping(value="/board/{category}/boardWrite")
 	public String boardInsertPage(HttpSession session, HttpServletRequest request
 	, HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
 		logger.info("boardWritePage View");
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(checkBoardLogin(loginVO,adminVO,category)){
+		if(checkBoardLogin(loginVO,category)){
 			return "redirect:/board"+category;
 		};
 		model.addAttribute("middle", category);
@@ -170,42 +199,18 @@ public class BoardController {
 		return "board/boardWritePage";
 	}
 
-	@GetMapping(value="/boardDetail/{category}/{boardId}")
-	public String boardDetailPage(HttpSession session, HttpServletRequest request
-	, HttpServletResponse response , Model model, @PathVariable("category") String category
-	, @PathVariable("boardId") Integer boardId) throws Exception{
-		logger.info("boardDetailPage View");
-		
-		HashMap<String,Object> reqMap = new HashMap<>();
-		reqMap.put("boardId",boardId);
-
-		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
-		List<FileVO> fileList = boardService.getBoardFileList(reqMap);
-		String boardCntnt = boardVO.getBoardCntnt();
-		boardVO.setBoardCntnt(StringEscapeUtils.unescapeHtml4(boardCntnt));
-
-		model.addAttribute("boardInfo", boardVO);
-		model.addAttribute("boardFileList", fileList);
-		return "board/boardDetailPage";
-	}
-
-	@RequestMapping(value="/board/{category}/insertBoard", method=RequestMethod.POST)
+	@PostMapping(value="/board/{category}/boardInsert")
 	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
 	, List<MultipartFile> uploadFiles, @PathVariable("category") String category) throws Exception {
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(checkBoardLogin(loginVO,adminVO,category)){
+		if(checkBoardLogin(loginVO,category)){
 			return "redirect:/board"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
 		String boardCate = category;
 		String cretUser ="";
-		if(ObjectUtils.isEmpty(loginVO)){
-			cretUser = adminVO.getEno();
-		}else{
-			cretUser = loginVO.getUserId();
-		}
+		cretUser = loginVO.getUserId();
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBoardCate(boardCate);
 		boardVO.setBoardTitle(boardTitle);
@@ -232,8 +237,7 @@ public class BoardController {
 	, @PathVariable("boardId") String boardId) throws Exception{
 		// 로그인 체크
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(checkBoardLogin(loginVO,adminVO,category)){
+		if(checkBoardLogin(loginVO,category)){
 			return "redirect:/board/"+category;
 		};
 		HashMap<String,Object> reqMap = new HashMap<>();
@@ -247,11 +251,7 @@ public class BoardController {
 		}
 		// 작성자 여부 확인
 		String modifyUser = "";
-		if(ObjectUtils.isEmpty(loginVO)){
-			modifyUser = adminVO.getEno();
-		}else{
-			modifyUser = loginVO.getUserId();
-		}
+		modifyUser = loginVO.getUserId();
 		if(!boardVO.getCretUser().equals(modifyUser)){
 			return "redirect:/board/"+category;
 		}
@@ -269,13 +269,12 @@ public class BoardController {
 		return "board/boardWritePage";
 	}
 
-	@PostMapping(value="/board/{category}/modifyBoard/{boardId}")
+	@PostMapping(value="/board/{category}/boardUpdate/{boardId}")
 	public String modifyBoardInfo(HttpSession session, MultipartHttpServletRequest request
     , HttpServletResponse response, List<MultipartFile> uploadFiles, @PathVariable("category") String category
 	, @PathVariable("boardId") String boardId) throws Exception {
 		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-		if(checkBoardLogin(loginVO,adminVO,category)){
+		if(checkBoardLogin(loginVO,category)){
 			return "redirect:/board"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
@@ -292,11 +291,7 @@ public class BoardController {
 			return "redirect:/board/"+category;
 		}
 		String chgUser = "";
-		if(ObjectUtils.isEmpty(loginVO)){
-			chgUser = adminVO.getEno();
-		}else{
-			chgUser = loginVO.getUserId();
-		}
+		chgUser = loginVO.getUserId();
 		// 작성자 여부 확인
 		if(!boardVO.getCretUser().equals(chgUser)){
 			return "redirect:/board/"+category;
@@ -316,7 +311,16 @@ public class BoardController {
 				return "redirect:/error";
 			}
 		}
-		return "redirect:/boardDetail/"+category+"/"+boardId;
+		return "redirect:/board/"+category+"/detail/"+boardId;
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/board/{category}/boardRecom",method=RequestMethod.POST)
+	public ResponseData putBoardRecom(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	,  @PathVariable("category") String category)throws Exception{
+		ResponseData js = new ResponseData();
+
+		return js;
 	}
 
 	/**
@@ -326,20 +330,20 @@ public class BoardController {
 	 * @param category
 	 * @return boolean
 	 */
-	private boolean checkBoardLogin(UserVO loginVO, AdminVO adminVO, String category){
+	private boolean checkBoardLogin(UserVO loginVO, String category){
 		// 자유게시판 사용자 체크
-		if(ObjectUtils.isEmpty(loginVO) && ObjectUtils.isEmpty(adminVO)){ 
+		if(ObjectUtils.isEmpty(loginVO)){ 
 			return true;
 		}
 		// 그 외 게시판 관리자 체크
-		if(!"community".equals(category) && ObjectUtils.isEmpty(adminVO)){
+		if(!"community".equals(category) && "0".equals(loginVO.getUserGrant())){
 			return true;
 		}
 		return false;
 	}
 
 	// 에디터 업로드 시 2중 escape된 태그 삭제 처리
-	// 프록시 툴을 사용해서 입력 시 어떻게 처리해야 하는지?
+	// 프록시 툴을 사용해서 입력 시 어떻게 처리해야 하는지? ckeditor를 쓰지 말아야하나?
 	private String escapeQuoatHtmlTag(String args){
 		return args.replaceAll("&amp;lt;","").replaceAll("&amp;gt;","")
 		.replaceAll("&amp;quot;","").replaceAll("&amp;#034;","")

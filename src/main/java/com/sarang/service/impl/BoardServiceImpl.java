@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sarang.mapper.BoardMapper;
 import com.sarang.model.BoardVO;
+import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
 import com.sarang.service.BoardService;
 
@@ -58,5 +59,10 @@ public class BoardServiceImpl implements BoardService{
     public Integer resetBoardFileList(BoardVO boardVO){
         return boardMapper.resetBoardFileList(boardVO);
 
+    }
+
+    @Override
+    public Integer insertBoardViewInfo(BoardViewVO viewVO){
+        return boardMapper.insertBoardViewInfo(viewVO);
     }
 }

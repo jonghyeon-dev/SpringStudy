@@ -60,25 +60,21 @@ public class XSSFilterWrapper extends HttpServletRequestWrapper{
 			
 			@Override
 			public int read() throws IOException {
-				// TODO Auto-generated method stub
 				return byteArrayInputStream.read();
 			}
 			
 			@Override
 			public void setReadListener(ReadListener readListener) {
-				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
 			public boolean isReady() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
 			@Override
 			public boolean isFinished() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		};

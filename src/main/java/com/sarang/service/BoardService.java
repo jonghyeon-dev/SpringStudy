@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.sarang.model.BoardVO;
+import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
 
 public interface BoardService {
@@ -16,4 +17,5 @@ public interface BoardService {
     Integer updateBoardDetailInfo(BoardVO boardVO);
     Integer deleteBoardDetailInfo(BoardVO boardVO);
     Integer resetBoardFileList(BoardVO boardVO);
+    Integer insertBoardViewInfo(BoardViewVO viewVO);
 }

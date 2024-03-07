@@ -2,11 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sarang.mapper.UserMapper">
+  <select id="checkAdminLogin" resultType="com.sarang.model.UserVO">
+		SELECT * FROM TUSR00100
+		WHERE 1=1
+		  AND USER_ID = #{userId}
+		  AND USER_PW = #{userPw}
+		  AND USER_GRANT = '0'
+	</select>
+
 	<select id="checkUserLogin" resultType="com.sarang.model.UserVO">
 		SELECT * FROM TUSR00100
 		WHERE 1=1
 		  AND USER_ID = #{userId}
 		  AND USER_PW = #{userPw}
+      AND USER_GRANT != '0'
 	</select>
 
   <select id="checkUserDuplication" resultType="String" parameterType="String">
@@ -16,10 +25,56 @@
 	</select>
 
   <select id="getUserInfo" resultType="com.sarang.model.UserVO">
-		SELECT * FROM TUSR00100
+		SELECT 
+      SEQ,
+      USER_ID,
+      USER_NM,
+      USER_GRANT,
+      CELPH,
+      EMAIL,
+      CRET_DATE,
+      CRET_TIME,
+      CHG_DATE,
+      CHG_TIME
+    FROM TUSR00100
 		WHERE 1=1
+      <if test='seq != null and !seq.equals("")'>
+		  AND SEQ LIKE CONCAT('%',#{seq},'%')
+		  </if>
+      <if test="!''.equals(userId) and userId != null">
 		  AND USER_ID like concat('%', #{userId} ,'%')
+      </if>
+      <choose>
+        <when test='!"".equals(userGrant) and userGrant != null'>
+          AND USER_GRANT = {userGrant}
+        </when>
+        <otherwise>
+          AND USER_GRANT != '0' 
+        </otherwise>
+      </choose>
 		ORDER BY SEQ desc LIMIT #{start}, #{size}
+	</select>
+
+  <select id="getUserPageInfo" resultType="HashMap">
+		SELECT 
+			count(*) AS totalCnt,
+			CEIL((count(*)/#{size})) as totalPage
+		FROM TUSR00100
+		WHERE 1=1
+		  <if test='seq != null and !seq.equals("")'>
+		  AND SEQ LIKE CONCAT('%',#{seq},'%')
+		  </if>
+		  <if test='userId != null and !userId.equals("")'>
+		  AND ENO LIKE CONCAT('%',#{eno},'%')
+		  </if>
+      <choose>
+        <when test='!"".equals(userGrant) and userGrant != null'>
+          AND USER_GRANT = {userGrant}
+        </when>
+        <otherwise>
+          AND USER_GRANT != '0' 
+        </otherwise>
+      </choose>
 	</select>
 
   <update id="updateUserInfo" parameterType="com.sarang.model.UserVO">
@@ -47,6 +102,7 @@
         USER_ID,
         USER_PW,
         USER_NM,
+        USER_GRANT,
         CELPH,
         EMAIL,
         CRET_DATE,
@@ -57,6 +113,7 @@
         #{userId},
         #{userPw},
         #{userNm},
+        #{userGrant},
         #{celph},
         #{email},
         DATE_FORMAT(NOW(),'%Y%m%d'),
@@ -65,4 +122,11 @@
         DATE_FORMAT(NOW(),'%H%i%s')
       )
   </insert>
+
+  <delete id="deleteUserInfo" parameterType="java.util.List">
+		DELETE FROM TUSR00100 WHERE SEQ IN
+		<foreach collection="deleteList" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
 </mapper>

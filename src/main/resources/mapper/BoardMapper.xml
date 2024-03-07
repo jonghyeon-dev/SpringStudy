@@ -6,30 +6,37 @@
 		SELECT 
 			BOARD_ID,
 			BOARD_CATE,
-			<if test='"news".equals(boardCate)'>
-			BOARD_CNTNT,
-			</if>
 			BOARD_TITLE,
 			CRET_USER,
 			CRET_DATE,
 			CRET_TIME,
 			CHG_USER,
 			CHG_DATE,
-			CHG_TIME
-		FROM TBRD00100
+			CHG_TIME,
+			CASE WHEN STR_TO_DATE(CONCAT(CRET_DATE,CRET_TIME),'%Y%m%d%H%i%s') 
+				BETWEEN DATE_ADD(now(), INTERVAL -1 DAY) 
+					AND NOW() 
+				THEN 1 
+				ELSE 0 
+			END AS AS_NEW,
+		IFNULL((SELECT COUNT(BOARD_ID) AS VIEW_CNT FROM TBRD00102 B WHERE A.BOARD_ID = B.BOARD_ID GROUP BY BOARD_ID),0) AS VIEW_CNT,
+		IFNULL((SELECT SUM(chu) as CHU_CNT FROM TBRD00103 C WHERE A.BOARD_ID = C.BOARD_ID GROUP BY BOARD_ID),0) AS CHU_CNT
+	FROM TBRD00100 A
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
-		  <if test='"title".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
-		  </if>
-		  <if test='"content".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
-		  </if>
-		  <if test='"titCont".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
-		  </if>
-		  <if test='"user".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+		  <if test='searchWord != null and !"".equals(searchWord)'>
+			<if test='"title".equals(searchOption)'>
+				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"content".equals(searchOption)'>
+				AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"titCont".equals(searchOption)'>
+				AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+			</if>
+			<if test='"user".equals(searchOption)'>
+				AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+			</if>
 		  </if>
 		ORDER BY BOARD_ID desc LIMIT #{start}, #{size}
 	</select>
@@ -40,17 +47,19 @@
 		FROM TBRD00100
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
-		  <if test='"title".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
-		  </if>
-		  <if test='"content".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
-		  </if>
-		  <if test='"titCont".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
-		  </if>
-		  <if test='"user".equals(searchOption) and searchWord != null and !"".equals(searchWord)'>
-		  	AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+		  <if test='searchWord != null and !"".equals(searchWord)'>
+			<if test='"title".equals(searchOption)'>
+				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"content".equals(searchOption)'>
+				AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"titCont".equals(searchOption)'>
+				AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+			</if>
+			<if test='"user".equals(searchOption)'>
+				AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+			</if>
 		  </if>
 	</select>
 
@@ -88,6 +97,20 @@
 			DATE_FORMAT(NOW(),'%Y%m%d'),
 			DATE_FORMAT(NOW(),'%H%i%s'),
 			#{chgUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<insert id="insertBoardViewInfo" parameterType="com.sarang.model.BoardViewVO">
+		INSERT INTO TBRD00102(
+			BOARD_ID,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME
+		)VALUES(
+			#{boardId},
+			#{cretUser},
 			DATE_FORMAT(NOW(),'%Y%m%d'),
 			DATE_FORMAT(NOW(),'%H%i%s')
 		)

@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>홈</title>
         <%@include file="../layouts/header.jsp"%>
     </head>
     <body class="bg-light">
@@ -91,7 +92,14 @@
                                 <div id="newsItems">
                                     <c:forEach items="${noticeBoardList}" var="items">
                                         <div class="border-bottom border-top d-flex flex-row justify-content-between" style="height:2.5rem;">
-                                            <a class="link-dark col" href="<c:url value='/boardDetail/notice/${items.boardId}'/>"><h5><c:out value="${items.boardTitle}"/></h5></a>
+                                            <a class="link-dark col" href="<c:url value='/board/notice/detail/${items.boardId}'/>">
+                                                <h5>
+                                                    <c:out value="${items.boardTitle}"/>
+                                                    <c:if test="${items.asNew eq 1}">
+                                                        <div class="badge bg-danger bg-gradient rounded-pill ms-2 mb-2">New</div>
+                                                    </c:if>
+                                                </h5>
+                                            </a>
                                             <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                                             <div class="small text-muted col-sm-auto"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></div>
                                         </div>
@@ -150,8 +158,10 @@
                                         <img class="card-img-top" src="${items.thumbPath}" alt="..." />
                                     </c:if>
                                     <div class="card-body p-4">
-                                        <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
-                                        <a class="text-decoration-none link-dark stretched-link" href="/boardDetail/news/${items.boardId}"><div class="h5 card-title mb-3">${items.title}</div></a>
+                                        <c:if test="${items.asNew eq 1}">
+                                            <div class="badge bg-danger bg-gradient rounded-pill mb-2">New</div>
+                                        </c:if>
+                                        <a class="text-decoration-none link-dark stretched-link" href="/board/news/detail/${items.boardId}"><div class="h5 card-title mb-3">${items.title}</div></a>
                                         <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                                         <p class="card-text mb-0"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></p>
                                     </div>
@@ -164,7 +174,7 @@
                                     <div class="card h-100 shadow border-0">
                                         <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="..." />
                                         <div class="card-body p-4">
-                                            <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div> -->
+                                                <!-- <div class="badge bg-primary bg-gradient rounded-pill mb-2">New</div> -->
                                             <a class="text-decoration-none link-dark stretched-link"><div class="h5 card-title mb-3">제목</div></a>
                                             <p class="card-text mb-0">날짜</p>
                                         </div>

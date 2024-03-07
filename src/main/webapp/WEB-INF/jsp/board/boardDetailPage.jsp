@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>게시판상세</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -57,7 +58,7 @@
                         </c:if>
                     </c:when>
                     <c:otherwise>
-                        <c:if test="${adminLogin.eno eq boardInfo.cretUser}">
+                        <c:if test="${userLogin.userId eq boardInfo.cretUser && userLogin.userGrant eq '0'}">
                             <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
                         </c:if>
                     </c:otherwise>

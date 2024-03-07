@@ -27,6 +27,8 @@ public class UserVO {
     private String userPw;      // 사용자비밀번호
     @NonNull
     private String userNm;      // 사용자별칭
+    @NonNull
+    private String userGrant;   // 사용자 권한
     private String celph;       // 전화번호
     private String email;       // 이메일
     private String cretDate;    // 생성일자

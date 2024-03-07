@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>관리자정보</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -22,7 +23,7 @@
                         <th class="table-success pt-3"><span class="form-label">번호 :</span></th>
                         <td><input class="form-control" onKeypress="return enterBtnClick(event,'getAdminInfo')"  type="number" name="seq" value=""></td>
                         <th class="table-success pt-3"><span class="form-label">ID :</span></th>
-                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getAdminInfo')" type="text" name="eno" value=""></td>
+                        <td><input class="form-control" onKeypress="return enterBtnClick(event,'getAdminInfo')" type="text" name="userId" value=""></td>
                         <td>
                             <button class="btn btn-primary searchBtn" type="button" id="getAdminInfo">검색</button>
                             <button class="btn btn-primary searchReset" type="button" id="searchReset">초기화</button>
@@ -43,6 +44,7 @@
                         <th class="table-info">번호</th>
                         <th class="table-info">ID</th>
                         <th class="table-info">이름</th>
+                        <th class="table-info">권한</th>
                         <th class="table-info">휴대폰번호</th>
                         <th class="table-info">E-MAIL</th>
                         <th class="table-info">생성일자</th>
@@ -56,8 +58,9 @@
                     <tr>
                         <td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td>
                         <td><c:out value="${items.seq}"/></td>
-                        <td><c:out value="${items.eno}"/></td>
-                        <td><c:out value="${items.name}"/></td>
+                        <td><c:out value="${items.userId}"/></td>
+                        <td><c:out value="${items.userNm}"/></td>
+                        <td><c:out value="${items.userGrant}"/></td>
                         <td><c:out value="${items.celph}"/></td>
                         <td><c:out value="${items.email}"/></td>
                         <td><c:out value="${items.cretDate}"/></td>
@@ -116,14 +119,14 @@
 
         };
         //사용자 데이터 출력
-        var searchAdminInfo = function(seq,eno,paging){
+        var searchAdminInfo = function(seq,userId,paging){
             $.ajax({
-                    url: '<c:url value="/admin/getAdminInfo.do"/>',
+                    url: '<c:url value="/admin/getAccountInfo.do"/>',
                     type: "GET",
                     dataType: "json",
                     traditional:true,
                     data: {"seq":seq,
-                            "eno":eno,
+                            "userId":userId,
                             "page":paging},
                     success: response=>{
                         if(response.isSucceed){
@@ -134,8 +137,9 @@
                                 dataText = dataText + "<tr>";
                                 dataText = dataText + "<td class='delCheck'><input type='checkbox' name='delCheck' value="+data[i].seq+"></td>";
                                 dataText = dataText + "<td>"+data[i].seq+"</td>";
-                                dataText = dataText + "<td>"+data[i].eno+"</td>";
-                                dataText = dataText + "<td>"+data[i].name+"</td>";
+                                dataText = dataText + "<td>"+data[i].userId+"</td>";
+                                dataText = dataText + "<td>"+data[i].userNm+"</td>";
+                                dataText = dataText + "<td>"+data[i].userGrant+"</td>";
                                 dataText = dataText + "<td>"+data[i].celph+"</td>";
                                 dataText = dataText + "<td>"+data[i].email+"</td>";
                                 dataText = dataText + "<td>"+data[i].cretDate+"</td>";
@@ -147,6 +151,7 @@
                             if(data.length<10){
                                 for(i=0;i<(10 - data.length);i++){
                                     dataText = dataText + "<tr>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
                                     dataText = dataText + "<td>&nbsp;</td>";
@@ -248,7 +253,7 @@
                                             }
                                         });
                                     }
-                                    searchAdminInfo(seq,eno,selectedPage);
+                                    searchAdminInfo(seq,userId,selectedPage);
                                 })
                             }
                         }
@@ -271,7 +276,7 @@
                 // data:{"delListData": JSON.stringify(delList)},
                 success: response=>{
                     let seq=$("#searchAdminForm input[name='seq']").val();
-                    let eno=$("#searchAdminForm input[name='eno']").val();
+                    let eno=$("#searchAdminForm input[name='userId']").val();
                     searchAdminInfo(seq,eno,0);
                     $("#checkAll").prop('checked',false);
                 },
@@ -292,14 +297,14 @@
             //검색 버튼 클릭 시
             $("#getAdminInfo").click(e=>{
                 let seq=$("#searchAdminForm input[name='seq']").val();
-                let eno=$("#searchAdminForm input[name='eno']").val();
-                searchUserInfo(seq,eno,0);
+                let eno=$("#searchAdminForm input[name='userId']").val();
+                searchUserInfo(seq,userId,0);
             });
 
             //하단 페이지 숫자 클릭 시
             $("#adminInfoPagination li:not(.disabled.active)").on("click",function(){
                 let seq=$("#searchAdminForm input[name='seq']").val();
-                let eno=$("#searchAdminForm input[name='eno']").val();
+                let userId=$("#searchAdminForm input[name='userId']").val();
                 let selectedPage=$(this).find("input[name='page']").val();
                 let totalPages = '<c:out value="${adminInfoList.totalPages}"/>';
                 if(selectedPage === "next"){
@@ -309,7 +314,7 @@
                         selectedPage = Number(totalPages)-1;
                     }
                 }
-                searchAdminInfo(seq,eno,selectedPage);
+                searchAdminInfo(seq,userId,selectedPage);
             })
 
             //삭제하기 버튼 클릭 시

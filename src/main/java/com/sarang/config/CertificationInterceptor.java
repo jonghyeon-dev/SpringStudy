@@ -11,7 +11,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.sarang.model.AdminVO;
 import com.sarang.model.UserVO;
 
 
@@ -23,28 +22,27 @@ public class CertificationInterceptor implements HandlerInterceptor{
             throws Exception {
         HttpSession session = request.getSession();
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        AdminVO adminVO = (AdminVO) session.getAttribute("adminLogin");
-        // 사용자만
-        if(request.getRequestURI().indexOf("/user/") >= 0){
+        // 사용자 
+        if(request.getRequestURI().indexOf("/user/") >= 0
+            ||request.getRequestURI().indexOf("/file/") >= 0
+            ||request.getRequestURI().indexOf("/community/board") >= 0){
             if(ObjectUtils.isEmpty(loginVO)){
                 response.sendRedirect("/error");
                 return false;
             }
         }
-        // 관리자만
-        if(request.getRequestURI().indexOf("/admin/") >= 0){
-            if(ObjectUtils.isEmpty(adminVO)){
+        // 관리자
+        if(request.getRequestURI().indexOf("/admin/") >= 0 
+            ||request.getRequestURI().indexOf("/news/board") >= 0
+            ||request.getRequestURI().indexOf("/notice/board") >= 0){
+            if(ObjectUtils.isEmpty(loginVO)){
+                response.sendRedirect("/error");
+                return false;
+            }else if(!"0".equals(loginVO.getUserGrant())){
                 response.sendRedirect("/error");
                 return false;
             }
         }
-        // 둘다 포함
-        // if(request.getRequestURI().indexOf("/file/") >= 0){
-        //     if(ObjectUtils.isEmpty(adminVO) && ObjectUtils.isEmpty(loginVO)){
-        //         response.sendRedirect("/error");
-        //         return false;
-        //     }
-        // }
 
         return true;
     }

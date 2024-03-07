@@ -1,6 +1,7 @@
 package com.sarang.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,23 @@ public class UserServiceImpl implements UserService{
     UserMapper userMapper;
 
     @Override
+    public UserVO checkAdminLogin(HashMap<String,Object> reqMap){
+        return userMapper.checkAdminLogin(reqMap);
+    }
+
+    @Override
     public UserVO checkUserLogin(HashMap<String,Object> reqMap){
         return userMapper.checkUserLogin(reqMap);
+    }
+
+    @Override
+    public List<UserVO> getUserInfo(HashMap<String,Object> reqMap){
+        return userMapper.getUserInfo(reqMap);
+    }
+
+    @Override
+    public HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap){
+        return userMapper.getUserPageInfo(reqMap);
     }
 
     @Override
@@ -25,8 +41,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public int insertUserInfo(UserVO userVO){
+    public Integer insertUserInfo(UserVO userVO){
         return userMapper.insertUserInfo(userVO);
+    }
+
+    @Override
+    public Integer deleteUserInfo(List<String> deleteList){
+        return userMapper.deleteUserInfo(deleteList);
     }
 }
 

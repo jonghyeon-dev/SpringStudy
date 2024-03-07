@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sarang.model.BoardVO;
+import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
 
 @Mapper
@@ -18,5 +19,8 @@ public interface BoardMapper {
     Integer insertBoardDetailInfo(BoardVO boardVO);
     Integer updateBoardDetailInfo(BoardVO boardVO);
     Integer deleteBoardDetailInfo(BoardVO boardVO);
+    
     Integer resetBoardFileList(BoardVO boardVO);
+
+    Integer insertBoardViewInfo(BoardViewVO viewVO);
 }

@@ -5,6 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>게시판</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -35,15 +36,18 @@
                         <tr>
                             <td class="text-center"><c:out value="${items.boardId}"/></td>
                             <td>
-                                <a class="link-dark" href="<c:url value='/boardDetail/${category}/${items.boardId}'/>">
+                                <a class="link-dark" href="<c:url value='/board/${category}/detail/${items.boardId}'/>">
                                     <c:out value="${items.boardTitle}"/>
+                                    <c:if test="${items.asNew eq 1}">
+                                        <div class="badge bg-danger bg-gradient rounded-pill ms-2 mb-2">News</div>
+                                    </c:if> 
                                 </a>
                             </td>
                             <td><c:out value="${items.cretUser}"/></td>
                             <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                             <td class="text-center"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></td>
-                            <td class="text-center">0</td>
-                            <td class="text-center">0</td>
+                            <td class="text-center">${items.viewCnt}</td>
+                            <td class="text-center">${items.chuCnt}</td>
                         </tr>
                     </c:forEach>
                     <c:if test="${fn:length(totalContents.boardList) < 10}">
@@ -80,175 +84,75 @@
             </form>
             <c:choose>
                 <c:when test="${category eq 'community'}">
-                    <c:if test="${userLogin ne null or adminLogin ne null}">
+                    <c:if test="${userLogin ne null}">
                         <a class="btn btn-outline-info flot-right" href="<c:url value='/board/${category}/boardWrite'/>">글쓰기</a>
                     </c:if>
                 </c:when>
                 <c:otherwise>
-                    <c:if test="${adminLogin ne null}">
+                    <c:if test="${userLogin ne null && userLogin.userGrant eq '0'}">
                         <a class="btn btn-outline-info flot-right" href="<c:url value='/board/${category}/boardWrite'/>">글쓰기</a>
                     </c:if>
                 </c:otherwise>
             </c:choose>
         </seciton>
-            <!-- <nav aria-label="Page navigation example">
-                <ul class="pagination" style="justify-content: center;">
-                    <c:set var="totalPage" value="${totalContents.totalPages}"/>
-                    <c:choose>
-                        <c:when test="${totalPage > 10}">
-                            <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>
-                            <li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="0">1</a></li>
-                            <c:forEach var="cnt" begin="2" end="10" step="1">
-                                <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
-                            </c:forEach>
-                            <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>
-                            <c:forEach var="cnt" begin="1" end="${totalPage}" step="1">
-                                <c:choose>
-                                    <c:when test="${cnt eq 1}">
-                                        <li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="${cnt-1}">${cnt}</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                            <c:choose>
-                                <c:when test="${totalPage <= 1}">
-                                    <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:otherwise>
-                    </c:choose>
-                </ul>
-            </nav> -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination" style="justify-content: center;" id="boardInfoPagination">
                     <c:choose>
-                        <c:when test="${param.searchOption ne null and param.searchWord ne null}">
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.firstPage} > 0">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/1?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&laquo;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&laquo;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.prevPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.prevPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&lt;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&lt;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:forEach var="idx" begin="${totalContents.pageInfo.startPage}" end="${totalContents.pageInfo.endPage}" step="1">
-                                <c:choose>
-                                    <c:when test="${totalContents.pageInfo.currentPage eq idx}">
-                                        <li class="page-item active"><a class="page-link" href='<c:url value="/board/${category}/${idx}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>'>${idx}</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li class="page-item"><a class="page-link" href='<c:url value="/board/${category}/${idx}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>'>${idx}</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.nextPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.nextPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&gt;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&gt;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.lastPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.lastPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&raquo;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&raquo;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
+                        <c:when test="${totalContents.pageInfo.firstPage} > 0">
+                            <li class="page-item">
+                                <a class="page-link" href="<c:url value='/board/${category}/1?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&laquo;</a>
+                            </li>
                         </c:when>
                         <c:otherwise>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.firstPage} > 0">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/1'/>">&laquo;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&laquo;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.prevPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.prevPage}'/>">&lt;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&lt;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:forEach var="idx" begin="${totalContents.pageInfo.startPage}" end="${totalContents.pageInfo.endPage}" step="1">
-                                <c:choose>
-                                    <c:when test="${totalContents.pageInfo.currentPage eq idx}">
-                                        <li class="page-item active"><a class="page-link" href='<c:url value="/board/${category}/${idx}"/>'>${idx}</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li class="page-item"><a class="page-link" href='<c:url value="/board/${category}/${idx}"/>'>${idx}</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.nextPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.nextPage}'/>">&gt;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&gt;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${totalContents.pageInfo.lastPage > 0}">
-                                    <li class="page-item">
-                                        <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.lastPage}'/>">&raquo;</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled">
-                                        <a class="page-link">&raquo;</a>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
+                            <li class="page-item disabled">
+                                <a class="page-link">&laquo;</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${totalContents.pageInfo.prevPage > 0}">
+                            <li class="page-item">
+                                <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.prevPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&lt;</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="page-item disabled">
+                                <a class="page-link">&lt;</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:forEach var="idx" begin="${totalContents.pageInfo.startPage}" end="${totalContents.pageInfo.endPage}" step="1">
+                        <c:choose>
+                            <c:when test="${totalContents.pageInfo.currentPage eq idx}">
+                                <li class="page-item active"><a class="page-link" href='<c:url value="/board/${category}/${idx}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>'>${idx}</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="page-item"><a class="page-link" href='<c:url value="/board/${category}/${idx}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>'>${idx}</a></li>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <c:choose>
+                        <c:when test="${totalContents.pageInfo.nextPage > 0}">
+                            <li class="page-item">
+                                <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.nextPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&gt;</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="page-item disabled">
+                                <a class="page-link">&gt;</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${totalContents.pageInfo.lastPage > 0}">
+                            <li class="page-item">
+                                <a class="page-link" href="<c:url value='/board/${category}/${totalContents.pageInfo.lastPage}?searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">&raquo;</a>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="page-item disabled">
+                                <a class="page-link">&raquo;</a>
+                            </li>
                         </c:otherwise>
                     </c:choose>
                 </ul>

@@ -23,5 +23,5 @@ public class BoardVO {
     //SubQuery
     private String asNew;           //24시간내 게시여부
     private String viewCnt;         //조회수
-    private String upCnt;           //추천수
+    private String chuCnt;           //추천수
 }
