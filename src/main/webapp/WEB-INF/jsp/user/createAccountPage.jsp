@@ -44,7 +44,7 @@
                 </table>
                 <input type="hidden" name="paging" value="0">
                 <div class="button-area text-center mb-2">
-                    <button class="btn btn-primary" type="button" id="reset">초기화</button>
+                    <button class="btn btn-primary" type="button" id="formReset">초기화</button>
                     <a href='<c:url value="/login.do"/>' class="btn btn-warning">돌아가기</button></a>
                     <button class="btn btn-success" type="submit">등록</button>
                 </div>
@@ -65,42 +65,42 @@
                 $("#modalContent").append(errorMsg);
                 $("#modalInfo").show();
             }
+
+            checkDuplication = function(){
+                let userId = $("#addUserForm input[name='userId']").val();
+                console.log(userId)
+                $.ajax({url:"<c:url value='/checkUserDup.do'/>",
+                        type:"POST",
+                        dataType: "json",
+                        traditional: true,
+                        data: {"userId":userId},
+                        success : function(result){
+                            $("#modalTitle").empty();
+                            $("#modalContent").empty();
+                            if(result.isSucceed){
+                                $("#modalTitle").append("중복체크");
+                                $("#modalContent").append("사용할 수 있는 ID입니다.");
+                                $("#modalInfo").show();
+                                $("#addUserForm input[name='checkDup']").val(true);
+                            }else{
+                                $("#modalTitle").append("중복체크");
+                                $("#modalContent").append("중복되는 ID가 존재합니다.");
+                                $("#modalInfo").show();
+                                $("#addUserForm input[name='checkDup']").val(false);
+                            }
+                        },
+                        error : function(request, status, error){
+                            console.log(status)
+                            console.log(error)
+                        }
+                });
+            }
+
         };
 
-        checkDuplication = function(){
-            let userId = $("#addUserForm input[name='userId']").val();
-            console.log(userId)
-            $.ajax({url:"<c:url value='/checkUserDup.do'/>",
-                    type:"POST",
-                    dataType: "json",
-                    traditional: true,
-                    data: {"userId":userId},
-                    success : function(result){
-                        $("#modalTitle").empty();
-                        $("#modalContent").empty();
-                        if(result.isSucceed){
-                            $("#modalTitle").append("중복체크");
-                            $("#modalContent").append("사용할 수 있는 ID입니다.");
-                            $("#modalInfo").show();
-                            $("#addUserForm input[name='checkDup']").val(true);
-                        }else{
-                            $("#modalTitle").append("중복체크");
-                            $("#modalContent").append("중복되는 ID가 존재합니다.");
-                            $("#modalInfo").show();
-                            $("#addUserForm input[name='checkDup']").val(false);
-                        }
-                    },
-                    error : function(request, status, error){
-                        console.log(status)
-                        console.log(error)
-                    }
-        
-            })
-
-        }
 
         var registerEvent = function(){
-            $("#reset").click(function(){
+            $("#formReset").click(function(){
                 $("#addUserForm")[0].reset();
             });
 
@@ -135,7 +135,6 @@
 
         $("#modalTitle").empty();
         $("#modalContent").empty();
-        console.log("실행?");
         if(userId.trim() == "" || userId == null){
             $("#modalTitle").append("ID값이 없습니다.");
             $("#modalContent").append("ID값은 필수 값 입니다.");
@@ -173,6 +172,7 @@
             $("#modalContent").append("패스워드 값과 확인 값이 같지 않습니다.");
             $('#addUserForm input[name="userPw"]').focus();
             $("#modalInfo").show();
+            return false;
         }
         
         const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/ // 한국 휴대폰 번호 정규식

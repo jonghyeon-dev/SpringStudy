@@ -149,7 +149,7 @@ public class UserController {
                 , "패스워드와 확인 값이 다릅니다.");
             return "redirect:/createAccount.do";
         }
-
+        // 중복ID 체크 루틴
         String checkDup = userService.checkUserDuplication(userId);
         if(checkDup != null){
             redirectAttributes.addFlashAttribute("errorMsg"

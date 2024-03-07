@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 public class XSSFilter implements Filter{
+	@SuppressWarnings("unused")
 	private FilterConfig filterConfig;
 	
 	@Override

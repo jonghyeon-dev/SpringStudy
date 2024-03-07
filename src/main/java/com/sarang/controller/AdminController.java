@@ -115,6 +115,7 @@ public class AdminController {
         UserVO UserVO = new UserVO();
         String userId = request.getParameter("user").trim();
         String userPw = request.getParameter("userPw").trim();
+        String userPwCheck = request.getParameter("userPwCheck").trim();
         String userNm = request.getParameter("userNm").trim();
         String celph = request.getParameter("celph").trim();
         String email = request.getParameter("email").trim();
@@ -125,9 +126,18 @@ public class AdminController {
         }else if(userPw.trim().isEmpty() || userPw == null){
             redirectAttributes.addFlashAttribute("errorMsg","패스워드는 필수 값입니다.");
             return "redirect:/addAdmin.do";
+        }else if(userPwCheck.trim().isEmpty() || userPwCheck == null){
+            redirectAttributes.addFlashAttribute("errorMsg","패스워드는 필수 값입니다.");
+            return "redirect:/addAdmin.do";
         }else if(userNm.trim().isEmpty() || userNm == null){
             redirectAttributes.addFlashAttribute("errorMsg","이름은 필수 값입니다.");
             return "redirect:/addAdmin.do";
+        }
+
+        if(!userPw.equals(userPwCheck)){
+            redirectAttributes.addFlashAttribute("errorMsg"
+                , "패스워드와 확인 값이 다릅니다.");
+            return "redirect:/createAccount.do";
         }
         
         //아이디 중복체크 루틴

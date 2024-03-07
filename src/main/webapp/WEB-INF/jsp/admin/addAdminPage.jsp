@@ -20,20 +20,19 @@
                     </colgroup>
                     <tr>
                         <th><span>ID :</span></th>
-                        <td colspan="2">
-                            <input class="form-control" type="text" name="userId" value="" required="true">
-                        </td>
                         <td>
+                            <input class="form-control" type="text" name="userId" value="" required="true">
                             <button class="btn btn-primary" type="button" name="checkDuplication" data-toggle="modal" data-target="#modalInfo">중복확인</button>
                             <input type="hidden" name="checkDup" value="" required="true">
-                            <span></span>
                         </td>
+                        <th><span>이름 :</span></th>
+                        <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>PW :</span></th>
                         <td><input class="form-control" type="password" name="userPw" value="" required="true"></td>
-                        <th><span>이름 :</span></th>
-                        <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
+                        <th><span>PW :</span></th>
+                        <td><input class="form-control" type="password" name="userPwCheck" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>휴대폰번호 :</span></th>
@@ -59,39 +58,48 @@
 <script>
     var joinPage = (function(){
         var init = function(){
-
-            checkDuplication = function(){
-            let userId = $("#addAdminForm input[name='userId']").val();
-            console.log(userId);
-            $.ajax({url:"<c:url value='/checkUserDup.do'/>",
-                    type:"POST",
-                    dataType: "json",
-                    traditional: true,
-                    data: {"userId":userId},
-                    success : function(result){
-                        $("#modalTitle").empty();
-                        $("#modalContent").empty();
-                        if(result.isSucceed){
-                            $("#modalTitle").append("중복체크");
-                            $("#modalContent").append("사용할 수 있는 ID입니다.");
-                            $("#modalInfo").show();
-                            $("#addAdminForm input[name='checkDup']").val(true);
-                        }else{
-                            $("#modalTitle").append("중복체크");
-                            $("#modalContent").append("중복되는 ID가 존재합니다.");
-                            $("#modalInfo").show();
-                            $("#addAdminForm input[name='checkDup']").val(false);
-                        }
-                    },
-                    error : function(request, status, error){
-                        console.log(status)
-                        console.log(error)
-                    }
-        
-                })
+            const errorMsg = $("#errorMsg").val()
+            $("#modalTitle").empty();
+            $("#modalContent").empty();
+            if(errorMsg != null && errorMsg != ""){
+                $("#modalTitle").append("Error");
+                $("#modalContent").append(errorMsg);
+                $("#modalInfo").show();
             }
 
+            checkDuplication = function(){
+                let userId = $("#addAdminForm input[name='userId']").val();
+                console.log(userId);
+                $.ajax({url:"<c:url value='/checkUserDup.do'/>",
+                        type:"POST",
+                        dataType: "json",
+                        traditional: true,
+                        data: {"userId":userId},
+                        success : function(result){
+                            $("#modalTitle").empty();
+                            $("#modalContent").empty();
+                            if(result.isSucceed){
+                                $("#modalTitle").append("중복체크");
+                                $("#modalContent").append("사용할 수 있는 ID입니다.");
+                                $("#modalInfo").show();
+                                $("#addAdminForm input[name='checkDup']").val(true);
+                            }else{
+                                $("#modalTitle").append("중복체크");
+                                $("#modalContent").append("중복되는 ID가 존재합니다.");
+                                $("#modalInfo").show();
+                                $("#addAdminForm input[name='checkDup']").val(false);
+                            }
+                        },
+                        error : function(request, status, error){
+                            console.log(status)
+                            console.log(error)
+                        }
+            
+                });
+            }
         };
+
+        
 
         var registerEvent = function(){
             $("#reset").click(function(){
@@ -100,13 +108,11 @@
 
             //모달창 오픈
             $("#addAdminForm button[name='checkDuplication']").click(function(){
-                $("#modalTitle").append("중복체크");
-                $("#modalContent").append("중복체크 완료");
-                $("#modalInfo").show();
+                checkDuplication();
             })
 
-            $("#addAdminForm input[name='checkDup']").keypress(function(e){
-                this.empty();
+            $("#addAdminForm input[name='userId']").keypress(function(e){
+                $("#addUserForm input[name='checkDup']").val(false);
             });
         };
 
@@ -125,6 +131,7 @@
     function validationForm(){
         const userId = $('#addAdminForm input[name="userId"]').val(); // 아이디
         const userPw = $('#addAdminForm input[name="userPw"]').val(); // 패스워드
+        const userPwCheck = $('#addAdminForm input[name="userPwCheck"]').val(); // 패스워드
         const userNm = $('#addAdminForm input[name="userNm"]').val(); // 이름
         const cehckDup = $('#addAdminForm input[name="checkDup"]').val(); // 중복체크 여부
         if(userId.trim() == "" || userId == null){
@@ -136,6 +143,11 @@
             $("#modalTitle").append("패스워드 값이 없습니다.");
             $("#modalContent").append("패스워드 값은 필수 값 입니다.");
             $('#addAdminForm input[name="userPw"]').focus();
+            return false;
+        }else if(userPwCheck.trim() == "" || userPwCheck == null){
+            $("#modalTitle").append("패스워드 확인 값이 없습니다.");
+            $("#modalContent").append("패스워드 확인 값은 필수 값 입니다.");
+            $('#addAdminForm input[name="userPwCheck"]').focus();
             return false;
         }else if(userNm.trim() == "" || namuserNme == null){
             $("#modalTitle").append("이름 값이 없습니다.");
@@ -149,7 +161,30 @@
             return false;
         }
 
+        if(userPw != userPwCheck){
+            $("#modalTitle").append("패스워드 값 확인");
+            $("#modalContent").append("패스워드 값과 확인 값이 같지 않습니다.");
+            $('#addUserForm input[name="userPw"]').focus();
+            $("#modalInfo").show();
+            return false;
+        }
+
+        const regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/ // 한국 휴대폰 번호 정규식
+        let celph = $('#addUserForm input[name="celph"]').val();
+        if(celph != null && celph.trim() != ""){
+            if(regPhone.test(celph) == false){
+                $("#modalTitle").append("후대폰번호 입력값 오류");
+                $("#modalContent").append("휴대폰번호를 형식에 맞게 정확히 입력해 주세요.<br>예:010-123-1234 혹은 010-1234-1234");
+                $('#addUserForm input[name="eno"]').focus();
+                $("#modalInfo").show();
+                return false;
+            }
+            celph = celph.replace(/-/gi, "");// celph 안에 하이픈 전체 공백으로 치환
+        }
+        $('#addUserForm input[name="celph"]').val(celph.trim());
+
         return true;
     }
 </script>
 </html>
+

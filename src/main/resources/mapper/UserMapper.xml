@@ -46,7 +46,7 @@
       </if>
       <choose>
         <when test='!"".equals(userGrant) and userGrant != null'>
-          AND USER_GRANT = {userGrant}
+          AND USER_GRANT = #{userGrant}
         </when>
         <otherwise>
           AND USER_GRANT != '0' 
@@ -69,7 +69,7 @@
 		  </if>
       <choose>
         <when test='!"".equals(userGrant) and userGrant != null'>
-          AND USER_GRANT = {userGrant}
+          AND USER_GRANT = #{userGrant}
         </when>
         <otherwise>
           AND USER_GRANT != '0' 
