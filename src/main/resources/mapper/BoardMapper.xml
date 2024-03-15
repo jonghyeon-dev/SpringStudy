@@ -72,9 +72,6 @@
 		WHERE 1=1
           AND BOARD_ID = #{boardId}
 		  AND BOARD_CATE = #{boardCate}
-		  <if test="cretUser != null and !''.equals(cretUser)">
-		  	AND CRET_USER = #{cretUser}
-		  </if>
 	</select>
 
 	<select id="getBoardFileList" resultType="com.sarang.model.common.FileVO">
