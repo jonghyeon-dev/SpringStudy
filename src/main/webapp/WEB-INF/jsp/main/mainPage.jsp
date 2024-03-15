@@ -23,16 +23,16 @@
                                         <div class="row gx-0">
                                             <div class="col-lg-6 col-xl-5 py-lg-5">
                                                 <div class="p-4 p-md-5 slider s1">
-                                                    <div class="h2 fw-bolder">헤드 컨텐츠1</div>
-                                                    <p>내용 작성1</p>
-                                                    <a class="stretched-link text-decoration-none" href="#!">
+                                                    <div class="h2 fw-bolder">볼다이크</div>
+                                                    <p>볼다이크 월페이퍼</p>
+                                                    <a class="stretched-link text-decoration-none" href="<c:url value='/board/news/detail/24'/>">
                                                         More
                                                         <i class="bi bi-arrow-right"></i>
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-xl-7">
-                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                                <div class="bg-featured-blog" style='background-image: url("/image/display/26")'></div>
                                             </div>
                                         </div>
                                     </div>
@@ -40,16 +40,16 @@
                                         <div class="row gx-0">
                                             <div class="col-lg-6 col-xl-5 py-lg-5">
                                                 <div class="p-4 p-md-5 slider s1">
-                                                    <div class="h2 fw-bolder">헤드 컨텐츠2</div>
-                                                    <p>내용 작성2</p>
-                                                    <a class="stretched-link text-decoration-none" href="#!">
+                                                    <div class="h2 fw-bolder">플레체</div>
+                                                    <p>플레체 월페이퍼</p>
+                                                    <a class="stretched-link text-decoration-none" href="<c:url value='/board/news/detail/24'/>">
                                                         More
                                                         <i class="bi bi-arrow-right"></i>
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-xl-7">
-                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                                <div class="bg-featured-blog" style="background-image: url('/image/display/28')"></div>
                                             </div>
                                         </div>
                                     </div>

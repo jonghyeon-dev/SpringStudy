@@ -83,6 +83,8 @@ public class BoardController {
 
         model.addAttribute("totalContents", totalContents);
 		model.addAttribute("category",category);
+		model.addAttribute("searchOption",searchOption);
+		model.addAttribute("searchWord",searchWord);
 
         return "board/boardPage";
     }
@@ -118,6 +120,8 @@ public class BoardController {
 
         model.addAttribute("totalContents", totalContents);
 		model.addAttribute("category",category);
+		model.addAttribute("searchOption",searchOption);
+		model.addAttribute("searchWord",searchWord);
 		model.addAttribute("page",page);
 
         return "board/boardPage";
@@ -165,8 +169,10 @@ public class BoardController {
 	, @PathVariable("boardId") Integer boardId) throws Exception{
 		logger.info("boardDetailPage View");
 		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+
 		HashMap<String,Object> reqMap = new HashMap<>();
 		reqMap.put("boardId",boardId);
+		reqMap.put("boardCate",category);
 		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
 		List<FileVO> fileList = boardService.getBoardFileList(reqMap);
 		String boardCntnt = boardVO.getBoardCntnt();
@@ -177,13 +183,13 @@ public class BoardController {
 		if(ObjectUtils.isEmpty(userVO)){
 			viewVO.setCretUser("guest:"+secureUtil.getClientIP(request));
 		}else{
-			viewVO.setCretUser(userVO.getUserId());
+			viewVO.setCretUser(userVO.getSeq().toString());
 		}
 		boardService.insertBoardViewInfo(viewVO);
 		if(!ObjectUtils.isEmpty(userVO)){
 			BoardRecomVO recomVO = new BoardRecomVO();
 			recomVO.setBoardId(boardId);
-			recomVO.setCretUser(userVO.getUserId());
+			recomVO.setCretUser(userVO.getSeq().toString());
 			BoardRecomVO retRecomVO = boardService.checkDupRecom(recomVO);
 			model.addAttribute("retRecomInfo", retRecomVO);
 		}
@@ -193,6 +199,7 @@ public class BoardController {
 		model.addAttribute("boardInfo", boardVO);
 		model.addAttribute("boardFileList", fileList);
 		model.addAttribute("recomCnt", recomCnt);
+
 		return "board/boardDetailPage";
 	}
 
@@ -305,7 +312,7 @@ public class BoardController {
 			return "redirect:/board/"+category;
 		}
 		String chgUser = "";
-		chgUser = userVO.getUserId();
+		chgUser = userVO.getSeq().toString();
 		// 작성자 여부 확인
 		if(!boardVO.getCretUser().equals(chgUser)){
 			return "redirect:/board/"+category;
@@ -329,7 +336,7 @@ public class BoardController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value="/board/{category}/boardRecom",method=RequestMethod.POST)
+	@RequestMapping(value="/board/{category}/recom",method=RequestMethod.POST)
 	public ResponseData putBoardRecom(HttpSession session, HttpServletRequest request, HttpServletResponse response 
 	,  @PathVariable("category") String category, String boardId, String likeChu)throws Exception{
 		ResponseData js = new ResponseData();
@@ -361,8 +368,8 @@ public class BoardController {
 		return js;
 	}
 
-	// @PostMapping(value="/board/{category}/boardAnswer")
-	// public String insertBoardAnswer(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	// @PostMapping(value="/board/{category}/boardComment")
+	// public String insertBoardComment(HttpSession session, HttpServletRequest request, HttpServletResponse response 
 	// ,  @PathVariable("category") String category, Integer boardId)throws Exception{
 	// 	BoardAnswerVO recomVO = new BoardAnswerVO();
 	// 	try{

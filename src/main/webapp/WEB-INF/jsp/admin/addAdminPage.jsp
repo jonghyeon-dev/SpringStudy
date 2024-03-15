@@ -19,19 +19,19 @@
                         <col width="30%">
                     </colgroup>
                     <tr>
-                        <th><span>ID :</span></th>
+                        <th><span>ID<span style="color:red">*</span> :</span></th>
                         <td>
                             <input class="form-control" type="text" name="userId" value="" required="true">
                             <button class="btn btn-primary" type="button" name="checkDuplication" data-toggle="modal" data-target="#modalInfo">중복확인</button>
                             <input type="hidden" name="checkDup" value="" required="true">
                         </td>
-                        <th><span>이름 :</span></th>
+                        <th><span>이름<span style="color:red">*</span> :</span></th>
                         <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
                     </tr>
                     <tr>
-                        <th><span>패스워드 :</span></th>
+                        <th><span>패스워드<span style="color:red">*</span> :</span></th>
                         <td><input class="form-control" type="password" name="userPwd" value="" required="true"></td>
-                        <th><span>패스워드확인 :</span></th>
+                        <th><span>패스워드확인<span style="color:red">*</span> :</span></th>
                         <td><input class="form-control" type="password" name="userPwdCheck" value="" required="true"></td>
                     </tr>
                     <tr>

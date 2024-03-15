@@ -22,7 +22,7 @@
                         <th><span>ID :</span></th>
                         <td><input type="text" name="userId" value="" required="true"></td>
                         <th><span>PW :</span></th>
-                        <td><input type="password" name="userPw" value="" required="true"></td>
+                        <td><input type="password" name="userPwd" value="" required="true"></td>
                     </tr>
                 </table>
                 <c:if test="${!empty errorMsg}">

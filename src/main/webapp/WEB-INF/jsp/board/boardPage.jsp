@@ -36,14 +36,14 @@
                         <tr>
                             <td class="text-center"><c:out value="${items.boardId}"/></td>
                             <td>
-                                <a class="link-dark" href="<c:url value='/board/${category}/detail/${items.boardId}'/>">
+                                <a class="link-dark" href="<c:url value='/board/${category}/detail/${items.boardId}?page=${page}&searchOption=${searchOption}&searchWord=${searchWord}'/>">
                                     <c:out value="${items.boardTitle}"/>
                                     <c:if test="${items.asNew eq 1}">
                                         <div class="badge bg-danger bg-gradient rounded-pill ms-2 mb-2">News</div>
                                     </c:if> 
                                 </a>
                             </td>
-                            <td><c:out value="${items.cretUser}"/></td>
+                            <td><c:out value="${items.cretUserNm}"/></td>
                             <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                             <td class="text-center"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></td>
                             <td class="text-center">${items.viewCnt}</td>

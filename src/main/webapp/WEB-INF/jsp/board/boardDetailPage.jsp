@@ -54,7 +54,14 @@
                                     <c:otherwise>
                                         <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue; cursor:pointer" id="recom">
                                             <input type="hidden" name="like" value="0">
-                                            <strong style="color:black;">${recomCnt}</strong>
+                                            <c:choose>
+                                                <c:when test="${recomCnt ne null}">
+                                                    <strong style="color:black;">${recomCnt}</strong>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <strong style="color:black;">0</strong>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </span>
                                     </c:otherwise>
                                 </c:choose>
@@ -73,7 +80,7 @@
                                         $("#recom").css("color","blue");
                                     }
                                     $.ajax({
-                                        url: '<c:url value="/board/${category}/boardRecom"/>',
+                                        url: '<c:url value="/board/${category}/recom"/>',
                                         type: "POST",
                                         dataType: "json",
                                         traditional:true,
@@ -82,9 +89,11 @@
                                                 "likeChu":likeChu
                                             },
                                         success: response=>{
+                                            console.log("isrun?");
                                             if(response.isSucceed){
                                                 let data = response.data;
-                                                $("#recom").find("span").text(data.recomCnt);
+                                                console.log(data.recomCnt);
+                                                $("#recom").find("strong").text(data.recomCnt);
                                             }else{
                                                 console.log(response.message);
                                             }
@@ -106,7 +115,9 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+            <c:if test="${category ne 'notice' && category ne 'news'}">
                 <div class="list-body white-bg" id="answerInsertArea">
+                    <c:set var="modifyComntCount" value="0"></c:set>
                     <div class="list-box">
                         <span>사용자1</span>님의 댓글:&nbsp;
                         <div class="row">
@@ -123,78 +134,82 @@
                                     <a class="btn btn-sm btn-danger float-end ansDelete" data-id="">삭제</a>
                                     <a class="btn btn-sm btn-success float-end ansModify">수정</a>
                                 </div>
-                                <!-- <script>
-                                    document.querySelectorAll('.ansModify').forEach((col) =>{
-                                        col.addEventListener('click', (event) =>{
-                                        event.target.parentNode.style.display="none";
-                                        event.target.parentNode.parentNode.querySelectorAll(".answerModifyArea")[0].style.display="inline";
-                                        event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="none";
-                                        });
-                                    });
-                                
-                                    document.querySelectorAll('.answerModifyCancle').forEach((col) =>{
-                                        col.addEventListener('click', (event) =>{
-                                        event.target.parentNode.style.display="none";
-                                        event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="inline";
-                                        event.target.parentNode.parentNode.querySelectorAll(".answerBtnArea")[0].style.display="inline";
-                                        });
-                                    });
-                                
-                                    document.querySelectorAll('.recDelete').forEach((col) =>{
-                                        col.addEventListener('click', (event) =>{
-                                        let id = event.target.dataset.id;
-                                        console.log("삭제ID: "+id);
-                                        fetch('/board/deleteAnswer',{
-                                            method:"DELETE",
-                                            body:JSON.stringify({id:id}),
-                                            headers:{"Content-Type":"application/json"}
-                                            }).then((response)=>response.json())
-                                            .then((data)=>{
-                                                if(data.isSucceed){
-                                                    location.reload();
-                                                }else{
-                                                    console.log(data.msg);
-                                                }
-                                        });
-                                        });
-                                    });
-                                </script> -->
+                                 <!-- <c:if test="${modifyComntCount > 0}"> 
+                        <script>
+                            document.querySelectorAll('.ansModify').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                event.target.parentNode.style.display="none";
+                                event.target.parentNode.parentNode.querySelectorAll(".answerModifyArea")[0].style.display="inline";
+                                event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="none";
+                                });
+                            });
+                        
+                            document.querySelectorAll('.answerModifyCancle').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                event.target.parentNode.style.display="none";
+                                event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="inline";
+                                event.target.parentNode.parentNode.querySelectorAll(".answerBtnArea")[0].style.display="inline";
+                                });
+                            });
+                        
+                            document.querySelectorAll('.recDelete').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                let id = event.target.dataset.id;
+                                console.log("삭제ID: "+id);
+                                fetch('/board/deleteAnswer',{
+                                    method:"DELETE",
+                                    body:JSON.stringify({id:id}),
+                                    headers:{"Content-Type":"application/json"}
+                                    }).then((response)=>response.json())
+                                    .then((data)=>{
+                                        if(data.isSucceed){
+                                            location.reload();
+                                        }else{
+                                            console.log(data.msg);
+                                        }
+                                });
+                                });
+                            });
+                        </script> 
+                    </c:if>-->
                             </c:if>
                         </div>
                     </div>
+                    
                 </div>
                 <c:if test="${userLogin ne null}">
-                <div id="recomWrite" class="mb-2">
-                    <form id="recomForm" class="form-box" method="POST" action="/board/addRecom">
-                        <div>
-                            <h4 class=""><strong>댓글쓰기</strong></h4>
-                            <input type="text" class="form-control" name="content">
-                        </div>
-                        <input type="hidden" name="postId" value="">
-                        <div class="recomBtnArea text-end">
-                            <button class="btn btn-lg btn-primary">작성</button>
-                        </div>
-                    </form>
-                </div>
+                    <div id="recomWrite" class="mb-2">
+                        <form id="recomForm" class="form-box" method="POST" action="/board/addRecom">
+                            <div>
+                                <h4 class=""><strong>댓글쓰기</strong></h4>
+                                <input type="text" class="form-control" name="content">
+                            </div>
+                            <input type="hidden" name="postId" value="">
+                            <div class="recomBtnArea text-end">
+                                <button class="btn btn-lg btn-primary">작성</button>
+                            </div>
+                        </form>
+                    </div>
                 </c:if>
+            </c:if>
             </div>
             <div class="buttonArea text-start">
                 <c:choose>
-                    <c:when test="${page ne null && page ne ''}">
-                        <a href='<c:url value="/board/${category}/${page}?searchOption=${searchOption}&searchWord=${searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
+                    <c:when test="${param.page ne null && param.page ne ''}">
+                        <a href='<c:url value="/board/${category}/${param.page}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
                     </c:when>
                     <c:otherwise>
-                        <a href='<c:url value="/board/${category}/1?searchOption=${searchOption}&searchWord=${searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
+                        <a href='<c:url value="/board/${category}?searchOption=${param.searchOption}&searchWord=${param.searchWord}"/>' class="btn btn-outline-primary text-center">목록</a>
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
                     <c:when test="${category eq 'community'}">
-                        <c:if test="${userLogin.userId eq boardInfo.cretUser}">
+                        <c:if test="${userLogin.seq eq boardInfo.cretUser}">
                             <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
                         </c:if>
                     </c:when>
                     <c:otherwise>
-                        <c:if test="${userLogin.userId eq boardInfo.cretUser && userLogin.userGrant eq '0'}">
+                        <c:if test="${userLogin.seq eq boardInfo.cretUser && userLogin.userGrant eq '0'}">
                             <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
                         </c:if>
                     </c:otherwise>

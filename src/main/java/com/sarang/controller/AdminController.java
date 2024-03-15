@@ -60,11 +60,11 @@ public class AdminController {
     , HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
         logger.info("Check Admin Login Process");
         String userId = request.getParameter("userId").trim();
-        String userPw = request.getParameter("userPw").trim();
+        String userPwd = request.getParameter("userPwd").trim();
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
         reqMap.put("userId",userId);
         try {
-            reqMap.put("userPw",secureutil.encryptSHA256(userPw));
+            reqMap.put("userPwd",secureutil.encryptSHA256(userPwd));
         } catch (NoSuchAlgorithmException e) {
             logger.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
             redirectAttributes.addFlashAttribute("errorMsg"
