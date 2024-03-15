@@ -77,14 +77,14 @@ public class UserController {
     , HttpServletResponse response, RedirectAttributes redirectAttributes){
         logger.info("Check User Login Process");
         String userId = request.getParameter("userId");
-        String userPw = request.getParameter("userPw");
+        String userPwd = request.getParameter("userPwd");
         HashMap<String,Object> reqMap = new HashMap<String,Object>();
         reqMap.put("userId",userId);
         try {
-            reqMap.put("userPw",secureutil.encryptSHA256(userPw));
+            reqMap.put("userPwd",secureutil.encryptSHA256(userPwd));
         } catch (NoSuchAlgorithmException e) {
             logger.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
-            reqMap.put("userPw","");
+            reqMap.put("userPwd","");
         }
         
         UserVO userVO = userService.checkUserLogin(reqMap);
