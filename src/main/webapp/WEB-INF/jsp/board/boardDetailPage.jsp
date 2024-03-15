@@ -6,7 +6,7 @@
     <title>게시판상세</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
-<body class="bg-light">
+<body class="bg-light" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
     <div class="container">
         <%@include file="../layouts/top.jsp"%> 
         <div>
@@ -109,7 +109,14 @@
                             <div class="d-flex justify-content-center mt-2 mb-2">
                                 <strong>추천&nbsp;</strong>
                                 <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue;">
-                                    <strong style="color:black;">${recomCnt}</strong>
+                                    <c:choose>
+                                        <c:when test="${recomCnt ne null}">
+                                            <strong style="color:black;">${recomCnt}</strong>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <strong style="color:black;">0</strong>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </span>
                             </div>
                         </c:otherwise>

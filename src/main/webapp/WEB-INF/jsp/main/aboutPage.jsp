@@ -6,7 +6,7 @@
         <title>About</title>
         <%@include file="../layouts/header.jsp"%> 
     </head>
-    <body class="bg-light">
+    <body class="bg-light" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
         <div class="container">
             <%@include file="../layouts/top.jsp"%> 
             <!-- Header-->

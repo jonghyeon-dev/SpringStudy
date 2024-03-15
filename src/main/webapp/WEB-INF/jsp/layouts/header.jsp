@@ -22,3 +22,6 @@
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="<c:url value='/css/styles.css'/>" rel="stylesheet" />
 <link href="<c:url value='/css/main.css'/>" rel="stylesheet" />
+<script>
+    document.oncontextmenu=function(){return false;}
+</script>

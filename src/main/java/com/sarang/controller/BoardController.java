@@ -83,8 +83,6 @@ public class BoardController {
 
         model.addAttribute("totalContents", totalContents);
 		model.addAttribute("category",category);
-		model.addAttribute("searchOption",searchOption);
-		model.addAttribute("searchWord",searchWord);
 
         return "board/boardPage";
     }
@@ -120,8 +118,6 @@ public class BoardController {
 
         model.addAttribute("totalContents", totalContents);
 		model.addAttribute("category",category);
-		model.addAttribute("searchOption",searchOption);
-		model.addAttribute("searchWord",searchWord);
 		model.addAttribute("page",page);
 
         return "board/boardPage";

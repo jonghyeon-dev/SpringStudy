@@ -8,7 +8,7 @@
         <title>홈</title>
         <%@include file="../layouts/header.jsp"%>
     </head>
-    <body class="bg-light">
+    <body class="bg-light" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
         <div class="container">
             <%@include file="../layouts/top.jsp"%> 
             <!-- Page Content-->
@@ -134,10 +134,10 @@
                                                 HP&nbsp;:&nbsp;<a>02-123-1234</a>
                                             </p>
                                             <div class="h6 fw-bolder">Follow us</div>
-                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter-x"></i></a>
-                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-facebook"></i></a>
-                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-linkedin"></i></a>
-                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-youtube"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="https://twitter.com/?lang=ko" target="_blank"><i class="bi-twitter-x"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="https://www.facebook.com/?locale=ko_KR" target="_blank"><i class="bi-facebook"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="https://www.instagram.com/" target="_blank"><i class="bi-linkedin"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="https://www.youtube.com" target="_blank"><i class="bi-youtube"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -196,7 +196,12 @@
         <script>
             const swiper = new Swiper('.mySwiper', {
                 // Optional parameters
-                loop: true,
+                loop: true, // 슬라이드 반복여부
+                slidesPerView: 'auto',// 한 슬라이드에 보여줄 개수
+                autoplay:{
+                    delay:3000, //3초
+                    disableOnInteraction: false //false 로 설정하면 스와이프 후 자동재생이 비활성화 되지 않음
+                },
                 // If we need pagination
                 pagination: {
                     el: '.swiper-pagination',
