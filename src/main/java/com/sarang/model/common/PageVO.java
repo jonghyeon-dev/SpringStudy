@@ -23,8 +23,6 @@ public class PageVO {
     private Integer lastPage;       // 마지막 페이지
 
     public PageVO(int totalCount, int currentPage){
-        // 첫 페이지
-        setFirstPage(1);
         // 현재 페이지
         setCurrentPage(currentPage);
         // 총 페이지 = 반올림(총 데이터 개수 / 화면에 표시항 데이터 개수)

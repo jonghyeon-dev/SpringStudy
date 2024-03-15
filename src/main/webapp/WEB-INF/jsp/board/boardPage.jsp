@@ -47,7 +47,7 @@
                             <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                             <td class="text-center"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></td>
                             <td class="text-center">${items.viewCnt}</td>
-                            <td class="text-center">${items.chuCnt}</td>
+                            <td class="text-center">${items.likeChuCnt}</td>
                         </tr>
                     </c:forEach>
                     <c:if test="${fn:length(totalContents.boardList) < 10}">

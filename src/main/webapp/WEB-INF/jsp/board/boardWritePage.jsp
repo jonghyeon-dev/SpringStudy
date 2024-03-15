@@ -67,8 +67,9 @@
     </div>
 </body>
 <script>
-let ckeditor
+
  var boardInsertPage = (function(){
+        let ckeditor;
         var init = function(){
             ckeditor = CKEDITOR.replace('ckeditor',{
                 filebrowserUploadUrl:'<c:url value="/file/imageUpload?type=Images"/>'
@@ -87,7 +88,7 @@ let ckeditor
 
         var registerEvent = function(){
             $("#uploadFiles").change((e) => {
-                const files = $("#uploadFiles")[0].files
+                const files = $("#uploadFiles")[0].files;
                 var filesText = "";
                 for(var i=0;i<files.length;i++){
                     filesText = filesText + "<span>" + files[i].name + "</span><br>";

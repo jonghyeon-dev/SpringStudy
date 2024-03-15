@@ -20,13 +20,13 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UserVO {
-    private Integer seq;         // 순차번호
+    private Integer seq;         // 일련번호
     @NonNull
     private String userId;      // 사용자아이디
     @NonNull
-    private String userPw;      // 사용자비밀번호
+    private String userPwd;      // 사용자비밀번호
     @NonNull
-    private String userNm;      // 사용자별칭
+    private String userNm;      // 사용자명
     @NonNull
     private String userGrant;   // 사용자 권한
     private String celph;       // 전화번호
@@ -40,7 +40,7 @@ public class UserVO {
         HashMap<String,Object> retMap = new HashMap<String,Object>();
         retMap.put("seq",this.getSeq());
         retMap.put("userId",this.getUserId());
-        retMap.put("userPw",this.getUserPw());
+        retMap.put("userPwd",this.getUserPwd());
         retMap.put("userNm",this.getUserNm());
         retMap.put("celph",this.getCelph());
         retMap.put("email",this.getEmail());
@@ -56,7 +56,7 @@ public class UserVO {
             this.setSeq(Integer.parseInt(String.valueOf(reqMap.get("seq"))));
         }
         this.setUserId(String.valueOf(reqMap.get("userId")));
-        this.setUserPw(String.valueOf(reqMap.get("userPw")));
+        this.setUserPwd(String.valueOf(reqMap.get("userPwd")));
         this.setUserNm(String.valueOf(reqMap.get("userNm")));
         this.setCelph(String.valueOf(reqMap.get("celph")));
         this.setEmail(String.valueOf(reqMap.get("email")));
@@ -70,7 +70,7 @@ public class UserVO {
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("seq", this.getSeq());
         jsonObj.put("userId",this.getUserId());
-        jsonObj.put("userPw",this.getUserPw());
+        jsonObj.put("userPwd",this.getUserPwd());
         jsonObj.put("userNm",this.getUserNm());
         jsonObj.put("celph",this.getCelph());
         jsonObj.put("email",this.getEmail());
@@ -86,7 +86,7 @@ public class UserVO {
             this.setSeq(Integer.parseInt(String.valueOf(jsonObj.get("seq"))));
         }
         this.setUserId(String.valueOf(jsonObj.get("userId")));
-        this.setUserPw(String.valueOf(jsonObj.get("userPw")));
+        this.setUserPwd(String.valueOf(jsonObj.get("userPwd")));
         this.setUserNm(String.valueOf(jsonObj.get("userNm")));
         this.setCelph(String.valueOf(jsonObj.get("celph")));
         this.setEmail(String.valueOf(jsonObj.get("email")));

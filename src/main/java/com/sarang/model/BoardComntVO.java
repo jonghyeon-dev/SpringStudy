@@ -6,8 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BoardAnswerVO {
-    private Integer boardComntId;   //게시판댓글ID
+public class BoardComntVO {
+    private Integer comntId;        //댓글ID
     @NonNull
     private Integer boardId;        //게시판ID
     private Integer parntComntId;   //부모댓글ID
@@ -19,5 +19,9 @@ public class BoardAnswerVO {
     private String chgUser;         //수정자
     private String chgDate;         //수정일자
     private String chgTime;         //수정시간
+
+    //SubQuery
+    private String cretUserNm;      //생성자명
+    private String chgUserNm;       //수정자명
 
 }

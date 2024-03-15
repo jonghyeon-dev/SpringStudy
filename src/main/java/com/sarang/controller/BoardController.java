@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sarang.config.FileUtils;
 import com.sarang.config.SecureUtil;
+import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.BoardViewVO;
 import com.sarang.model.UserVO;
@@ -179,9 +180,19 @@ public class BoardController {
 			viewVO.setCretUser(userVO.getUserId());
 		}
 		boardService.insertBoardViewInfo(viewVO);
+		if(!ObjectUtils.isEmpty(userVO)){
+			BoardRecomVO recomVO = new BoardRecomVO();
+			recomVO.setBoardId(boardId);
+			recomVO.setCretUser(userVO.getUserId());
+			BoardRecomVO retRecomVO = boardService.checkDupRecom(recomVO);
+			model.addAttribute("retRecomInfo", retRecomVO);
+		}
+
+		Integer recomCnt = boardService.getBoardRecomCount(reqMap);
 
 		model.addAttribute("boardInfo", boardVO);
 		model.addAttribute("boardFileList", fileList);
+		model.addAttribute("recomCnt", recomCnt);
 		return "board/boardDetailPage";
 	}
 
@@ -189,8 +200,8 @@ public class BoardController {
 	public String boardInsertPage(HttpSession session, HttpServletRequest request
 	, HttpServletResponse response , Model model, @PathVariable("category") String category) throws Exception{
 		logger.info("boardWritePage View");
-		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		if(checkBoardLogin(loginVO,category)){
+		UserVO userVO = (UserVO) session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board"+category;
 		};
 		model.addAttribute("middle", category);
@@ -202,15 +213,15 @@ public class BoardController {
 	@PostMapping(value="/board/{category}/boardInsert")
 	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
 	, List<MultipartFile> uploadFiles, @PathVariable("category") String category) throws Exception {
-		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		if(checkBoardLogin(loginVO,category)){
+		UserVO userVO = (UserVO) session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
 		String boardCate = category;
 		String cretUser ="";
-		cretUser = loginVO.getUserId();
+		cretUser = userVO.getSeq().toString();
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBoardCate(boardCate);
 		boardVO.setBoardTitle(boardTitle);
@@ -236,13 +247,16 @@ public class BoardController {
     , HttpServletResponse response , Model model, @PathVariable("category") String category
 	, @PathVariable("boardId") String boardId) throws Exception{
 		// 로그인 체크
-		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		if(checkBoardLogin(loginVO,category)){
+		UserVO userVO = (UserVO) session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board/"+category;
 		};
 		HashMap<String,Object> reqMap = new HashMap<>();
 		reqMap.put("boardId",boardId);
 		reqMap.put("boardCate",category);
+		if(userVO.getUserGrant() != "0"){
+			reqMap.put("cretUser",userVO.getSeq());
+		}
 
 		BoardVO boardVO = boardService.getBoardDetailInfo(reqMap);
 		// 게시물 존재 여부 확인
@@ -251,7 +265,7 @@ public class BoardController {
 		}
 		// 작성자 여부 확인
 		String modifyUser = "";
-		modifyUser = loginVO.getUserId();
+		modifyUser = userVO.getSeq().toString();
 		if(!boardVO.getCretUser().equals(modifyUser)){
 			return "redirect:/board/"+category;
 		}
@@ -273,8 +287,8 @@ public class BoardController {
 	public String modifyBoardInfo(HttpSession session, MultipartHttpServletRequest request
     , HttpServletResponse response, List<MultipartFile> uploadFiles, @PathVariable("category") String category
 	, @PathVariable("boardId") String boardId) throws Exception {
-		UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-		if(checkBoardLogin(loginVO,category)){
+		UserVO userVO = (UserVO) session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
@@ -291,7 +305,7 @@ public class BoardController {
 			return "redirect:/board/"+category;
 		}
 		String chgUser = "";
-		chgUser = loginVO.getUserId();
+		chgUser = userVO.getUserId();
 		// 작성자 여부 확인
 		if(!boardVO.getCretUser().equals(chgUser)){
 			return "redirect:/board/"+category;
@@ -317,11 +331,50 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value="/board/{category}/boardRecom",method=RequestMethod.POST)
 	public ResponseData putBoardRecom(HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	,  @PathVariable("category") String category)throws Exception{
+	,  @PathVariable("category") String category, String boardId, String likeChu)throws Exception{
 		ResponseData js = new ResponseData();
+		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+		try{
+			BoardRecomVO recomVO = new BoardRecomVO();
+			recomVO.setBoardId(Integer.parseInt(boardId));
+			recomVO.setLikeChu(Integer.parseInt(likeChu));
+			recomVO.setCretUser(userVO.getSeq().toString());
+			BoardRecomVO retRecomVO = boardService.checkDupRecom(recomVO);
+			if(ObjectUtils.isEmpty(retRecomVO)){
+				boardService.insertBoardRecomInfo(recomVO);
+			}else{
+				boardService.updateBoardRecomInfo(recomVO);
+			}
+			HashMap<String,Object> reqMap = new HashMap<>();
+			reqMap.put("boardId",boardId);
+			Integer recomCnt = boardService.getBoardRecomCount(reqMap);
 
+			HashMap<String,Object> retMap = new HashMap<>();
+			retMap.put("recomCnt",recomCnt);
+			js.setIsSucceed(true);
+			js.setData(retMap);
+		}catch(Exception e){
+			logger.error("Error Is : {}",e.getMessage());
+			js.setIsSucceed(false);
+			js.setMessage("추천 등록 중 오류가 발생 하였습니다.");
+		}
 		return js;
 	}
+
+	// @PostMapping(value="/board/{category}/boardAnswer")
+	// public String insertBoardAnswer(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	// ,  @PathVariable("category") String category, Integer boardId)throws Exception{
+	// 	BoardAnswerVO recomVO = new BoardAnswerVO();
+	// 	try{
+	// 		UserVO loginVO = (UserVO)session.getAttribute("userLogin");
+	// 		answerVO.setBoardId(boardId);
+	// 		answerVO.setCretUser(loginVO.getUserId());
+	// 		boardService.insertBoardAnswerInfo(answerVO);
+	// 	}catch(Exception e){
+	// 		logger.error("Error Is : {}",e.getMessage());
+	// 	}
+	// 	return "redirect:/board/"+category+"/detail/"+boardId;
+	// }
 
 	/**
 	 * 게시판 등록, 수정 시 사용자 권한 체크
@@ -330,13 +383,13 @@ public class BoardController {
 	 * @param category
 	 * @return boolean
 	 */
-	private boolean checkBoardLogin(UserVO loginVO, String category){
+	private boolean checkBoardLogin(UserVO userVO, String category){
 		// 자유게시판 사용자 체크
-		if(ObjectUtils.isEmpty(loginVO)){ 
+		if(ObjectUtils.isEmpty(userVO)){ 
 			return true;
 		}
 		// 그 외 게시판 관리자 체크
-		if(!"community".equals(category) && "0".equals(loginVO.getUserGrant())){
+		if(!"community".equals(category) && "0".equals(userVO.getUserGrant())){
 			return true;
 		}
 		return false;

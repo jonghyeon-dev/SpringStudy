@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sarang.mapper.BoardMapper;
+import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
@@ -38,6 +39,16 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    public Integer getBoardRecomCount(HashMap<String,Object> reqMap){
+        return boardMapper.getBoardRecomCount(reqMap);
+    }
+
+    @Override
+    public BoardRecomVO checkDupRecom(BoardRecomVO recomVO){
+        return boardMapper.checkDupRecom(recomVO);
+    }
+
+    @Override
     public Integer insertBoardDetailInfo(BoardVO boardVO){
         return boardMapper.insertBoardDetailInfo(boardVO);
 
@@ -64,5 +75,15 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public Integer insertBoardViewInfo(BoardViewVO viewVO){
         return boardMapper.insertBoardViewInfo(viewVO);
+    }
+
+    @Override
+    public Integer insertBoardRecomInfo(BoardRecomVO recomVO){
+        return boardMapper.insertBoardRecomInfo(recomVO);
+    }
+
+    @Override
+    public Integer updateBoardRecomInfo(BoardRecomVO recomVO){
+        return boardMapper.updateBoardRecomInfo(recomVO);
     }
 }

@@ -29,10 +29,10 @@
                         <td><input class="form-control" type="text" name="userNm" value="" required="true"></td>
                     </tr>
                     <tr>
-                        <th><span>PW :</span></th>
-                        <td><input class="form-control" type="password" name="userPw" value="" required="true"></td>
-                        <th><span>PW :</span></th>
-                        <td><input class="form-control" type="password" name="userPwCheck" value="" required="true"></td>
+                        <th><span>패스워드 :</span></th>
+                        <td><input class="form-control" type="password" name="userPwd" value="" required="true"></td>
+                        <th><span>패스워드확인 :</span></th>
+                        <td><input class="form-control" type="password" name="userPwdCheck" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>휴대폰번호 :</span></th>
@@ -66,8 +66,9 @@
                 $("#modalContent").append(errorMsg);
                 $("#modalInfo").show();
             }
+        };
 
-            checkDuplication = function(){
+        checkDuplication = function(){
                 let userId = $("#addAdminForm input[name='userId']").val();
                 console.log(userId);
                 $.ajax({url:"<c:url value='/checkUserDup.do'/>",
@@ -97,10 +98,7 @@
             
                 });
             }
-        };
-
-        
-
+            
         var registerEvent = function(){
             $("#reset").click(function(){
                 $("#addAdminForm")[0].reset();
@@ -130,8 +128,8 @@
     
     function validationForm(){
         const userId = $('#addAdminForm input[name="userId"]').val(); // 아이디
-        const userPw = $('#addAdminForm input[name="userPw"]').val(); // 패스워드
-        const userPwCheck = $('#addAdminForm input[name="userPwCheck"]').val(); // 패스워드
+        const userPwd = $('#addAdminForm input[name="userPwd"]').val(); // 패스워드
+        const userPwdCheck = $('#addAdminForm input[name="userPwdCheck"]').val(); // 패스워드
         const userNm = $('#addAdminForm input[name="userNm"]').val(); // 이름
         const cehckDup = $('#addAdminForm input[name="checkDup"]').val(); // 중복체크 여부
         if(userId.trim() == "" || userId == null){
@@ -139,17 +137,17 @@
             $("#modalContent").append("ID값은 필수 값 입니다.");
             $('#addAdminForm input[name="userId"]').focus();
             return false;
-        }else if(userPw.trim() == "" || userPw == null){
+        }else if(userPwd.trim() == "" || userPwd == null){
             $("#modalTitle").append("패스워드 값이 없습니다.");
             $("#modalContent").append("패스워드 값은 필수 값 입니다.");
-            $('#addAdminForm input[name="userPw"]').focus();
+            $('#addAdminForm input[name="userPwd"]').focus();
             return false;
-        }else if(userPwCheck.trim() == "" || userPwCheck == null){
+        }else if(userPwdCheck.trim() == "" || userPwdCheck == null){
             $("#modalTitle").append("패스워드 확인 값이 없습니다.");
             $("#modalContent").append("패스워드 확인 값은 필수 값 입니다.");
-            $('#addAdminForm input[name="userPwCheck"]').focus();
+            $('#addAdminForm input[name="userPwdCheck"]').focus();
             return false;
-        }else if(userNm.trim() == "" || namuserNme == null){
+        }else if(userNm.trim() == "" || userNm == null){
             $("#modalTitle").append("이름 값이 없습니다.");
             $("#modalContent").append("이름 값은 필수 값 입니다.");
             $('#addAdminForm input[name="userNm"]').focus();
@@ -161,7 +159,7 @@
             return false;
         }
 
-        if(userPw != userPwCheck){
+        if(userPwd != userPwdCheck){
             $("#modalTitle").append("패스워드 값 확인");
             $("#modalContent").append("패스워드 값과 확인 값이 같지 않습니다.");
             $('#addUserForm input[name="userPw"]').focus();

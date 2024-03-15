@@ -20,7 +20,9 @@
 				ELSE 0 
 			END AS AS_NEW,
 		IFNULL((SELECT COUNT(BOARD_ID) AS VIEW_CNT FROM TBRD00102 B WHERE A.BOARD_ID = B.BOARD_ID GROUP BY BOARD_ID),0) AS VIEW_CNT,
-		IFNULL((SELECT SUM(chu) as CHU_CNT FROM TBRD00103 C WHERE A.BOARD_ID = C.BOARD_ID GROUP BY BOARD_ID),0) AS CHU_CNT
+		IFNULL((SELECT SUM(LIKE_CHU) as LIKE_CHU_CNT FROM TBRD00103 C WHERE A.BOARD_ID = C.BOARD_ID GROUP BY BOARD_ID),0) AS LIKE_CHU_CNT,
+		(SELECT USER_NM FROM TUSR00100 D WHERE A.CRET_USER = D.SEQ) AS CRET_USER_NM,
+		(SELECT USER_NM FROM TUSR00100 E WHERE A.CHG_USER = E.SEQ) AS CHG_USER_NM
 	FROM TBRD00100 A
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
@@ -69,6 +71,10 @@
 		FROM TBRD00100
 		WHERE 1=1
           AND BOARD_ID = #{boardId}
+		  AND BOARD_CATE = #{boardCate}
+		  <if test="cretUser != null and !''.equals(cretUser)">
+		  	AND CRET_USER = #{cretUser}
+		  </if>
 	</select>
 
 	<select id="getBoardFileList" resultType="com.sarang.model.common.FileVO">
@@ -76,6 +82,22 @@
 			*
 		FROM TBRD00101
 		WHERE BOARD_ID = #{boardId}
+	</select>
+
+	<select id="getBoardRecomCount" resultType="Integer">
+		SELECT
+			SUM(LIKE_CHU) AS CNT
+		FROM TBRD00103
+		WHERE BOARD_ID = #{boardId}
+		GROUP BY BOARD_ID
+	</select>
+
+	<select id="checkDupRecom" resultType="com.sarang.model.BoardRecomVO">
+		SELECT
+			*
+		FROM TBRD00103
+		WHERE BOARD_ID = #{boardId}
+		  AND CRET_USER = #{cretUser}
 	</select>
 
 	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId" keyColumn="BOARD_ID">
@@ -116,6 +138,26 @@
 		)
 	</insert>
 
+	<insert id="insertBoardRecomInfo" parameterType="com.sarang.model.BoardRecomVO">
+		INSERT INTO TBRD00103(
+			BOARD_ID,
+			LIKE_CHU,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_DATE,
+			CHG_TIME
+		)VALUES(
+			#{boardId},
+			#{likeChu},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
 	<update id="updateBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
 		UPDATE TBRD00100 SET
 			BOARD_CATE = #{boardCate},
@@ -125,10 +167,28 @@
 			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
 			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
 		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</update>
+
+	<update id="updateBoardRecomInfo" parameterType="com.sarang.model.BoardRecomVO">
+		UPDATE TBRD00103 SET
+			LIKE_CHU = #{likeChu},
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
 	</update>
 
 	<delete id="deleteBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
-		DELETE FROM TBRD00100 WHERE BOARD_ID = #{boardId}
+		DELETE FROM TBRD00100 
+		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)"> 
+		  AND CRET_USER = #{cretUser}
+		</if>
 	</delete>
 
 	<update id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">

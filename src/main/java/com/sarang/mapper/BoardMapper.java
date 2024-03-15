@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
@@ -15,6 +16,8 @@ public interface BoardMapper {
     Integer getBoardPageInfo(HashMap<String,Object> reqMap);
     BoardVO getBoardDetailInfo(HashMap<String,Object> reqMap);
     List<FileVO> getBoardFileList(HashMap<String,Object> reqMap);
+    Integer getBoardRecomCount(HashMap<String,Object> reqMap);
+    BoardRecomVO checkDupRecom(BoardRecomVO recomVO);
 
     Integer insertBoardDetailInfo(BoardVO boardVO);
     Integer updateBoardDetailInfo(BoardVO boardVO);
@@ -23,4 +26,7 @@ public interface BoardMapper {
     Integer resetBoardFileList(BoardVO boardVO);
 
     Integer insertBoardViewInfo(BoardViewVO viewVO);
+    
+    Integer insertBoardRecomInfo(BoardRecomVO recomVO);
+    Integer updateBoardRecomInfo(BoardRecomVO recomVO);
 }

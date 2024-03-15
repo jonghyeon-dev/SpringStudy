@@ -29,13 +29,13 @@
                 <c:choose>
                     <c:when test="${userLogin ne null}">
                         <li class="nav-item text-light">
-                            <c:if test="${userLogin ne null}">
-                                ${userLogin.userNm}님 환영합니다.
-                            </c:if>
+                            ${userLogin.userNm}님 환영합니다.
                             <a class="btn btn-success" href='<c:url value="/logout.do"/>'>로그아웃</a>
                         </li>
                     </c:when>
-                    <c:otherwise><li><a class="btn btn-success" href='<c:url value="/login.do"/>'>로그인</a></li></c:otherwise>
+                    <c:otherwise>
+                        <li><a class="btn btn-success" href='<c:url value="/login.do"/>'>로그인</a></li>
+                    </c:otherwise>
                 </c:choose>
             </ul>
         </div>

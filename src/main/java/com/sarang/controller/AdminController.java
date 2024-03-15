@@ -114,8 +114,8 @@ public class AdminController {
 		logger.info("insertAdmin Data");
         UserVO UserVO = new UserVO();
         String userId = request.getParameter("user").trim();
-        String userPw = request.getParameter("userPw").trim();
-        String userPwCheck = request.getParameter("userPwCheck").trim();
+        String userPwd = request.getParameter("userPwd").trim();
+        String userPwdCheck = request.getParameter("userPwdCheck").trim();
         String userNm = request.getParameter("userNm").trim();
         String celph = request.getParameter("celph").trim();
         String email = request.getParameter("email").trim();
@@ -123,10 +123,10 @@ public class AdminController {
         if(userId.trim().isEmpty() || userId == null){
             redirectAttributes.addFlashAttribute("errorMsg","아이디는 필수 값입니다.");
             return "redirect:/addAdmin.do";
-        }else if(userPw.trim().isEmpty() || userPw == null){
+        }else if(userPwd.trim().isEmpty() || userPwd == null){
             redirectAttributes.addFlashAttribute("errorMsg","패스워드는 필수 값입니다.");
             return "redirect:/addAdmin.do";
-        }else if(userPwCheck.trim().isEmpty() || userPwCheck == null){
+        }else if(userPwdCheck.trim().isEmpty() || userPwdCheck == null){
             redirectAttributes.addFlashAttribute("errorMsg","패스워드는 필수 값입니다.");
             return "redirect:/addAdmin.do";
         }else if(userNm.trim().isEmpty() || userNm == null){
@@ -134,7 +134,7 @@ public class AdminController {
             return "redirect:/addAdmin.do";
         }
 
-        if(!userPw.equals(userPwCheck)){
+        if(!userPwd.equals(userPwdCheck)){
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "패스워드와 확인 값이 다릅니다.");
             return "redirect:/createAccount.do";
@@ -158,7 +158,7 @@ public class AdminController {
             celph = celph.replaceAll("-", "");// celph 안에 하이픈 전체 공백으로 치환
         }
         UserVO.setUserId(userId);
-        UserVO.setUserPw(secureutil.encryptSHA256(userPw));
+        UserVO.setUserPwd(secureutil.encryptSHA256(userPwd));
         UserVO.setUserNm(userNm);
         UserVO.setUserGrant("0");
         UserVO.setCelph(celph);

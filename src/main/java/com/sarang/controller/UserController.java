@@ -120,8 +120,8 @@ public class UserController {
     , HttpServletResponse response, RedirectAttributes redirectAttributes) {
         logger.info("Add User Process");
         String userId = request.getParameter("userId").trim();
-        String userPw = request.getParameter("userPw").trim();
-        String pwCheck = request.getParameter("userPwCheck").trim();
+        String userPwd = request.getParameter("userPwd").trim();
+        String pwdCheck = request.getParameter("userPwdCheck").trim();
         String userNm = request.getParameter("userNm").trim();
         String celph = request.getParameter("celph").trim();
         String email = request.getParameter("email").trim();
@@ -130,11 +130,11 @@ public class UserController {
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "ID는 필수 값 입니다.");
             return "redirect:/createAccount.do";
-        }else if(userPw == null || "".equals(userPw) ){
+        }else if(userPwd == null || "".equals(userPwd) ){
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "패스워드는 필수 값 입니다.");
             return "redirect:/createAccount.do";
-        }else if(pwCheck == null || "".equals(pwCheck) ){
+        }else if(pwdCheck == null || "".equals(pwdCheck) ){
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "패스워드확인은 필수 값 입니다.");
             return "redirect:/createAccount.do";
@@ -144,7 +144,7 @@ public class UserController {
             return "redirect:/createAccount.do";
         }
 
-        if(!userPw.equals(pwCheck)){
+        if(!userPwd.equals(pwdCheck)){
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "패스워드와 확인 값이 다릅니다.");
             return "redirect:/createAccount.do";
@@ -171,7 +171,7 @@ public class UserController {
         UserVO userVO = new UserVO();
         userVO.setUserId(userId);
         try {
-            userVO.setUserPw(secureutil.encryptSHA256(userPw).toString());
+            userVO.setUserPwd(secureutil.encryptSHA256(userPwd).toString());
         }catch(NoSuchAlgorithmException e){
             logger.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
             redirectAttributes.addFlashAttribute("errorMsg"
