@@ -97,6 +97,29 @@
 		  AND CRET_USER = #{cretUser}
 	</select>
 
+	<select id="getBoardComntList" resultType="com.sarang.model.BoardComntVO">
+		SELECT 
+			 COMNT_ID
+			,BOARD_ID
+			,PARNT_ID
+			,IFNULL(ORIGIN_ID,COMNT_ID) AS ORIGIN_ID
+			,GROUP_STEP
+			,GROUP_LAYER
+			,BOARD_COMNT
+			,CRET_USER
+			,CRET_DATE
+			,CRET_TIME
+			,CHG_USER
+			,CHG_DATE
+			,CHG_TIME
+			,DEL_YN
+			,(SELECT USER_NM FROM TUSR00100 B WHERE A.CRET_USER = B.SEQ) AS CRET_USER_NM
+			,(SELECT USER_NM FROM TUSR00100 C WHERE A.CHG_USER = C.SEQ) AS CHG_USER_NM
+		FROM TBRD00110 A
+		WHERE BOARD_ID = #{boardId}
+		ORDER BY ORIGIN_ID,GROUP_STEP;
+	</select>
+
 	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId" keyColumn="BOARD_ID">
 		INSERT INTO TBRD00100(
 			BOARD_CATE,
@@ -155,6 +178,44 @@
 		)
 	</insert>
 
+	<insert id="insertBoardComment" parameterType="com.sarang.model.BoardComntVO">
+	INSERT INTO TBRD00110(
+			BOARD_ID,
+			<if test="parntId != null and parntId != 0">
+			PARNT_ID,
+			</if>
+			<if test="originId != null and originId != 0">
+			ORIGIN_ID,
+			GROUP_STEP,
+			GROUP_LAYER,
+			</if>
+			BOARD_COMNT,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		) VALUES (
+			#{boardId},
+			<if test="parntId != null and parntId != 0">
+			#{parntId},
+			</if>
+			<if test="originId != null and originId != 0">
+			#{originId},
+			#{groupStep} + 1,
+			#{groupLayer} + 1,
+			</if>
+			#{boardComnt},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
 	<update id="updateBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
 		UPDATE TBRD00100 SET
 			BOARD_CATE = #{boardCate},
@@ -180,6 +241,35 @@
 		</if>
 	</update>
 
+	<update id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00101 SET
+			BOARD_ID = null
+		WHERE BOARD_ID = #{boardId}
+	</update>
+
+	<update id="updateBoardComment" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		BOARD_COMNT = #{boardComnt},
+		CHG_USER = #{chgUser},
+		CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+		CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE COMNT_ID = #{comntId}
+		  AND BOARD_ID = #{boardId}
+		  AND CRET_USER = #{cretUser}
+	</update>
+
+	
+
+	<update id="deleteBoardComment" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		DEL_YN = 'Y'
+		WHERE COMNT_ID = #{comntId}
+		AND BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</update>
+
 	<delete id="deleteBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
 		DELETE FROM TBRD00100 
 		WHERE BOARD_ID = #{boardId}
@@ -188,9 +278,22 @@
 		</if>
 	</delete>
 
-	<update id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
-		UPDATE TBRD00101 SET
-			BOARD_ID = null
+	<select id="getComntGroupLayerStep" resultType="Integer">
+		SELECT 
+			IFNULL(MAX(GROUP_STEP),0) AS MAX_GROUP_STEP 
+		FROM TBRD00110 
+		WHERE BOARD_ID = #{boardId} 
+		  AND ORIGIN_ID= #{originId} 
+		  AND GROUP_LAYER = #{groupLayer} + 1
+		  AND PARNT_ID = #{parntId}
+	</select>
+
+	<update id="updateBoardComntGroupStep" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		GROUP_STEP = GROUP_STEP + 1
 		WHERE BOARD_ID = #{boardId}
+		  AND ORIGIN_ID = #{originId} 
+		  AND GROUP_STEP  <![CDATA[ > ]]>  ${groupStep} 
 	</update>
+	
 </mapper>

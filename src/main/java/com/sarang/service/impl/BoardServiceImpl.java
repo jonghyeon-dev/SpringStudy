@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sarang.mapper.BoardMapper;
+import com.sarang.model.BoardComntVO;
 import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.BoardViewVO;
@@ -49,6 +50,11 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    public List<BoardComntVO> getBoardComntList(HashMap<String,Object> reqMap){
+        return boardMapper.getBoardComntList(reqMap);
+    }
+    
+    @Override
     public Integer insertBoardDetailInfo(BoardVO boardVO){
         return boardMapper.insertBoardDetailInfo(boardVO);
 
@@ -85,5 +91,27 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public Integer updateBoardRecomInfo(BoardRecomVO recomVO){
         return boardMapper.updateBoardRecomInfo(recomVO);
+    }
+
+    @Override
+    public Integer insertBoardComment(BoardComntVO comntVO){
+        if(comntVO.getOriginId() != null && comntVO.getOriginId() != 0){
+            Integer groupStep = boardMapper.getComntGroupLayerStep(comntVO);
+            if(groupStep != 0){
+                comntVO.setGroupStep(groupStep);
+            }
+            boardMapper.updateBoardComntGroupStep(comntVO);
+        }
+        return boardMapper.insertBoardComment(comntVO);
+    }
+
+    @Override
+    public Integer updateBoardComment(BoardComntVO comntVO){
+        return boardMapper.updateBoardComment(comntVO);
+    }
+
+    @Override
+    public Integer deleteBoardComment(BoardComntVO comntVO){
+        return boardMapper.deleteBoardComment(comntVO);
     }
 }

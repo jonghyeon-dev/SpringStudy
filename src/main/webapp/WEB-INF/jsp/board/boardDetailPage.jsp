@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -89,7 +91,6 @@
                                                 "likeChu":likeChu
                                             },
                                         success: response=>{
-                                            console.log("isrun?");
                                             if(response.isSucceed){
                                                 let data = response.data;
                                                 console.log(data.recomCnt);
@@ -123,75 +124,136 @@
                     </c:choose>
                 </div>
             <c:if test="${category ne 'notice' && category ne 'news'}">
-                <div class="list-body white-bg" id="answerInsertArea">
-                    <c:set var="modifyComntCount" value="0"></c:set>
-                    <div class="list-box">
-                        <span>사용자1</span>님의 댓글:&nbsp;
-                        <div class="row">
-                            <p class="col answerText">안녕하세요.</p>
-                            <c:if test="">
-                                <form class="form-box answerModifyArea" style="display:none" method="POST" action="/board/modifyAnswer?_method=PUT">
-                                    <input type="hidden" name="boardId" value="">
-                                    <input type="hidden" name="answerId" value="">
-                                    <input class="form-control" type="text" name="content" value="">
-                                    <button type="button" class="btn btn-warning ms-2 float-end answerModifyCancle">취소</button>
-                                    <button type="submit" class="btn float-end">등록</button>
-                                </form>
-                                <div class="col answerBtnArea">
-                                    <a class="btn btn-sm btn-danger float-end ansDelete" data-id="">삭제</a>
-                                    <a class="btn btn-sm btn-success float-end ansModify">수정</a>
-                                </div>
-                                 <!-- <c:if test="${modifyComntCount > 0}"> 
+                <div class="list-body white-bg" id="comntInsertArea">
+                    <c:set var="modifyComntCount" value="0"/>
+                    <c:if test="${comntList ne null}">
+                        <c:forEach var="items" items="${comntList}">
+                            <div class="list-box" style='<c:if test="${items.groupLayer > 0}">padding-left:${((items.groupLayer-1)*1.2)+1.5}rem;</c:if>'>
+                                <c:choose>
+                                    <c:when test="${items.delYn eq 'N'}">
+                                    <span>
+                                        ${items.cretUserNm}님의 <c:if test="${items.groupLayer > 0}">대</c:if>댓글:&nbsp;
+                                    </span>
+                                    <div class="row">
+                                        <p class="col comntText">
+                                            ${items.boardComnt}
+                                        </p>
+                                        <c:if test="${userLogin ne null}">
+                                            <c:if test="${items.cretUser eq userLogin.seq}">
+                                                <c:set var="modifyComntCount" value="${modifyComntCount+1}"/> 
+                                                <form class="form-box comntModifyArea" style="display:none" method="POST" action="/board/${category}/boardModifyComnt">
+                                                    <input type="hidden" name="boardId" value="${boardInfo.boardId}">
+                                                    <input type="hidden" name="comntId" value="${items.comntId}">
+                                                    <input class="form-control" type="text" name="boardComnt" value="${items.boardComnt}">
+                                                    <button type="button" class="btn btn-warning ms-2 float-end comntModifyCancle">취소</button>
+                                                    <button type="submit" class="btn float-end">등록</button>
+                                                </form>
+                                                <div class="col comntBtnArea">
+                                                    <a class="btn btn-sm btn-danger float-end comntDelete" data-id="${items.comntId}">삭제</a>
+                                                    <a class="btn btn-sm btn-success float-end comntModify">수정</a>
+                                                </div>
+                                            </c:if>
+                                        </c:if>
+                                    </div>
+                                    <div class="mb-4">
+                                        <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
+                                        <span><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></span>
+                                        <c:if test="${userLogin ne null}">
+                                            <a class="link-dark reComnt" style="cursor:pointer;">답글쓰기</a>
+                                            <form class="form-box reComntForm" style="display:none" method="POST" action="/board/${category}/boardComnt">
+                                                <input type="hidden" name="boardId" value="${boardInfo.boardId}">
+                                                <input type="hidden" name="parntId" value="${items.comntId}">
+                                                <input type="hidden" name="originId" value="${items.originId}">
+                                                <input type="hidden" name="groupStep" value="${items.groupStep}">
+                                                <input type="hidden" name="groupLayer" value="${items.groupLayer}">
+                                                <input class="form-control" placeholder="댓글을 남겨보세요." type="text" name="boardComnt" value="">
+                                                <button type="submit" class="btn float-end">등록</button>
+                                                <button type="button" class="btn ms-2 float-end reComntCancle">취소</button>
+                                            </form>
+                                        </c:if>
+                                    </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="row">
+                                            <p class="col comntText">삭제된 댓글 입니다.</p>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${userLogin ne null}">
                         <script>
-                            document.querySelectorAll('.ansModify').forEach((col) =>{
+                            document.querySelectorAll('.reComnt').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                    document.querySelectorAll(".reComntForm").forEach((col)=>{
+                                        col.style.display="none";
+                                    })
+                                event.target.parentNode.querySelectorAll(".reComntForm")[0].style.display="inline";
+                                });
+                            });
+                            document.querySelectorAll('.reComntCancle').forEach((col) =>{
                                 col.addEventListener('click', (event) =>{
                                 event.target.parentNode.style.display="none";
-                                event.target.parentNode.parentNode.querySelectorAll(".answerModifyArea")[0].style.display="inline";
-                                event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="none";
+                                });
+                            });
+                        </script>
+                    </c:if>
+                    <c:if test="${modifyComntCount > 0}"> 
+                        <script>
+                            document.querySelectorAll('.comntModify').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                event.target.parentNode.style.display="none";
+                                event.target.parentNode.parentNode.querySelectorAll(".comntModifyArea")[0].style.display="inline";
+                                event.target.parentNode.parentNode.querySelectorAll(".comntText")[0].style.display="none";
+                                });
+                            });
+
+                            document.querySelectorAll('.comntModifyCancle').forEach((col) =>{
+                                col.addEventListener('click', (event) =>{
+                                event.target.parentNode.style.display="none";
+                                event.target.parentNode.parentNode.querySelectorAll(".comntText")[0].style.display="inline";
+                                event.target.parentNode.parentNode.querySelectorAll(".comntBtnArea")[0].style.display="inline";
                                 });
                             });
                         
-                            document.querySelectorAll('.answerModifyCancle').forEach((col) =>{
+                            document.querySelectorAll('.comntDelete').forEach((col) =>{
                                 col.addEventListener('click', (event) =>{
-                                event.target.parentNode.style.display="none";
-                                event.target.parentNode.parentNode.querySelectorAll(".answerText")[0].style.display="inline";
-                                event.target.parentNode.parentNode.querySelectorAll(".answerBtnArea")[0].style.display="inline";
-                                });
-                            });
-                        
-                            document.querySelectorAll('.recDelete').forEach((col) =>{
-                                col.addEventListener('click', (event) =>{
-                                let id = event.target.dataset.id;
-                                console.log("삭제ID: "+id);
-                                fetch('/board/deleteAnswer',{
-                                    method:"DELETE",
-                                    body:JSON.stringify({id:id}),
-                                    headers:{"Content-Type":"application/json"}
-                                    }).then((response)=>response.json())
-                                    .then((data)=>{
-                                        if(data.isSucceed){
-                                            location.reload();
-                                        }else{
-                                            console.log(data.msg);
+                                    const boardId = "${boardInfo.boardId}";
+                                    let comntId = event.target.dataset.id;
+                                    console.log(comntId);
+                                    $.ajax({
+                                        url: '<c:url value="/board/${category}/deleteComnt"/>',
+                                        type: "DELETE",
+                                        dataType: "json",
+                                        traditional:true,
+                                        data: { 
+                                                "boardId":boardId,
+                                                "comntId":comntId
+                                            },
+                                        success: response=>{
+                                            if(response.isSucceed){
+                                                event.target.parentNode.parentNode.parentNode.innerHTML= "<div class='row'><p class='col comntText'>삭제된 댓글 입니다.</p></div>"
+                                            }else{
+                                                console.log(response.message);
+                                            }
+                                        },error: e=>{
+                                            console.log("Ajax Get Data Error :: ", e);
                                         }
-                                });
+                                    })
                                 });
                             });
                         </script> 
-                    </c:if>-->
-                            </c:if>
-                        </div>
-                    </div>
-                    
+                    </c:if>
                 </div>
                 <c:if test="${userLogin ne null}">
                     <div id="recomWrite" class="mb-2">
-                        <form id="recomForm" class="form-box" method="POST" action="/board/addRecom">
+                        <form id="recomForm" class="form-box" method="POST" action="/board/${category}/boardComnt">
                             <div>
                                 <h4 class=""><strong>댓글쓰기</strong></h4>
-                                <input type="text" class="form-control" name="content">
+                                <input type="text" class="form-control" name="boardComnt">
                             </div>
-                            <input type="hidden" name="postId" value="">
+                            <input type="hidden" name="boardId" value="${boardId}">
                             <div class="recomBtnArea text-end">
                                 <button class="btn btn-lg btn-primary">작성</button>
                             </div>

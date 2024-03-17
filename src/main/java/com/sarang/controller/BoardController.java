@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.sarang.config.FileUtils;
 import com.sarang.config.SecureUtil;
+import com.sarang.model.BoardComntVO;
 import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.BoardViewVO;
@@ -182,6 +183,7 @@ public class BoardController {
 			viewVO.setCretUser(userVO.getSeq().toString());
 		}
 		boardService.insertBoardViewInfo(viewVO);
+		
 		if(!ObjectUtils.isEmpty(userVO)){
 			BoardRecomVO recomVO = new BoardRecomVO();
 			recomVO.setBoardId(boardId);
@@ -192,9 +194,12 @@ public class BoardController {
 
 		Integer recomCnt = boardService.getBoardRecomCount(reqMap);
 
+		List<BoardComntVO> comntList = boardService.getBoardComntList(reqMap);
+
 		model.addAttribute("boardInfo", boardVO);
 		model.addAttribute("boardFileList", fileList);
 		model.addAttribute("recomCnt", recomCnt);
+		model.addAttribute("comntList",comntList);
 
 		return "board/boardDetailPage";
 	}
@@ -337,6 +342,11 @@ public class BoardController {
 	,  @PathVariable("category") String category, String boardId, String likeChu)throws Exception{
 		ResponseData js = new ResponseData();
 		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
+			js.setIsSucceed(false);
+			js.setMessage("로그인을 해야 가능한 기능입니다.");
+			return js;
+		}
 		try{
 			BoardRecomVO recomVO = new BoardRecomVO();
 			recomVO.setBoardId(Integer.parseInt(boardId));
@@ -364,20 +374,81 @@ public class BoardController {
 		return js;
 	}
 
-	// @PostMapping(value="/board/{category}/boardComment")
-	// public String insertBoardComment(HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	// ,  @PathVariable("category") String category, Integer boardId)throws Exception{
-	// 	BoardAnswerVO recomVO = new BoardAnswerVO();
-	// 	try{
-	// 		UserVO loginVO = (UserVO)session.getAttribute("userLogin");
-	// 		answerVO.setBoardId(boardId);
-	// 		answerVO.setCretUser(loginVO.getUserId());
-	// 		boardService.insertBoardAnswerInfo(answerVO);
-	// 	}catch(Exception e){
-	// 		logger.error("Error Is : {}",e.getMessage());
-	// 	}
-	// 	return "redirect:/board/"+category+"/detail/"+boardId;
-	// }
+	@PostMapping(value="/board/{category}/boardComnt")
+	public String insertBoardComment(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	,  @PathVariable("category") String category, Integer boardId, String boardComnt, Integer parntId
+	, Integer originId, Integer groupStep, Integer groupLayer)throws Exception{
+		logger.info("POST insertBoardComment");
+		BoardComntVO comntVO = new BoardComntVO();
+		try{
+			UserVO loginVO = (UserVO)session.getAttribute("userLogin");
+			comntVO.setBoardId(boardId);
+			if(parntId != null && parntId != 0){
+				comntVO.setParntId(parntId);
+			}
+			if(originId != null && originId != 0){
+				comntVO.setOriginId(originId);
+				comntVO.setGroupStep(groupStep);
+				comntVO.setGroupLayer(groupLayer);
+			}
+			comntVO.setBoardComnt(boardComnt);
+			comntVO.setCretUser(loginVO.getSeq().toString());
+			comntVO.setChgUser(loginVO.getSeq().toString());
+			boardService.insertBoardComment(comntVO);
+		}catch(Exception e){
+			logger.error("Error Is : {}",e.getMessage());
+		}
+		return "redirect:/board/"+category+"/detail/"+boardId;
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/board/{category}/deleteComnt",method=RequestMethod.DELETE)
+	public ResponseData deleteComntInfo (HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	,  @PathVariable("category") String category, Integer boardId, Integer comntId)throws Exception{
+		ResponseData js = new ResponseData();
+		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
+			js.setIsSucceed(false);
+			js.setMessage("로그인을 해야 가능한 기능입니다.");
+			return js;
+		}
+		try{
+			BoardComntVO comntVO = new BoardComntVO();
+			comntVO.setBoardId(boardId);
+			comntVO.setComntId(comntId);
+			if(!"0".equals(userVO.getUserGrant())){
+				comntVO.setCretUser(userVO.getSeq().toString());
+			}
+			boardService.deleteBoardComment(comntVO);
+			js.setIsSucceed(true);
+			js.setMessage("삭제 성공");
+		}catch(Exception e){
+			logger.error("Error Is : {}",e.getMessage());
+			js.setIsSucceed(false);
+			js.setMessage("Delete Comment Error");
+		}
+
+		return js;
+	}
+
+	@PostMapping(value="/board/{category}/boardModifyComnt")
+	public String modifyBoardComnt(HttpSession session, HttpServletRequest request, HttpServletResponse response 
+	,  @PathVariable("category") String category, Integer boardId, Integer comntId, String boardComnt)throws Exception{
+		UserVO userVO = (UserVO)session.getAttribute("userLogin");
+		try{
+			BoardComntVO comntVO = new BoardComntVO();
+			comntVO.setBoardId(boardId);
+			comntVO.setComntId(comntId);
+			comntVO.setBoardComnt(boardComnt);
+			comntVO.setCretUser(userVO.getSeq().toString());
+			comntVO.setChgUser(userVO.getSeq().toString());
+			System.out.println(comntVO.toString());
+			boardService.updateBoardComment(comntVO);
+		}catch(Exception e){
+			logger.error("Error Is : {}",e.getMessage());
+		}
+		return "redirect:/board/"+category+"/detail/"+boardId;
+	}
 
 	/**
 	 * 게시판 등록, 수정 시 사용자 권한 체크

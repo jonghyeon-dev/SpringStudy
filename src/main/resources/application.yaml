@@ -19,6 +19,10 @@ spring:
         view:
             prefix: /WEB-INF/jsp/
             suffix: .jsp
+        # put,delete method 사용을 위한 설정
+        hiddenmethod:
+            filter:
+                enabled: true
     #thymeleaf
     thymeleaf:
         cache: false
