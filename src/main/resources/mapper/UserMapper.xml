@@ -61,6 +61,7 @@
 			CEIL((count(*)/#{size})) as totalPage
 		FROM TUSR00100
 		WHERE 1=1
+      AND 
 		  <if test='seq != null and !seq.equals("")'>
 		  AND SEQ LIKE CONCAT('%',#{seq},'%')
 		  </if>

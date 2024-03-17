@@ -78,7 +78,7 @@
             const pageStatus = '<c:out value="${status}"/>';
 
             if(pageStatus === "update"){
-                const boardTitle = '<c:out value="${boardInfo.boardTitle}"/>';
+                const boardTitle = `<c:out value='${boardInfo.boardTitle}'/>`;
                 const boardCntnt = `<c:out value='${boardInfo.boardCntnt}'/>`;
                 $("#boardInsertForm input[name='boardTitle']").val(boardTitle);
                 console.log(unescapeHtml(boardCntnt));

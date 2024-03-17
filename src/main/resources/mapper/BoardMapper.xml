@@ -26,6 +26,7 @@
 	FROM TBRD00100 A
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
 		  <if test='searchWord != null and !"".equals(searchWord)'>
 			<if test='"title".equals(searchOption)'>
 				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
@@ -49,6 +50,7 @@
 		FROM TBRD00100
 		WHERE 1=1
           AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
 		  <if test='searchWord != null and !"".equals(searchWord)'>
 			<if test='"title".equals(searchOption)'>
 				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
@@ -72,6 +74,7 @@
 		WHERE 1=1
           AND BOARD_ID = #{boardId}
 		  AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
 	</select>
 
 	<select id="getBoardFileList" resultType="com.sarang.model.common.FileVO">

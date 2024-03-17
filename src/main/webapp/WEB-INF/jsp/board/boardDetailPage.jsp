@@ -145,8 +145,8 @@
                                                     <input type="hidden" name="boardId" value="${boardInfo.boardId}">
                                                     <input type="hidden" name="comntId" value="${items.comntId}">
                                                     <input class="form-control" type="text" name="boardComnt" value="${items.boardComnt}">
-                                                    <button type="button" class="btn btn-warning ms-2 float-end comntModifyCancle">취소</button>
-                                                    <button type="submit" class="btn float-end">등록</button>
+                                                    <button type="submit" class="btn btn-outline-success float-end">수정</button>
+                                                    <button type="button" class="btn btn-outline-warning ms-2 float-end comntModifyCancle">취소</button>
                                                 </form>
                                                 <div class="col comntBtnArea">
                                                     <a class="btn btn-sm btn-danger float-end comntDelete" data-id="${items.comntId}">삭제</a>

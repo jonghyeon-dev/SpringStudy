@@ -39,7 +39,7 @@
                                 <a class="link-dark" href="<c:url value='/board/${category}/detail/${items.boardId}?page=${page}&searchOption=${param.searchOption}&searchWord=${param.searchWord}'/>">
                                     <c:out value="${items.boardTitle}"/>
                                     <c:if test="${items.asNew eq 1}">
-                                        <div class="badge bg-danger bg-gradient rounded-pill ms-2 mb-2">News</div>
+                                        <div class="badge bg-danger bg-gradient rounded-pill ms-2 mb-2">New</div>
                                     </c:if> 
                                 </a>
                             </td>

@@ -65,6 +65,7 @@ public class FileController {
 			result.put("error",message);
             return result;
         }
+		System.out.println("실행됨?");
 		MultipartFile uploadFile = request.getFile("upload");
 		FileVO fileInfo = new FileVO();
 		try{

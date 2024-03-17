@@ -73,7 +73,7 @@ public class FileUtils {
                 }
 
                 File saveFile = new File(saveFilePath);
-                checkFileMimeType(saveFile);
+                // checkFileMimeType(saveFile);
                 // saveFile이 File이면 true, 아니면 false
                 // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
                 if(saveFile.isFile()){
@@ -157,7 +157,7 @@ public class FileUtils {
                 }
 
                 File saveFile = new File(saveFilePath);
-                checkFileMimeType(saveFile);
+                // checkFileMimeType(saveFile);
                 // saveFile이 File이면 true, 아니면 false
                 // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
                 if(saveFile.isFile()){
@@ -195,7 +195,7 @@ public class FileUtils {
             return fileVO;
         } catch(Exception e){
             if(logger.isErrorEnabled()){
-                logger.error("#Exception Message : {}", e.getMessage());
+                logger.error("#FileUpload Exception Message : {}", e.getMessage());
             }
             return fileVO;
         }
