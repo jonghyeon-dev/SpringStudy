@@ -102,7 +102,6 @@ public class UserController {
     public ResponseData checkUserDuplication(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, String userId) {
         ResponseData js = new ResponseData();
-        System.out.println(userId);
         String checkId = userService.checkUserDuplication(userId);
         if(checkId == null || "".equals(checkId)){
             js.setIsSucceed(true);

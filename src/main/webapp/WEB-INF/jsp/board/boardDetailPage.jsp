@@ -93,7 +93,6 @@
                                         success: response=>{
                                             if(response.isSucceed){
                                                 let data = response.data;
-                                                console.log(data.recomCnt);
                                                 $("#recom").find("strong").text(data.recomCnt);
                                             }else{
                                                 console.log(response.message);
@@ -221,7 +220,6 @@
                                 col.addEventListener('click', (event) =>{
                                     const boardId = "${boardInfo.boardId}";
                                     let comntId = event.target.dataset.id;
-                                    console.log(comntId);
                                     $.ajax({
                                         url: '<c:url value="/board/${category}/deleteComnt"/>',
                                         type: "DELETE",

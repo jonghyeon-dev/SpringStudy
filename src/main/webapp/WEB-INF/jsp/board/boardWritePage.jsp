@@ -81,7 +81,6 @@
                 const boardTitle = `<c:out value='${boardInfo.boardTitle}'/>`;
                 const boardCntnt = `<c:out value='${boardInfo.boardCntnt}'/>`;
                 $("#boardInsertForm input[name='boardTitle']").val(boardTitle);
-                console.log(unescapeHtml(boardCntnt));
                 ckeditor.setData(unescapeHtml(boardCntnt));
             }
         };

@@ -442,7 +442,6 @@ public class BoardController {
 			comntVO.setBoardComnt(boardComnt);
 			comntVO.setCretUser(userVO.getSeq().toString());
 			comntVO.setChgUser(userVO.getSeq().toString());
-			System.out.println(comntVO.toString());
 			boardService.updateBoardComment(comntVO);
 		}catch(Exception e){
 			logger.error("Error Is : {}",e.getMessage());

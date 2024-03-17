@@ -68,7 +68,6 @@
 
             checkDuplication = function(){
                 let userId = $("#addUserForm input[name='userId']").val();
-                console.log(userId)
                 $.ajax({url:"<c:url value='/checkUserDup.do'/>",
                         type:"POST",
                         dataType: "json",

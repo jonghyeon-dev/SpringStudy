@@ -126,7 +126,6 @@ public class FileUtils {
         if(ObjectUtils.isEmpty(loginVO)){
             return fileVO;
         }
-        System.out.println(filePath);
         try{
             // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
                 // 원본 파일명(확장자 포함)
@@ -205,7 +204,6 @@ public class FileUtils {
         final String[] PERMISSION_FILE_MIME_TYPE = {"image/gif", "image/jpeg", "image/png", "image/bmp", "application/pdf", "video/mp4"};
         boolean isPermision = false;
         String mimeType = new Tika().detect(file);
-        System.out.println(mimeType);
         for(int i=0;i<PERMISSION_FILE_MIME_TYPE.length;i++){
             if(PERMISSION_FILE_MIME_TYPE[i].equals(mimeType)){
 

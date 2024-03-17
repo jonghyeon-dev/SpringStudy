@@ -266,14 +266,12 @@
 
         //ENO 데이터 삭제
         var deleteAdmin = function(delList){
-            // console.log("deleteAdmin Start :: " + delList);
             $.ajax({
                 url:"<c:url value='/admin/deleteAdminInfo.do'/>",
                 type:"POST",
                 dataType:"json",
                 traditional:true,
                 data:{"delList": delList},
-                // data:{"delListData": JSON.stringify(delList)},
                 success: response=>{
                     let seq=$("#searchAdminForm input[name='seq']").val();
                     let eno=$("#searchAdminForm input[name='userId']").val();
