@@ -15,9 +15,9 @@
                         <li><a class="dropdown-item" href="<c:url value='/board/notice'/>">공지사항</a></li>
                         <li><a class="dropdown-item" href="<c:url value='/board/news'/>">최근소식</a></li>
                         <li><a class="dropdown-item" href="<c:url value='/board/community'/>">자유게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<c:url value='/thymeleafTest'/>">타임리프테스트</a></li>
                     </ul>
                 </li>
+                <!-- <li class="nav-item"><a class="nav-link" href="<c:url value='/thymeleafTest'/>">타임리프테스트</a></li> -->
                 <c:if test="${userLogin ne null && userLogin.userGrant eq '0'}">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자항목</a>

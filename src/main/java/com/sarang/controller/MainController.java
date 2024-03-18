@@ -80,8 +80,9 @@ public class MainController {
     @GetMapping(value="/thymeleafTest")
     public String hellothymeleaf(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception{
+      logger.info("thymeleaf Test Start");
+      
       model.addAttribute("name", "thymeleaf Study");
-
       return "thymeleaf/hello";
     }
 } 
