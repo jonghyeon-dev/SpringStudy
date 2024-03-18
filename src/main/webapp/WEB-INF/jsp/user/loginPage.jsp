@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+    <title>로그인</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light">
@@ -21,21 +22,37 @@
                         <th><span>ID :</span></th>
                         <td><input type="text" name="userId" value="" required="true"></td>
                         <th><span>PW :</span></th>
-                        <td><input type="password" name="userPw" value="" required="true"></td>
+                        <td><input type="password" name="userPwd" value="" required="true"></td>
                     </tr>
                 </table>
                 <c:if test="${!empty errorMsg}">
                     <span style="color:red">${errorMsg}</span><br/>
                 </c:if>
                 <button class="btn btn-primary" type="submit">로그인</button>
+                <a class="btn btn-primary" href="/createAccount.do">회원가입</a>
             </form>
         <div>
+        <input type="hidden" id="errorMsg" value="${errorMsg}">
+        <input type="hidden" id="successMsg" value="${successMsg}">
         <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>
 <script>
     var loginPage = (function(){
         var init = function(){
+            const errorMsg = $("#errorMsg").val()
+            if(errorMsg != null && errorMsg != ""){
+                $("#modalTitle").append("Error");
+                $("#modalContent").append(errorMsg);
+                $("#modalInfo").show();
+            }
+
+            const successMsg = $("#successMsg").val()
+            if(successMsg != null && successMsg != ""){
+                $("#modalTitle").append("가입 완료");
+                $("#modalContent").append(successMsg);
+                $("#modalInfo").show();
+            }
 
         };
 

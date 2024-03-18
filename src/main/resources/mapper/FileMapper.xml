@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sarang.mapper.FileMapper">
+
+	<select id="getDownloadFileInfo" resultType="com.sarang.model.common.FileVO">
+		SELECT 
+            FILE_ID,
+            BOARD_ID,
+            FILE_PATH,
+            FILE_NAME,
+            FILE_CUT_NAME,
+            SAVE_FILE_NAME,
+            FILE_EXT,
+            CRET_USER,
+            CRET_DATE,
+            CRET_TIME
+        FROM TBRD00101
+		WHERE FILE_ID = #{fileId}
+	</select>
+	
+	<insert id="insertUploadedFileInfo" parameterType="com.sarang.model.common.FileVO" useGeneratedKeys="true" keyProperty="fileId" keyColumn="FILE_ID">
+		INSERT INTO TBRD00101(
+            BOARD_ID,
+            FILE_PATH,
+            FILE_NAME,
+            FILE_CUT_NAME,
+            SAVE_FILE_NAME,
+            FILE_EXT,
+            CRET_USER,
+            CRET_DATE,
+            CRET_TIME
+		)VALUE(
+			#{boardId},
+			#{filePath},
+			#{fileName},
+			#{fileCutName},
+            #{saveFileName},
+            #{fileExt},
+            #{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+</mapper>

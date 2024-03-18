@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sarang.mapper.BoardMapper">
+    <select id="getBoardList" resultType="com.sarang.model.BoardVO">
+		SELECT 
+			BOARD_ID,
+			BOARD_CATE,
+			BOARD_TITLE,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME,
+			CASE WHEN STR_TO_DATE(CONCAT(CRET_DATE,CRET_TIME),'%Y%m%d%H%i%s') 
+				BETWEEN DATE_ADD(now(), INTERVAL -1 DAY) 
+					AND NOW() 
+				THEN 1 
+				ELSE 0 
+			END AS AS_NEW,
+		IFNULL((SELECT COUNT(BOARD_ID) AS VIEW_CNT FROM TBRD00102 B WHERE A.BOARD_ID = B.BOARD_ID GROUP BY BOARD_ID),0) AS VIEW_CNT,
+		IFNULL((SELECT SUM(LIKE_CHU) as LIKE_CHU_CNT FROM TBRD00103 C WHERE A.BOARD_ID = C.BOARD_ID GROUP BY BOARD_ID),0) AS LIKE_CHU_CNT,
+		(SELECT USER_NM FROM TUSR00100 D WHERE A.CRET_USER = D.SEQ) AS CRET_USER_NM,
+		(SELECT USER_NM FROM TUSR00100 E WHERE A.CHG_USER = E.SEQ) AS CHG_USER_NM
+	FROM TBRD00100 A
+		WHERE 1=1
+          AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
+		  <if test='searchWord != null and !"".equals(searchWord)'>
+			<if test='"title".equals(searchOption)'>
+				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"content".equals(searchOption)'>
+				AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"titCont".equals(searchOption)'>
+				AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+			</if>
+			<if test='"user".equals(searchOption)'>
+				AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+		  </if>
+		ORDER BY BOARD_ID desc LIMIT #{start}, #{size}
+	</select>
+
+	<select id="getBoardPageInfo" resultType="Integer">
+		SELECT 
+			count(*) AS totalCnt
+		FROM TBRD00100
+		WHERE 1=1
+          AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
+		  <if test='searchWord != null and !"".equals(searchWord)'>
+			<if test='"title".equals(searchOption)'>
+				AND BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"content".equals(searchOption)'>
+				AND BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+			<if test='"titCont".equals(searchOption)'>
+				AND (BOARD_TITLE LIKE CONCAT('%',#{searchWord},'%') OR BOARD_CNTNT LIKE CONCAT('%',#{searchWord},'%'))
+			</if>
+			<if test='"user".equals(searchOption)'>
+				AND CRET_USER LIKE CONCAT('%',#{searchWord},'%')
+			</if>
+		  </if>
+	</select>
+
+	<select id="getBoardDetailInfo" resultType="com.sarang.model.BoardVO">
+		SELECT 
+			*
+		FROM TBRD00100
+		WHERE 1=1
+          AND BOARD_ID = #{boardId}
+		  AND BOARD_CATE = #{boardCate}
+		  AND DEL_YN = 'N'
+	</select>
+
+	<select id="getBoardFileList" resultType="com.sarang.model.common.FileVO">
+		SELECT
+			*
+		FROM TBRD00101
+		WHERE BOARD_ID = #{boardId}
+	</select>
+
+	<select id="getBoardRecomCount" resultType="Integer">
+		SELECT
+			SUM(LIKE_CHU) AS CNT
+		FROM TBRD00103
+		WHERE BOARD_ID = #{boardId}
+		GROUP BY BOARD_ID
+	</select>
+
+	<select id="checkDupRecom" resultType="com.sarang.model.BoardRecomVO">
+		SELECT
+			*
+		FROM TBRD00103
+		WHERE BOARD_ID = #{boardId}
+		  AND CRET_USER = #{cretUser}
+	</select>
+
+	<select id="getBoardComntList" resultType="com.sarang.model.BoardComntVO">
+		SELECT 
+			 COMNT_ID
+			,BOARD_ID
+			,PARNT_ID
+			,IFNULL(ORIGIN_ID,COMNT_ID) AS ORIGIN_ID
+			,GROUP_STEP
+			,GROUP_LAYER
+			,BOARD_COMNT
+			,CRET_USER
+			,CRET_DATE
+			,CRET_TIME
+			,CHG_USER
+			,CHG_DATE
+			,CHG_TIME
+			,DEL_YN
+			,(SELECT USER_NM FROM TUSR00100 B WHERE A.CRET_USER = B.SEQ) AS CRET_USER_NM
+			,(SELECT USER_NM FROM TUSR00100 C WHERE A.CHG_USER = C.SEQ) AS CHG_USER_NM
+		FROM TBRD00110 A
+		WHERE BOARD_ID = #{boardId}
+		ORDER BY ORIGIN_ID,GROUP_STEP;
+	</select>
+
+	<insert id="insertBoardDetailInfo" parameterType="com.sarang.model.BoardVO" useGeneratedKeys="true" keyProperty="boardId" keyColumn="BOARD_ID">
+		INSERT INTO TBRD00100(
+			BOARD_CATE,
+			BOARD_TITLE,
+			BOARD_CNTNT,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		)VALUES(
+			#{boardCate},
+			#{boardTitle},
+			#{boardCntnt},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			#{chgUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<insert id="insertBoardViewInfo" parameterType="com.sarang.model.BoardViewVO">
+		INSERT INTO TBRD00102(
+			BOARD_ID,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME
+		)VALUES(
+			#{boardId},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<insert id="insertBoardRecomInfo" parameterType="com.sarang.model.BoardRecomVO">
+		INSERT INTO TBRD00103(
+			BOARD_ID,
+			LIKE_CHU,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_DATE,
+			CHG_TIME
+		)VALUES(
+			#{boardId},
+			#{likeChu},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<insert id="insertBoardComment" parameterType="com.sarang.model.BoardComntVO">
+	INSERT INTO TBRD00110(
+			BOARD_ID,
+			<if test="parntId != null and parntId != 0">
+			PARNT_ID,
+			</if>
+			<if test="originId != null and originId != 0">
+			ORIGIN_ID,
+			GROUP_STEP,
+			GROUP_LAYER,
+			</if>
+			BOARD_COMNT,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		) VALUES (
+			#{boardId},
+			<if test="parntId != null and parntId != 0">
+			#{parntId},
+			</if>
+			<if test="originId != null and originId != 0">
+			#{originId},
+			#{groupStep} + 1,
+			#{groupLayer} + 1,
+			</if>
+			#{boardComnt},
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+	<update id="updateBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00100 SET
+			BOARD_CATE = #{boardCate},
+			BOARD_TITLE = #{boardTitle},
+			BOARD_CNTNT= #{boardCntnt},
+			CHG_USER = #{chgUser},
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</update>
+
+	<update id="updateBoardRecomInfo" parameterType="com.sarang.model.BoardRecomVO">
+		UPDATE TBRD00103 SET
+			LIKE_CHU = #{likeChu},
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</update>
+
+	<update id="resetBoardFileList" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00101 SET
+			BOARD_ID = null
+		WHERE BOARD_ID = #{boardId}
+	</update>
+
+	<update id="updateBoardComment" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		BOARD_COMNT = #{boardComnt},
+		CHG_USER = #{chgUser},
+		CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+		CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE COMNT_ID = #{comntId}
+		  AND BOARD_ID = #{boardId}
+		  AND CRET_USER = #{cretUser}
+	</update>
+
+	
+
+	<update id="deleteBoardComment" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		DEL_YN = 'Y'
+		WHERE COMNT_ID = #{comntId}
+		AND BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)">
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</update>
+
+	<delete id="deleteBoardDetailInfo" parameterType="com.sarang.model.BoardVO">
+		DELETE FROM TBRD00100 
+		WHERE BOARD_ID = #{boardId}
+		<if test="cretUser != null and !''.equals(cretUser)"> 
+		  AND CRET_USER = #{cretUser}
+		</if>
+	</delete>
+
+	<select id="getComntGroupLayerStep" resultType="Integer">
+		SELECT 
+			IFNULL(MAX(GROUP_STEP),0) AS MAX_GROUP_STEP 
+		FROM TBRD00110 
+		WHERE BOARD_ID = #{boardId} 
+		  AND ORIGIN_ID= #{originId} 
+		  AND GROUP_LAYER = #{groupLayer} + 1
+		  AND PARNT_ID = #{parntId}
+	</select>
+
+	<update id="updateBoardComntGroupStep" parameterType="com.sarang.model.BoardComntVO">
+		UPDATE TBRD00110 SET
+		GROUP_STEP = GROUP_STEP + 1
+		WHERE BOARD_ID = #{boardId}
+		  AND ORIGIN_ID = #{originId} 
+		  AND GROUP_STEP  <![CDATA[ > ]]>  ${groupStep} 
+	</update>
+	
+</mapper>

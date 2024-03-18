@@ -20,7 +20,9 @@ public class ErrorHandler implements ErrorController{
         
         if(status != null){
             int statusCode = Integer.valueOf(status.toString());
-            if(statusCode == HttpStatus.NOT_FOUND.value()) {
+            if(statusCode == HttpStatus.NOT_FOUND.value()) { // 404
+                return "main/errorPage";
+            } else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) { // 500 
                 return "main/errorPage";
             } else {
                 return "main/errorPage";
