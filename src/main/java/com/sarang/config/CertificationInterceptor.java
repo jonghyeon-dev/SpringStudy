@@ -27,7 +27,7 @@ public class CertificationInterceptor implements HandlerInterceptor{
             ||request.getRequestURI().indexOf("/file/") >= 0
             ||request.getRequestURI().indexOf("/community/board") >= 0){
             if(ObjectUtils.isEmpty(loginVO)){
-                response.sendRedirect("/error");
+                response.sendRedirect("/login.do");
                 return false;
             }
         }
