@@ -30,9 +30,9 @@
                     </tr>
                     <tr>
                         <th><span>패스워드<span style="color:red">*</span> :</span></th>
-                        <td><input class="form-control" type="password" name="userPw" value="" required="true"></td>
+                        <td><input class="form-control" type="password" name="userPwd" value="" required="true"></td>
                         <th><span>패스워드 확인<span style="color:red">*</span> :</span></th>
-                        <td><input class="form-control" type="password" name="userPwCheck" value="" required="true"></td>
+                        <td><input class="form-control" type="password" name="userPwdCheck" value="" required="true"></td>
                     </tr>
                     <tr>
                         <th><span>휴대폰번호 :</span></th>
@@ -127,8 +127,8 @@
     
     function validationForm(){
         const userId = $('#addUserForm input[name="userId"]').val(); // 아이디
-        const userPw = $('#addUserForm input[name="userPw"]').val(); // 패스워드
-        const pwCheck = $('#addUserForm input[name="userPwCheck"]').val(); // 패스워드확인
+        const userPwd = $('#addUserForm input[name="userPwd"]').val(); // 패스워드
+        const pwdCheck = $('#addUserForm input[name="userPwdCheck"]').val(); // 패스워드확인
         const userNm = $('#addUserForm input[name="userNm"]').val(); // 이름
         const checkDup = $('#addUserForm input[name="checkDup"]').val(); // 중복체크 여부
 
@@ -140,16 +140,16 @@
             $('#addUserForm input[name="userId"]').focus();
             $("#modalInfo").show();
             return false;
-        }else if(userPw.trim() == "" || userPw == null){
+        }else if(userPwd.trim() == "" || userPwd == null){
             $("#modalTitle").append("패스워드 값이 없습니다.");
             $("#modalContent").append("패스워드 값은 필수 값 입니다.");
-            $('#addUserForm input[name="userPw"]').focus();
+            $('#addUserForm input[name="userPwd"]').focus();
             $("#modalInfo").show();
             return false;
-        }else if(pwCheck.trim() == "" || pwCheck == null){
+        }else if(pwdCheck.trim() == "" || pwdCheck == null){
             $("#modalTitle").append("패스워드 확인 값이 없습니다.");
             $("#modalContent").append("패스워드 확인 값은 필수 값 입니다.");
-            $('#addUserForm input[name="userPwCheck"]').focus();
+            $('#addUserForm input[name="userPwdCheck"]').focus();
             $("#modalInfo").show();
             return false;
         }else if(userNm.trim() == "" || userNm == null){
@@ -166,10 +166,10 @@
             return false;
         }
 
-        if(userPw != pwCheck){
+        if(userPwd != pwCheck){
             $("#modalTitle").append("패스워드 값 확인");
             $("#modalContent").append("패스워드 값과 확인 값이 같지 않습니다.");
-            $('#addUserForm input[name="userPw"]').focus();
+            $('#addUserForm input[name="userPwd"]').focus();
             $("#modalInfo").show();
             return false;
         }

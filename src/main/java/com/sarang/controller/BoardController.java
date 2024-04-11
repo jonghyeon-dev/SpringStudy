@@ -210,7 +210,7 @@ public class BoardController {
 		logger.info("boardWritePage View");
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
-			return "redirect:/board"+category;
+			return "redirect:/board/"+category;
 		};
 		model.addAttribute("middle", category);
 		model.addAttribute("category", category);
@@ -223,7 +223,7 @@ public class BoardController {
 	, List<MultipartFile> uploadFiles, @PathVariable("category") String category) throws Exception {
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
-			return "redirect:/board"+category;
+			return "redirect:/board/"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
@@ -462,7 +462,9 @@ public class BoardController {
 			return true;
 		}
 		// 그 외 게시판 관리자 체크
-		if(!"community".equals(category) && "0".equals(userVO.getUserGrant())){
+		System.out.println(category);
+		System.out.println(userVO.getUserGrant());
+		if(!"community".equals(category) && !"0".equals(userVO.getUserGrant())){
 			return true;
 		}
 		return false;
