@@ -72,6 +72,17 @@ public class UserController {
         return "user/createAccountPage";
     }
 
+    @GetMapping(value="/myPage.do")
+    public String myPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model){
+        logger.info("MyPage View");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
+        return "user/myPage";
+    }
+
     @PostMapping(value="/checkUser.do")
     public String checkLogin(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, RedirectAttributes redirectAttributes){

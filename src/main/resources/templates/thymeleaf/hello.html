@@ -25,17 +25,14 @@
                         <li class="nav-item"><a class="nav-link" th:href="@{/main.do}">홈</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{/about.do}">소개</a></li>
                         <li class="nav-item"><a class="nav-link" th:href="@{/thymeleafTest}">타임리프테스트</a></li>
-                        <li th:if="${session.adminLogin} != null" class="nav-item"><a class="nav-link" th:href="@{/admin/adminAccountMain.do}">관리자목록</a></li>
-                        <li th:if="${session.adminLogin} != null or ${session.userLogin} != null" class="nav-item text-light">
-                            <span th:if="${session.adminLogin} != null">
-                                [[${session.adminLogin.name}]]님 환영합니다.
-                            </span>
-                            <span th:if="${userLogin} != null">
+                        <li th:if="${session.userLogin} != null and ${session.userLogin.userGrant} == '0'" class="nav-item"><a class="nav-link" th:href="@{/admin/adminAccountMain.do}">관리자목록</a></li>
+                        <li th:if="${session.userLogin} != null" class="nav-item text-light">
+                            <span th:if="${session.userLogin} != null">
                                 [[${session.userLogin.userNm}]]님 환영합니다.
                             </span>
                             <a class="btn btn-success" th:href="@{/logout.do}">로그아웃</a>
                         </li>
-                        <li th:unless="${session.adminLogin} != null or ${session.userLogin} != null"><a class="btn btn-success" th:href="@{/login.do}">로그인</a></li>
+                        <li th:unless="${session.userLogin} != null"><a class="btn btn-success" th:href="@{/login.do}">로그인</a></li>
                     </ul>
                 </div>
             </div>
@@ -59,7 +56,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script>
             function closeModal(){
                 $("#modalTitle").empty();

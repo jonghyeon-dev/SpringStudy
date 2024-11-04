@@ -58,7 +58,7 @@
                         <a href='<c:url value="/board/${category}"/>' class="btn btn-danger text-center">취소</a>
                     </c:if>
                     <c:if test="${status eq 'update'}">
-                        <a href='<c:url value="/boardDetail/${category}/${boardInfo.boardId}"/>' class="btn btn-danger text-center">취소</a>
+                        <a href='<c:url value="/board/${category}/detail/${boardInfo.boardId}"/>' class="btn btn-danger text-center">취소</a>
                     </c:if>
                 </div>
             </form>
