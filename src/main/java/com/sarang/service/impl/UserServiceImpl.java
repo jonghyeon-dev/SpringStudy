@@ -3,51 +3,15 @@ package com.sarang.service.impl;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.sarang.mapper.UserMapper;
 import com.sarang.model.UserVO;
-import com.sarang.service.UserService;
 
-@Service
-public class UserServiceImpl implements UserService{
-    @Autowired
-    UserMapper userMapper;
-
-    @Override
-    public UserVO checkAdminLogin(HashMap<String,Object> reqMap){
-        return userMapper.checkAdminLogin(reqMap);
-    }
-
-    @Override
-    public UserVO checkUserLogin(HashMap<String,Object> reqMap){
-        return userMapper.checkUserLogin(reqMap);
-    }
-
-    @Override
-    public List<UserVO> getUserInfo(HashMap<String,Object> reqMap){
-        return userMapper.getUserInfo(reqMap);
-    }
-
-    @Override
-    public HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap){
-        return userMapper.getUserPageInfo(reqMap);
-    }
-
-    @Override
-    public String checkUserDuplication(String userId){
-        return userMapper.checkUserDuplication(userId);
-    }
-
-    @Override
-    public Integer insertUserInfo(UserVO userVO){
-        return userMapper.insertUserInfo(userVO);
-    }
-
-    @Override
-    public Integer deleteUserInfo(List<String> deleteList){
-        return userMapper.deleteUserInfo(deleteList);
-    }
+public interface UserServiceImpl{
+    UserVO checkUserLogin(HashMap<String,Object> reqMap);
+    UserVO checkAdminLogin(HashMap<String,Object> reqMap);
+    List<UserVO> getUserInfo(HashMap<String,Object> reqMap);
+    HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);
+    String checkUserDuplication(String userId);
+    Integer insertUserInfo(UserVO userVO);
+    Integer deleteUserInfo(List<String> deleteList);
 }
 

@@ -23,7 +23,7 @@
                         <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">관리자항목</a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
                             <li><a class="dropdown-item" href="<c:url value='/admin/adminAccountMain.do'/>">관리자목록</a></li>
-                            <!-- <li><a class="dropdown-item" href="<c:url value='/admin/mainContents.do'/>">메인화면관리</a></li> -->
+                            <li><a class="dropdown-item" href="<c:url value='/admin/headContent.do'/>">메인헤드컨텐츠관리</a></li>
                         </ul>
                     </li>
                 </c:if>

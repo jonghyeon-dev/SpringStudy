@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sarang.mapper.HeadContentMapper">
+    <select id="getHeadContents" resultType="com.sarang.model.HeadContentVO">
+		SELECT 
+            CONTENT_SEQ,
+            TITLE,
+            CNTNT,
+            IMG_FILE_ID,
+            STR_DATE,
+            END_DATE,
+            DEL_YN,
+            CRET_USER,
+            CRET_DATE,
+            CRET_TIME,
+            CHG_USER,
+            CHG_DATE,
+            CHG_TIME
+        FROM THCT00100
+		WHERE 1=1
+        <if test='contentSeq != null and !contentSeq.equals("")'>
+            AND CONTENT_SEQ LIKE CONCAT('%',#{contentSeq},'%')
+        </if>
+        <if test="!''.equals(title) and title != null">
+            AND TITLE like concat('%', #{title} ,'%')
+        </if>
+        <if test="!''.euqals(delYn) and delYn != null">
+            AND DEL_YN = #{delYn}
+        <if>
+		ORDER BY SEQ desc LIMIT #{start}, #{size}
+	</select>
+
+    <select id="getHeadContentsPageInfo" resultType="HashMap">
+		SELECT 
+			count(*) AS totalCnt,
+			CEIL((count(*)/#{size})) as totalPage
+		FROM THCT00100
+		WHERE 1=1
+        <if test='contentSeq != null and !contentSeq.equals("")'>
+            AND CONTENT_SEQ LIKE CONCAT('%',#{contentSeq},'%')
+        </if>
+		<if test="!''.equals(title) and title != null">
+		    AND TITLE like concat('%', #{title} ,'%')
+        </if>
+        <if test="!''.euqals(delYn) and delYn != null">
+            AND DEL_YN = #{delYn}
+        <if>
+	</select>
+</mapper>

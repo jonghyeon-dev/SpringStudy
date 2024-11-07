@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sarang.config.SecureUtil;
+import com.sarang.model.HeadContentVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseData;
+import com.sarang.service.HeadContentService;
 import com.sarang.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private HeadContentService headContentService;
 
     @Autowired
     private SecureUtil secureutil;
@@ -101,7 +106,7 @@ public class AdminController {
 	}
 
     @GetMapping(value="/admin/addAdmin.do")
-    public String addEnoPage(HttpSession session, HttpServletRequest request
+    public String addAdminPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception {
 		logger.info("addAdmin Page View");
        
@@ -199,7 +204,7 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value="/admin/deleteAdminInfo.do", method={RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value="/admin/deleteAdminInfo.do", method={RequestMethod.POST})
     public  ResponseData deleteEnoInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , @RequestParam(value="delList", required=false) List<String> delList
@@ -211,5 +216,24 @@ public class AdminController {
         js.setMessage("1");
         return js;
     }
+
+    
+    @GetMapping(value="/admin/headContent.do")
+    public String headContentMain(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception {
+		logger.info("headContentMain Page View");
+        HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("start",0);
+        reqMap.put("size",pageSize);
+        List<HeadContentVO> headContentsList = headContentService.getHeadContents(reqMap);
+        HashMap<String,Object> pageInfo = headContentService.getHeadContentsPageInfo(reqMap);
+
+        HashMap<String, Object> totalContents = new HashMap<>();
+        totalContents.put("headContentsList", headContentsList);
+        totalContents.put("totalPages", pageInfo.get("totalPage"));
+        model.addAttribute("totalContents", totalContents);
+       
+        return "admin/headContentPage";
+	}
     
 }
