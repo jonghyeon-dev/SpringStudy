@@ -27,7 +27,7 @@
         </if>
         <if test="!''.euqals(delYn) and delYn != null">
             AND DEL_YN = #{delYn}
-        <if>
+        </if>
 		ORDER BY SEQ desc LIMIT #{start}, #{size}
 	</select>
 
@@ -45,6 +45,6 @@
         </if>
         <if test="!''.euqals(delYn) and delYn != null">
             AND DEL_YN = #{delYn}
-        <if>
+        </if>
 	</select>
 </mapper>
