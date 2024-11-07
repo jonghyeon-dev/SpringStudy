@@ -14,9 +14,9 @@
                 <table class="table table-bordered searchTable text-center">
                     <colgroup>
                         <col width="15%">
-                        <col width="25%">
+                        <col width="10%">
                         <col width="15%">
-                        <col width="25%">
+                        <col width="35%">
                         <col width="20%">
                     </colgroup>
                     <tr>
@@ -38,16 +38,20 @@
             </form>
         <div>
             <table class="table table-bordered table-hover">
+                <colgroup>
+                    <col width="5%">
+                    <col width="10%">
+                    <col width="30%">
+                    <col width="15%">
+                    <col width="20%">
+                    <col width="20%">
+                </colgroup>
                 <thead>
                     <tr class="text-center">
                         <th class="table-info"><input type="checkBox" id="checkAll"></th>
                         <th class="table-info">번호</th>
                         <th class="table-info">제목</th>
                         <th class="table-info">작성자</th>
-                        <th class="table-info">생성일자</th>
-                        <th class="table-info">생성시간</th>
-                        <th class="table-info">변경일자</th>
-                        <th class="table-info">변경시간</th>
                         <th class="table-info">시작일자</th>
                         <th class="table-info">종료일자</th>
                     </tr>
@@ -59,10 +63,6 @@
                         <td><c:out value="${items.contentSeq}"/></td>
                         <td><c:out value="${items.title}"/></td>
                         <td><c:out value="${items.userNm}"/></td>
-                        <td><c:out value="${items.cretDate}"/></td>
-                        <td><c:out value="${items.cretTime}"/></td>
-                        <td><c:out value="${items.chgDate}"/></td>
-                        <td><c:out value="${items.chgTime}"/></td>
                         <td><c:out value="${items.strDate}"/></td>
                         <td><c:out value="${items.endDate}"/></td>
                     </tr>

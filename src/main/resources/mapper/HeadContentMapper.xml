@@ -25,10 +25,10 @@
         <if test="!''.equals(title) and title != null">
             AND TITLE like concat('%', #{title} ,'%')
         </if>
-        <if test="!''.euqals(delYn) and delYn != null">
+        <if test="!''.equals(delYn) and delYn != null">
             AND DEL_YN = #{delYn}
         </if>
-		ORDER BY SEQ desc LIMIT #{start}, #{size}
+		ORDER BY CONTENT_SEQ desc LIMIT #{start}, #{size}
 	</select>
 
     <select id="getHeadContentsPageInfo" resultType="HashMap">
@@ -43,7 +43,7 @@
 		<if test="!''.equals(title) and title != null">
 		    AND TITLE like concat('%', #{title} ,'%')
         </if>
-        <if test="!''.euqals(delYn) and delYn != null">
+        <if test="!''.equals(delYn) and delYn != null">
             AND DEL_YN = #{delYn}
         </if>
 	</select>

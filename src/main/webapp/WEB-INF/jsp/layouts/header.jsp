@@ -21,7 +21,7 @@
 <script src="<c:url value='/assets/swiper/swiper-bundle.min.js'/>"></script>
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="<c:url value='/css/styles.css'/>" rel="stylesheet" />
-<link href="<c:url value='/css/main.css'/>" rel="stylesheet" />
+<link href="<c:url value='/css/main.css?styleVer=1'/>" rel="stylesheet" />
 <script>
     document.oncontextmenu=function(){return false;}
 </script>
