@@ -87,7 +87,7 @@ public class AdminController {
         return "redirect:/main.do";
     }
 
-    @GetMapping(value="/admin/adminAccountMain.do")
+    @GetMapping(value="/admin/adminAccount.do")
 	public String userMainPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception {
 		logger.info("Check Admin AccountList Page View");
@@ -204,8 +204,8 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value="/admin/deleteAdminInfo.do", method={RequestMethod.POST})
-    public  ResponseData deleteEnoInfo(HttpSession session, HttpServletRequest request
+    @RequestMapping(value="/admin/deleteAdminInfo.do", method=RequestMethod.POST)
+    public  ResponseData deleteAdminInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , @RequestParam(value="delList", required=false) List<String> delList
         ) throws Exception {
@@ -217,6 +217,66 @@ public class AdminController {
         return js;
     }
 
+    @GetMapping(value="/admin/userAccount.do")
+    public String userAccountPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model)throws Exception {
+        logger.info("Check User AccountList Page View");
+        HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("start",0);
+        reqMap.put("size",pageSize);
+        List<UserVO> userInfoList = userService.getUserInfo(reqMap);
+        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
+
+        HashMap<String, Object> totalContents = new HashMap<>();
+        totalContents.put("userInfoList", userInfoList);
+        totalContents.put("totalPages", pageInfo.get("totalPage"));
+        model.addAttribute("totalContents", totalContents);
+        return "admin/userAccountPage";
+    }
+
+    @ResponseBody
+    @GetMapping(value="/admin/getUserInfo.do")
+    public  ResponseData getUserInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
+        , HttpServletResponse response, Model model
+        , String seq, String userId, String userNm, String page) throws Exception {
+        ResponseData js = new ResponseData();
+        HashMap<String,Object> reqMap = new HashMap<String,Object>();
+        reqMap.put("seq",seq);
+        reqMap.put("userId",userId);
+        reqMap.put("userNm",userNm);
+        reqMap.put("start",Integer.parseInt(page));
+        reqMap.put("size",pageSize);
+        if(page != null){
+            reqMap.put("start",Integer.parseInt(page)*10);
+        }else{
+            reqMap.put("start",0);
+        }
+
+        List<UserVO> userInfoList = userService.getUserInfo(reqMap);
+        HashMap<String,Object> pageInfo = userService.getUserPageInfo(reqMap);
+        
+        HashMap <String, Object> totalContents = new HashMap<>();
+        totalContents.put("userInfoList", userInfoList);
+        totalContents.put("totalPages", pageInfo.get("totalPage"));
+
+        js.setIsSucceed(true);
+        js.setData(totalContents);
+        return js;
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/admin/deleteUserInfo.do",method=RequestMethod.POST)
+    public  ResponseData deleteUserInfo(HttpSession session, HttpServletRequest request
+        , HttpServletResponse response, Model model
+        , @RequestParam(value="delList", required=false) List<String> delList
+        ) throws Exception {
+
+        ResponseData js = new ResponseData();
+        userService.deleteUserInfo(delList);
+        js.setIsSucceed(true);
+        js.setMessage("1");
+        return js;
+    }
     
     @GetMapping(value="/admin/headContent.do")
     public String headContentMain(HttpSession session, HttpServletRequest request

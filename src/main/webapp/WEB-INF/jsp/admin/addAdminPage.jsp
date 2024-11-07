@@ -47,7 +47,7 @@
                 <input type="hidden" name="paging" value="0">
                 <div class="button-area text-center mb-2">
                     <button class="btn btn-primary" type="button" id="reset">초기화</button>
-                    <a href='<c:url value="/admin/adminAccountMain.do"/>' class="btn btn-warning">돌아가기</button></a>
+                    <a href='<c:url value="/admin/adminAccount.do"/>' class="btn btn-warning">돌아가기</button></a>
                     <button class="btn btn-success" type="submit">등록</button>
                 </div>
             </form>

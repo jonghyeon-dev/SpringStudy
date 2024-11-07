@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>관리자정보</title>
+    <title>메인헤드콘텐츠관리</title>
     <%@include file="../layouts/header.jsp"%> 
 </head>
 <body class="bg-light" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -32,8 +32,7 @@
                 </table>
                 <input type="hidden" name="paging" value="0">
                 <div style="float:right;">
-                    <a class="btn btn-success" href='<c:url value="/admin/addHeadContent.do"/>'>등록하기</a>
-                    <!-- <button class="btn btn-danger" type="button" id="deleteAdmin">삭제하기</button> -->
+                    <!-- <a class="btn btn-success" href='<c:url value="/admin/addHeadContent.do"/>'>등록하기</a> -->
                 </div>
             </form>
         <div>
@@ -96,7 +95,7 @@
                                 </c:choose>
                             </c:forEach>
                             <c:choose>
-                                <c:when test="${totalPage eq 1}">
+                                <c:when test="${totalPage eq 1 or totalPage eq 0}">
                                     <li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>
                                 </c:when>
                                 <c:otherwise>

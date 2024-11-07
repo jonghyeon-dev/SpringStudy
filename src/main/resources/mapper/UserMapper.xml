@@ -44,6 +44,9 @@
       <if test="!''.equals(userId) and userId != null">
 		  AND USER_ID like concat('%', #{userId} ,'%')
       </if>
+      <if test="!''.equals(userNm) and userNm != null">
+		  AND USER_NM like concat('%', #{userNm} ,'%')
+      </if>
       <choose>
         <when test='!"".equals(userGrant) and userGrant != null'>
           AND USER_GRANT = #{userGrant}
@@ -65,8 +68,11 @@
 		  AND SEQ LIKE CONCAT('%',#{seq},'%')
 		  </if>
 		  <if test='userId != null and !userId.equals("")'>
-		  AND ENO LIKE CONCAT('%',#{eno},'%')
+		  AND USER_ID LIKE CONCAT('%',#{userId},'%')
 		  </if>
+      <if test="!''.equals(userNm) and userNm != null">
+		  AND USER_NM like concat('%', #{userNm} ,'%')
+      </if>
       <choose>
         <when test='!"".equals(userGrant) and userGrant != null'>
           AND USER_GRANT = #{userGrant}
