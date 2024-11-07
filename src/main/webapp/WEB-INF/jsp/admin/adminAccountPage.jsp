@@ -148,23 +148,23 @@
                                 dataText = dataText + "<td>"+data[i].chgTime+"</td>";
                                 dataText = dataText + "<tr>";
                             }
-                            if(data.length<10){
-                                for(i=0;i<(10 - data.length);i++){
-                                    dataText = dataText + "<tr>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<td>&nbsp;</td>";
-                                    dataText = dataText + "<tr>";
-                                }
-                            }
+                            // if(data.length<10){
+                            //     for(i=0;i<(10 - data.length);i++){
+                            //         dataText = dataText + "<tr>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<td>&nbsp;</td>";
+                            //         dataText = dataText + "<tr>";
+                            //     }
+                            // }
                             $("#tbodyAdminInfoList").empty();
                             if(dataText != ""){
                                 $("#tbodyAdminInfoList").append(dataText);
@@ -295,7 +295,7 @@
             $("#getAdminInfo").click(e=>{
                 let seq=$("#searchAdminForm input[name='seq']").val();
                 let userId=$("#searchAdminForm input[name='userId']").val();
-                searchUserInfo(seq,userId,0);
+                searchAdminInfo(seq,userId,0);
             });
 
             //하단 페이지 숫자 클릭 시

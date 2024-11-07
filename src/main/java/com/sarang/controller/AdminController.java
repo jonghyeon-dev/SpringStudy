@@ -203,19 +203,19 @@ public class AdminController {
         return js;
     }
 
-    @ResponseBody
-    @RequestMapping(value="/admin/deleteAdminInfo.do", method=RequestMethod.POST)
-    public  ResponseData deleteAdminInfo(HttpSession session, HttpServletRequest request
-        , HttpServletResponse response, Model model
-        , @RequestParam(value="delList", required=false) List<String> delList
-        ) throws Exception {
-        ResponseData js = new ResponseData();
-        // 관리자 아이디 1개 이하일 시 삭제 불가 체크루틴 추가 
-        userService.deleteUserInfo(delList);
-        js.setIsSucceed(true);
-        js.setMessage("1");
-        return js;
-    }
+    // @ResponseBody
+    // @RequestMapping(value="/admin/deleteAdminInfo.do", method=RequestMethod.POST)
+    // public  ResponseData deleteAdminInfo(HttpSession session, HttpServletRequest request
+    //     , HttpServletResponse response, Model model
+    //     , @RequestParam(value="delList", required=false) List<String> delList
+    //     ) throws Exception {
+    //     ResponseData js = new ResponseData();
+    //     // 관리자 아이디 1개 이하일 시 삭제 불가 체크루틴 추가 
+    //     userService.deleteUserInfo(delList);
+    //     js.setIsSucceed(true);
+    //     js.setMessage("1");
+    //     return js;
+    // }
 
     @GetMapping(value="/admin/userAccount.do")
     public String userAccountPage(HttpSession session, HttpServletRequest request
@@ -264,19 +264,19 @@ public class AdminController {
         return js;
     }
 
-    @ResponseBody
-    @RequestMapping(value="/admin/deleteUserInfo.do",method=RequestMethod.POST)
-    public  ResponseData deleteUserInfo(HttpSession session, HttpServletRequest request
-        , HttpServletResponse response, Model model
-        , @RequestParam(value="delList", required=false) List<String> delList
-        ) throws Exception {
+    // @ResponseBody
+    // @RequestMapping(value="/admin/deleteUserInfo.do",method=RequestMethod.POST)
+    // public  ResponseData deleteUserInfo(HttpSession session, HttpServletRequest request
+    //     , HttpServletResponse response, Model model
+    //     , @RequestParam(value="delList", required=false) List<String> delList
+    //     ) throws Exception {
 
-        ResponseData js = new ResponseData();
-        userService.deleteUserInfo(delList);
-        js.setIsSucceed(true);
-        js.setMessage("1");
-        return js;
-    }
+    //     ResponseData js = new ResponseData();
+    //     userService.deleteUserInfo(delList);
+    //     js.setIsSucceed(true);
+    //     js.setMessage("1");
+    //     return js;
+    // }
     
     @GetMapping(value="/admin/headContent.do")
     public String headContentMain(HttpSession session, HttpServletRequest request
@@ -295,5 +295,23 @@ public class AdminController {
        
         return "admin/headContentPage";
 	}
+
+    @GetMapping(value="/admin/headContentWrite.do")
+    public String headContentWrite(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception {
+		logger.info("headContentWrite Page View");
+        model.addAttribute("status","insert");
+        return "admin/headContentWritePage";
+	}
+
+    @PostMapping(value="/admin/insertHeadContent")
+    public String insertHeadContent(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception {
+		logger.info("insertHeadContent Page View");
+        String contentSeq = "";
+        return "redirect:/admin/headContentDetail/"+contentSeq;
+	}
+
+    
     
 }

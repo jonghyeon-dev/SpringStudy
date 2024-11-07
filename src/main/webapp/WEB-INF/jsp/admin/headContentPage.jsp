@@ -32,7 +32,7 @@
                 </table>
                 <input type="hidden" name="paging" value="0">
                 <div style="float:right;">
-                    <!-- <a class="btn btn-success" href='<c:url value="/admin/addHeadContent.do"/>'>등록하기</a> -->
+                    <a class="btn btn-success" href='<c:url value="/admin/headContentWrite.do"/>'>등록하기</a>
                 </div>
             </form>
         <div>
