@@ -118,7 +118,7 @@ public class AdminController {
     , HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
 		logger.info("insertAdmin Data");
         UserVO UserVO = new UserVO();
-        String userId = request.getParameter("user").trim();
+        String userId = request.getParameter("userId").trim();
         String userPwd = request.getParameter("userPwd").trim();
         String userPwdCheck = request.getParameter("userPwdCheck").trim();
         String userNm = request.getParameter("userNm").trim();
@@ -170,7 +170,7 @@ public class AdminController {
         UserVO.setEmail(email);
         userService.insertUserInfo(UserVO);
 
-        return "redirect:/adminAccountMain.do";
+        return "redirect:/admin/adminAccount.do";
 	}
 
     @ResponseBody
@@ -203,19 +203,23 @@ public class AdminController {
         return js;
     }
 
-    // @ResponseBody
-    // @RequestMapping(value="/admin/deleteAdminInfo.do", method=RequestMethod.POST)
-    // public  ResponseData deleteAdminInfo(HttpSession session, HttpServletRequest request
-    //     , HttpServletResponse response, Model model
-    //     , @RequestParam(value="delList", required=false) List<String> delList
-    //     ) throws Exception {
-    //     ResponseData js = new ResponseData();
-    //     // 관리자 아이디 1개 이하일 시 삭제 불가 체크루틴 추가 
-    //     userService.deleteUserInfo(delList);
-    //     js.setIsSucceed(true);
-    //     js.setMessage("1");
-    //     return js;
-    // }
+    @ResponseBody
+    @RequestMapping(value="/admin/deleteAdminInfo.do", method=RequestMethod.POST)
+    public  ResponseData deleteAdminInfo(HttpSession session, HttpServletRequest request
+        , HttpServletResponse response, Model model
+        , @RequestParam(value="delList", required=false) List<String> delList
+        ) throws Exception {
+        ResponseData js = new ResponseData();
+        if(delList.contains("0")){
+            js.setIsSucceed(false);
+            js.setMessage("삭제 실패");
+        }else{
+            userService.deleteUserInfo(delList);
+            js.setIsSucceed(true);
+            js.setMessage("삭제 성공");
+        }
+        return js;
+    }
 
     @GetMapping(value="/admin/userAccount.do")
     public String userAccountPage(HttpSession session, HttpServletRequest request

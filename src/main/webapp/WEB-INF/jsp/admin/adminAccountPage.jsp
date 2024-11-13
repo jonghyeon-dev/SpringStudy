@@ -278,10 +278,13 @@
                 traditional:true,
                 data:{"delList": delList},
                 success: response=>{
-                    let seq=$("#searchAdminForm input[name='seq']").val();
-                    let userId=$("#searchAdminForm input[name='userId']").val();
-                    searchAdminInfo(seq,userId,0);
-                    $("#checkAll").prop('checked',false);
+                    console.log(response.message);
+                    if(response.isSucceed){
+                        let seq=$("#searchAdminForm input[name='seq']").val();
+                        let userId=$("#searchAdminForm input[name='userId']").val();
+                        searchAdminInfo(seq,userId,0);
+                        $("#checkAll").prop('checked',false);
+                    }
                 },
                 error: e=>{
                     console.log("Delete Admin Ajax Get Data Error :: ", e);
