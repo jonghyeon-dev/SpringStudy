@@ -24,6 +24,7 @@ public interface BoardServiceImpl {
     Integer deleteBoardDetailInfo(BoardVO boardVO);
 
     Integer resetBoardFileList(BoardVO boardVO);
+    Integer setBasicFileList(HashMap<String,Object> reqMap);
 
     Integer insertBoardViewInfo(BoardViewVO viewVO);
     

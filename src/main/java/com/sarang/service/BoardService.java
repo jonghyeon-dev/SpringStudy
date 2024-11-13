@@ -75,7 +75,11 @@ public class BoardService implements BoardServiceImpl{
     @Override
     public Integer resetBoardFileList(BoardVO boardVO){
         return boardMapper.resetBoardFileList(boardVO);
+    }
 
+    @Override
+    public Integer setBasicFileList(HashMap<String,Object> reqMap){
+        return boardMapper.setBasicFileList(reqMap);
     }
 
     @Override

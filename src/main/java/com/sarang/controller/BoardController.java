@@ -301,8 +301,14 @@ public class BoardController {
 		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
+		String[] fileIds = request.getParameterValues("fileIds");
 		String boardCate = category;
-
+		System.out.println("fileIds Length:"+fileIds.length);
+		if(fileIds.length>0){
+			for(int i=0;fileIds.length>i;i++){
+				System.out.println("fileId:"+fileIds[i]);
+			}
+		}
 		HashMap<String,Object> reqMap = new HashMap<>();
 		reqMap.put("boardId",boardId);
 		reqMap.put("boardCate",boardCate);
@@ -327,6 +333,12 @@ public class BoardController {
 		if(!CollectionUtils.isEmpty(uploadFiles)){
 			try{
 				boardService.resetBoardFileList(boardVO);
+				if(fileIds.length>0){
+					HashMap<String,Object> fileReqMap = new HashMap<>();
+					fileReqMap.put("fileIds",fileIds);
+					fileReqMap.put("boardId",boardId);
+					boardService.setBasicFileList(fileReqMap);
+				}
 				fileUtils.MultiFileUpload(session, Integer.parseInt(boardId), uploadFiles);
 			}catch(Exception e){
 				logger.error("Board File Upload Error : {}",e.getMessage());

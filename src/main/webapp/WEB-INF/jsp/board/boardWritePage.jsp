@@ -34,10 +34,17 @@
                         </div>
                         <input class="d-none form-control" type="file" id="uploadFiles" name="uploadFiles" multiple>
                         <div id="uploadResult" class="ms-2">
+                            <div id="uploadInsert"></div>
                             <c:if test="${status eq 'update'}">
-                                <c:forEach items="${boardFileList}" var="items">
-                                    <span>${items.fileName}</span><br>
-                                </c:forEach>
+                                <div id="uploadUpdate">
+                                    <c:forEach items="${boardFileList}" var="items">
+                                        <p>
+                                            <input type="hidden" name="fileIds" value="${items.fileId}">
+                                            ${items.fileName}
+                                            <button type="button" class="btn-close" onclick="javascript:deleteUploadFile(this);"></button>
+                                        </p>
+                                    </c:forEach>
+                                </div>
                             </c:if>
                         </div>
                     </div>
@@ -90,10 +97,12 @@
                 const files = $("#uploadFiles")[0].files;
                 var filesText = "";
                 for(var i=0;i<files.length;i++){
-                    filesText = filesText + "<span>" + files[i].name + "</span><br>";
+                    filesText = filesText + "<p>" + files[i].name;
+                    filesText = filesText + `<button type="button" data-index="\${files[i].lastModified}" class="btn-close" onclick="javascript:deleteInsertFile(this);"></button>`;
+                    filesText = filesText + "</p>";
                 }
-                $("#uploadResult").empty();
-                $("#uploadResult").append(filesText);
+                $("#uploadInsert").empty();
+                $("#uploadInsert").append(filesText);
             })
         };
 
@@ -140,6 +149,25 @@
                 .replace(/&#039;/g,"'")
                 .replace(/&#39/g,"'")
                 
+    }
+
+    function deleteInsertFile(e){
+        const dataTransfer = new DataTransfer();
+        const removeTargetId = e.dataset.index;
+        const files = $("#uploadFiles")[0].files;
+
+        Array.from(files)
+            .filter(file => file.lastModified != removeTargetId)
+            .forEach(file => {
+            dataTransfer.items.add(file);
+            });
+
+        document.querySelector('#uploadFiles').files = dataTransfer.files;
+        e.parentNode.remove();
+    }
+
+    function deleteUploadFile(e){
+        e.parentNode.remove();
     }
 </script>
 </html>

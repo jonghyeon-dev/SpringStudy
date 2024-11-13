@@ -250,6 +250,15 @@
 		WHERE BOARD_ID = #{boardId}
 	</update>
 
+	<update id="setBasicFileList" parameterType="HashMap">
+		UPDATE TBRD00101 SET
+			BOARD_ID = #{boardId}
+		WHERE FILE_ID IN 
+		<foreach collection="fileIds" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</update>
+
 	<update id="updateBoardComment" parameterType="com.sarang.model.BoardComntVO">
 		UPDATE TBRD00110 SET
 		BOARD_COMNT = #{boardComnt},
@@ -260,8 +269,6 @@
 		  AND BOARD_ID = #{boardId}
 		  AND CRET_USER = #{cretUser}
 	</update>
-
-	
 
 	<update id="deleteBoardComment" parameterType="com.sarang.model.BoardComntVO">
 		UPDATE TBRD00110 SET
