@@ -56,8 +56,8 @@
                 <tbody id="tbodyAdminInfoList">
                     <c:forEach items="${totalContents.adminInfoList}" var="items">
                     <tr>
-                        <c:if test="${items.seq ne 0}"><td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td></c:if>
-                        <c:if test="${items.seq eq 0}"><td></td></c:if>
+                        <c:if test="${items.seq ne 0 && items.seq ne userLogin.seq}"><td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td></c:if>
+                        <c:if test="${items.seq eq 0 || items.seq eq userLogin.seq}"><td></td></c:if>
                         <td><c:out value="${items.seq}"/></td>
                         <td><c:out value="${items.userId}"/></td>
                         <td><c:out value="${items.userNm}"/></td>
@@ -138,6 +138,8 @@
                                 dataText = dataText + "<tr>";
                                 if(data[i].seq != "0"){
                                     dataText = dataText + "<td class='delCheck'><input type='checkbox' name='delCheck' value="+data[i].seq+"></td>";
+                                }else if(data[i].seq != "${userLogin.seq}"){
+                                    dataText = dataText + "<td></td>";
                                 }else{
                                     dataText = dataText + "<td></td>";
                                 }

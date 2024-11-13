@@ -210,9 +210,14 @@ public class AdminController {
         , @RequestParam(value="delList", required=false) List<String> delList
         ) throws Exception {
         ResponseData js = new ResponseData();
+        UserVO userVO = (UserVO)session.getAttribute("userLogin");
+
         if(delList.contains("0")){
             js.setIsSucceed(false);
             js.setMessage("삭제 실패");
+        }else if(delList.contains(userVO.getSeq().toString())){
+            js.setIsSucceed(false);
+            js.setMessage("현재 자신을 삭제할 수 없습니다.");
         }else{
             userService.deleteUserInfo(delList);
             js.setIsSucceed(true);
