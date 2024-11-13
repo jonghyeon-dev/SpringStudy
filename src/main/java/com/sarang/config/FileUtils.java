@@ -1,6 +1,6 @@
 package com.sarang.config;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 import java.util.UUID;

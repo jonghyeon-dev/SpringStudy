@@ -26,9 +26,9 @@ import com.sarang.model.common.ResponseData;
 import com.sarang.service.HeadContentService;
 import com.sarang.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AdminController {
@@ -175,7 +175,7 @@ public class AdminController {
 
     @ResponseBody
     @RequestMapping(value="/admin/getAccountInfo.do", method=RequestMethod.GET)
-    public  ResponseData getAdminInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
+    public  ResponseData getAdminInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , String seq, String userId, String page) throws Exception {
         ResponseData js = new ResponseData();
@@ -236,7 +236,7 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping(value="/admin/getUserInfo.do")
-    public  ResponseData getUserInfo(javax.servlet.http.HttpSession session, HttpServletRequest request
+    public  ResponseData getUserInfo(HttpSession session, HttpServletRequest request
         , HttpServletResponse response, Model model
         , String seq, String userId, String userNm, String page) throws Exception {
         ResponseData js = new ResponseData();
@@ -311,7 +311,4 @@ public class AdminController {
         String contentSeq = "";
         return "redirect:/admin/headContentDetail/"+contentSeq;
 	}
-
-    
-    
 }

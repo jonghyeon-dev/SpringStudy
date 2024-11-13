@@ -23,15 +23,15 @@ public class WebConfiguration implements WebMvcConfigurer{
 	}
 
     //lucy
-    @Bean
-    public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-        FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = new FilterRegistrationBean<>();
-        filterRegistration.setFilter(new XssEscapeServletFilter());
-        filterRegistration.setOrder(1);
-        filterRegistration.addUrlPatterns("/*");
+    // @Bean
+    // public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
+    //     FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = new FilterRegistrationBean<>();
+    //     filterRegistration.setFilter(new XssEscapeServletFilter());
+    //     filterRegistration.setOrder(1);
+    //     filterRegistration.addUrlPatterns("/*");
 
-        return filterRegistration;
-    }
+    //     return filterRegistration;
+    // }
     //Json XSS
     @Bean
     public MappingJackson2HttpMessageConverter jsonEscapeConverter() {
