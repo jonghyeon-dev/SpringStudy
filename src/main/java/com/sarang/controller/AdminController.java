@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sarang.config.FileUtils;
 import com.sarang.config.SecureUtil;
-import com.sarang.model.BoardRecomVO;
 import com.sarang.model.BoardVO;
 import com.sarang.model.HeadContentVO;
 import com.sarang.model.UserVO;
@@ -331,9 +329,6 @@ public class AdminController {
     , HttpServletResponse response , Model model, HeadContentVO headContentVO, MultipartFile uploadImage, String createNotice) throws Exception {
 		logger.info("insertHeadContent Page View");
         UserVO userVO = (UserVO)session.getAttribute("userLogin");
-        // System.out.println("headContentInfo:" + headContentVO.toString());
-        // System.out.println("imageFile:"+ uploadImage.getOriginalFilename());
-        // System.out.println("CreateNotice:" + createNotice);// checked = on, non checked = null
         if(createNotice != null && !createNotice.isEmpty()){
             BoardVO createBoardVO = new BoardVO();
             createBoardVO.setBoardTitle(headContentVO.getTitle());

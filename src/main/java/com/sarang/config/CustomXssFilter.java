@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CustomXssFilter implements Filter {
 
+  @SuppressWarnings("unused")
   private FilterConfig filterConfig;
 
   @Override
