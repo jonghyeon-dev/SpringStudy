@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sarang.config.FileUtils;
 import com.sarang.config.SecureUtil;
+import com.sarang.model.BoardRecomVO;
+import com.sarang.model.BoardVO;
 import com.sarang.model.HeadContentVO;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseData;
+import com.sarang.service.BoardService;
 import com.sarang.service.HeadContentService;
 import com.sarang.service.UserService;
 
@@ -38,6 +45,12 @@ public class AdminController {
 
     @Autowired
     private HeadContentService headContentService;
+
+    @Autowired
+    private BoardService boardService;
+
+    @Autowired
+    private FileUtils fileUtils;
 
     @Autowired
     private SecureUtil secureutil;
@@ -313,11 +326,41 @@ public class AdminController {
         return "admin/headContentWritePage";
 	}
 
-    @PostMapping(value="/admin/insertHeadContent")
-    public String insertHeadContent(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model) throws Exception {
+    @PostMapping(value="/admin/insertHeadContent.do")
+    public String insertHeadContent(HttpSession session, MultipartHttpServletRequest request
+    , HttpServletResponse response , Model model, HeadContentVO headContentVO, MultipartFile uploadImage, String createNotice) throws Exception {
 		logger.info("insertHeadContent Page View");
-        String contentSeq = "";
-        return "redirect:/admin/headContentDetail/"+contentSeq;
+        UserVO userVO = (UserVO)session.getAttribute("userLogin");
+        // System.out.println("headContentInfo:" + headContentVO.toString());
+        // System.out.println("imageFile:"+ uploadImage.getOriginalFilename());
+        // System.out.println("CreateNotice:" + createNotice);// checked = on, non checked = null
+        if(createNotice != null && !createNotice.isEmpty()){
+            BoardVO createBoardVO = new BoardVO();
+            createBoardVO.setBoardTitle(headContentVO.getTitle());
+            createBoardVO.setBoardCate("notice");
+            createBoardVO.setBoardCntnt(headContentVO.getCntnt());
+            createBoardVO.setCretUser(userVO.getSeq().toString());
+            boardService.insertBoardDetailInfo(createBoardVO);
+            Integer boardId = createBoardVO.getBoardId();
+            if(uploadImage != null){
+                try{
+                    fileUtils.headContentsFileUpload(session, boardId, uploadImage);
+                }catch(Exception e){
+                    logger.error("Board File Upload Error : {}",e.getMessage());
+                    return "redirect:/error";
+                }
+            }
+        }else{
+            if(headContentVO.getConnectUrl() == null || "".equals(headContentVO.getConnectUrl().trim())){
+                if (request.getHeader("Referer") != null) {
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    return "redirect:/admin/headContent.do";
+                }
+
+            }
+        }
+        // return "redirect:/admin/headContentDetail/"+contentSeq;
+        return "redirect:/admin/headContent.do";
 	}
 }

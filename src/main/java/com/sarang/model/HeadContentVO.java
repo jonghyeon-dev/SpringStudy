@@ -3,15 +3,19 @@ package com.sarang.model;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class HeadContentVO {
     private Integer contentSeq;
     @NonNull
     private String title;           //제목
     private String cntnt;           //내용
     private String imgFileId;       //이미지파일ID
+    @NonNull
+    private String connectUrl;      //연결URL
     private String delYn;           //삭제여부
     private String strDate;         //시작일자
     private String endDate;         //종료시간

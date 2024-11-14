@@ -20,7 +20,7 @@
                 <div class="card-body p-0">
                     <div class="row gx-0">
                         <div class="col-lg-6 col-xl-5 py-lg-5">
-                            <div class="p-4 p-md-5 slider s1">
+                            <div class="p-4 p-md-5 text-start">
                                 <div class="h2 fw-bolder prevHead">
                                     <c:if test="${status eq 'insert'}">헤드 컨텐츠1</c:if>
                                     <c:if test="${status eq 'update'}">${headContentInfo.title}</c:if>
@@ -29,6 +29,10 @@
                                     <c:if test="${status eq 'insert'}">내용 작성1</c:if>
                                     <c:if test="${status eq 'update'}">${headContentInfo.cntnt}</c:if>
                                 </p>
+                                <div class="stretched-link text-decoration-none">
+                                    More
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-xl-7">
@@ -40,29 +44,57 @@
             </div>
             <form id="headContentInsertForm" method="post" action="<c:url value='/admin/${actionUrl}'/>" enctype="multipart/form-data" onSubmit="return validationForm()">
                 <div class="insertArea">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <label for="uploadFiles">
-                                <div class="btn btn-primary">파일첨부</div>
-                            </label>
-                        </span>
-                    </div>
-                    <input class="d-none form-control" type="file" id="uploadImage" name="uploadImage">
-                    <div id="uploadImageView" class="ms-2">
-                        <c:if test="${status eq 'update'}">
-                            <!-- 이미지 정보 -->
-                            <p>
-                                <input type="hidden" name="imgFileId" value="${headContentInfo.imgFileId}">
-                                ${headContentFile.fileName}
-                                <button type="button" class="btn-close" onclick="javascript:deleteUploadFile(this);"></button>
-                            </p>
-                        </c:if>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <label for="uploadImage">
+                                    <div class="btn btn-primary">파일첨부</div>
+                                </label>
+                            </span>
+                        </div>
+                        <input class="d-none form-control" type="file" id="uploadImage" name="uploadImage" accept="image/*" onchange="imageUpload(this)">
+                        <div id="uploadImageView" class="ms-2">
+                            <c:if test="${status eq 'update'}">
+                                <!-- 이미지 정보 -->
+                                <p>
+                                    <input type="hidden" name="imgFileId" value="${headContentInfo.imgFileId}">
+                                    ${headContentFile.fileName}
+                                    <button type="button" class="btn-close" onclick="javascript:deleteUploadFile(this);"></button>
+                                </p>
+                            </c:if>
+                        </div>
                     </div>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">제목:&nbsp;</span>
                         </div>
                         <input type="text" class="form-control" name="title">
+                    </div>
+                    <div class="input-group">
+                        <c:if test="${status eq 'insert'}">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="height:100%;">
+                                    공지사항 생성:&nbsp;
+                                    <input type="checkbox" name="createNotice" id="createNotice" checked="true">
+                                </span> 
+                            </div>
+                            <script>
+                                $("#createNotice").change((e)=>{
+                                    let checked = $("#createNotice").is(":checked");
+                                    if(checked){
+                                        $("#headContentInsertForm input[name='conectUrl']").attr("disabled",true);
+                                    }else{
+                                        $("#headContentInsertForm input[name='conectUrl']").removeAttr("disabled");
+                                    }
+                                })
+                            </script>
+                        </c:if>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                연결URL&nbsp;:&nbsp;
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" name="conectUrl" disabled="true"></input>
                     </div>
                     <div class="form-control">
                         <textarea class="form-control" name="cntnt"></textarea>
@@ -110,15 +142,7 @@
         };
 
         var registerEvent = function(){
-            $("#uploadFiles").change((e) => {
-                const files = $("#uploadFiles")[0].files;
-                var filesText = "";
-                for(var i=0;i<files.length;i++){
-                    filesText = filesText + "<span>" + files[i].name + "</span><br>";
-                }
-                $("#uploadResult").empty();
-                $("#uploadResult").append(filesText);
-            })
+
 
             $("#headContentInsertForm input[name='title']").keyup((e)=>{
                 $(".prevHead").html(e.target.value);
@@ -146,12 +170,12 @@
     }
 
     function validationForm(){
-        const boardTitle = $('#boardInsertForm input[name="boardTitle"]').val(); // 제목
-        if(boardTitle.trim() == "" || boardTitle == null){
+        const title = $('#headContentInsertForm input[name="title"]').val(); // 제목
+        if(title.trim() == "" || title == null){
             $("#modalTitle").append("제목이 없습니다.");
             $("#modalContent").append("제목은 필수 값 입니다.");
             $("#modalInfo").show();
-            $('#boardInsertForm input[name="boardTitle"]').focus();
+            $('#headContentInsertForm input[name="title"]').focus();
             return false;
         }
         return true;
@@ -174,7 +198,28 @@
                 
     }
 
+    function imageUpload(e){
+        const files = e.files;
+        if(files && files[0]){
+            let reader = new FileReader();
+            reader.onload = function(event){
+                document.querySelector("div.prevImg").style.backgroundImage="url("+event.target.result+")";
+            };
+            reader.readAsDataURL(files[0]);
+        }
+        let filesText = "";
+        for(let i=0;i<files.length;i++){
+            filesText = filesText + "<p>" + files[i].name;
+            filesText = filesText + `<button type="button" class="btn-close" onclick="javascript:deleteUploadFile(this);"></button>`;
+            filesText = filesText + "</p>";
+        }
+        $("#uploadImageView").empty();
+        $("#uploadImageView").append(filesText);
+    };
+
     function deleteUploadFile(e){
+        $("#uploadImage").val("");
+        document.querySelector(".prevImg").style.backgroundImage="url(https://dummyimage.com/700x350/343a40/6c757d)";
         e.parentNode.remove();
     }
 </script>

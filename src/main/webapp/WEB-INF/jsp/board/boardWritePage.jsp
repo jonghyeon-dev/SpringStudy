@@ -34,7 +34,6 @@
                         </div>
                         <input class="d-none form-control" type="file" id="uploadFiles" name="uploadFiles" multiple>
                         <div id="uploadResult" class="ms-2">
-                            <div id="uploadInsert"></div>
                             <c:if test="${status eq 'update'}">
                                 <div id="uploadUpdate">
                                     <c:forEach items="${boardFileList}" var="items">
@@ -46,6 +45,7 @@
                                     </c:forEach>
                                 </div>
                             </c:if>
+                            <div id="uploadInsert"></div>
                         </div>
                     </div>
                     <div class="form-control">
