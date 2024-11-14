@@ -303,12 +303,7 @@ public class BoardController {
 		String boardCntnt = request.getParameter("boardCntnt");
 		String[] fileIds = request.getParameterValues("fileIds");
 		String boardCate = category;
-		System.out.println("fileIds Length:"+fileIds.length);
-		if(fileIds.length>0){
-			for(int i=0;fileIds.length>i;i++){
-				System.out.println("fileId:"+fileIds[i]);
-			}
-		}
+		
 		HashMap<String,Object> reqMap = new HashMap<>();
 		reqMap.put("boardId",boardId);
 		reqMap.put("boardCate",boardCate);
@@ -333,7 +328,7 @@ public class BoardController {
 		if(!CollectionUtils.isEmpty(uploadFiles)){
 			try{
 				boardService.resetBoardFileList(boardVO);
-				if(fileIds.length>0){
+				if(fileIds != null){
 					HashMap<String,Object> fileReqMap = new HashMap<>();
 					fileReqMap.put("fileIds",fileIds);
 					fileReqMap.put("boardId",boardId);

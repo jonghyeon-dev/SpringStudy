@@ -55,6 +55,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+bootWar{
+	archiveName("popol.war")
+}
+
 test {
     exclude '**/*'
 }
