@@ -76,7 +76,12 @@ public class MainController {
             //헤드콘텐츠
             reqMap = new HashMap<>();
             List<HeadContentVO> headContentsList = headContentService.getMainHeadContents(reqMap);
-
+            if(!headContentsList.isEmpty()){
+                  for(HeadContentVO headContentVO : headContentsList){
+                        String retCntnt = headContentVO.getCntnt();
+                        headContentVO.setCntnt(retCntnt.replaceAll("\\n", "<br/>"));
+                  }
+            }
 
             model.addAttribute("noticeBoardList", noticeBoardList);
             model.addAttribute("newsList", newsList);

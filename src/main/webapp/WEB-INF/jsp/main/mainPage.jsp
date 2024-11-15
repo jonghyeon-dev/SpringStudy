@@ -26,7 +26,7 @@
                                                 <div class="col-lg-6 col-xl-5 py-lg-5">
                                                     <div class="p-4 p-md-5 slider s1">
                                                         <div class="h2 fw-bolder"><c:out value='${items.title}'/></div>
-                                                        <p><c:out value='${items.cntnt}'/></p>
+                                                        <p><c:out value='${items.cntnt}' escapeXml="false"/></p>
                                                         <a class="stretched-link text-decoration-none" href="<c:url value='${items.connectUrl}'/>">
                                                             More
                                                             <i class="bi bi-arrow-right"></i>
