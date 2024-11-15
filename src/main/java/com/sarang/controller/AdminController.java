@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -399,6 +398,9 @@ public class AdminController {
         HashMap<String,Object> reqMap = new HashMap<>();
         reqMap.put("contentSeq",headContentId);
         HeadContentVO headContentVO = headContentService.getHeadContentDetail(reqMap);
+        if(headContentVO != null){
+            headContentVO.setCntnt(headContentVO.getCntnt().replaceAll("\\n","<br/>"));
+        }
         model.addAttribute("headContentInfo", headContentVO);
         model.addAttribute("status","update");
         return "admin/headContentWritePage";
