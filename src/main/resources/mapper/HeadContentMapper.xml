@@ -27,7 +27,7 @@
             AND TITLE like concat('%', #{title} ,'%')
         </if>
         <if test="!''.equals(delYn) and delYn != null">
-            DEL_YN = #{delYn}
+            AND DEL_YN = #{delYn}
         </if>
 		ORDER BY CONTENT_SEQ desc LIMIT #{start}, #{size}
 	</select>
