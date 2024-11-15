@@ -23,11 +23,11 @@
                             <div class="p-4 p-md-5 text-start">
                                 <div class="h2 fw-bolder prevHead">
                                     <c:if test="${status eq 'insert'}">헤드 컨텐츠1</c:if>
-                                    <c:if test="${status eq 'update'}">${headContentInfo.title}</c:if>
+                                    <c:if test="${status eq 'update'}"><c:out value='${headContentInfo.title}'/></c:if>
                                 </div>
                                 <p class="prevText">
                                     <c:if test="${status eq 'insert'}">내용 작성1</c:if>
-                                    <c:if test="${status eq 'update'}">${headContentInfo.cntnt}</c:if>
+                                    <c:if test="${status eq 'update'}"><c:out value='${headContentInfo.cntnt}' escapeXml="false"/></c:if>
                                 </p>
                                 <div class="stretched-link text-decoration-none">
                                     More
