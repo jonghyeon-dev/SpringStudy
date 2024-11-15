@@ -398,9 +398,6 @@ public class AdminController {
         HashMap<String,Object> reqMap = new HashMap<>();
         reqMap.put("contentSeq",headContentId);
         HeadContentVO headContentVO = headContentService.getHeadContentDetail(reqMap);
-        if(headContentVO != null){
-            headContentVO.setCntnt(headContentVO.getCntnt().replaceAll("\\n","<br/>"));
-        }
         model.addAttribute("headContentInfo", headContentVO);
         model.addAttribute("status","update");
         return "admin/headContentWritePage";

@@ -22,12 +22,10 @@
                         <div class="col-lg-6 col-xl-5 py-lg-5">
                             <div class="p-4 p-md-5 text-start">
                                 <div class="h2 fw-bolder prevHead">
-                                    <c:if test="${status eq 'insert'}">헤드 컨텐츠1</c:if>
-                                    <c:if test="${status eq 'update'}"><c:out value='${headContentInfo.title}'/></c:if>
+                                    헤드 컨텐츠1
                                 </div>
                                 <p class="prevText">
-                                    <c:if test="${status eq 'insert'}">내용 작성1</c:if>
-                                    <c:if test="${status eq 'update'}"><c:out value='${headContentInfo.cntnt}' escapeXml="false"/></c:if>
+                                    내용 작성1
                                 </p>
                                 <div class="stretched-link text-decoration-none">
                                     More
@@ -36,8 +34,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6 col-xl-7">
-                            <c:if test="${status eq 'insert'}"><div class="bg-featured-blog prevImg" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div></c:if>
-                            <c:if test="${status eq 'update'}"><div class="bg-featured-blog prevImg" style="background-image: url('/image/display/${headContentInfo.imgFileId}')"></div></c:if>
+                            <div class="bg-featured-blog prevImg" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
                         </div>
                     </div>
                 </div>
@@ -141,14 +138,18 @@
 
             if(pageStatus === "update"){
                 const headContentTitle = `<c:out value='${headContentInfo.title}'/>`;
-                const headContentdCntnt = `<c:out value='${headContentInfo.cntnt}'/>`;
+                const headContentCntnt = `<c:out value='${headContentInfo.cntnt}'/>`;
                 const connectUrl = `<c:out value='${headContentInfo.connectUrl}'/>`;
+                const imgFileId = `<c:out value='${headContentInfo.imgFileId}'/>`
                 const strDate = `<c:out value='${headContentInfo.strDate}'/>`;
                 const endDate = `<c:out value='${headContentInfo.endDate}'/>`;
 
                 $("#headContentInsertForm input[name='title']").val(headContentTitle);
-                $("#headContentInsertForm textarea[name='cntnt']").text(headContentdCntnt);
+                $("#headContentInsertForm textarea[name='cntnt']").text(headContentCntnt);
                 $("#headContentInsertForm input[name='connectUrl']").val(connectUrl);
+                $(".prevHead").text(headContentTitle);
+                $(".prevText").html(headContentCntnt.replaceAll("\n","<br/>"));
+                $(".prevImg").css("background-image","url(/image/display/"+imgFileId+")");
                 $("#strDate").val(dateConvert(strDate));
                 $("#endDate").val(dateConvert(endDate));
             }
