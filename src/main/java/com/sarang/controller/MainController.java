@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.sarang.model.BoardVO;
+import com.sarang.model.HeadContentVO;
 import com.sarang.model.common.FileVO;
 import com.sarang.service.BoardService;
+import com.sarang.service.HeadContentService;
 
 @Controller
 public class MainController {
@@ -26,16 +28,21 @@ public class MainController {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private HeadContentService headContentService;
+
     @GetMapping(value={"/main.do","/"})
     public String mainPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception {
             logger.info("Main Page View");
+            //공지사항
             HashMap<String,Object> reqMap = new HashMap<>();
             reqMap.put("boardCate","notice");
             reqMap.put("size",5);
             reqMap.put("start",0);
             List<BoardVO> noticeBoardList = boardService.getBoardList(reqMap);
 
+            //최신소식
             reqMap = new HashMap<>();
             reqMap.put("boardCate","news");
             reqMap.put("size",3);
@@ -65,8 +72,15 @@ public class MainController {
                         newsList.add(result);
                   }
             }
+
+            //헤드콘텐츠
+            reqMap = new HashMap<>();
+            List<HeadContentVO> headContentsList = headContentService.getMainHeadContents(reqMap);
+
+
             model.addAttribute("noticeBoardList", noticeBoardList);
             model.addAttribute("newsList", newsList);
+            model.addAttribute("headContentsList",headContentsList);
             return "main/mainPage";
     }
 

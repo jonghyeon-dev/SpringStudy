@@ -15,61 +15,51 @@
             <section>
                 <div class="container p-0">
                     <!-- <h1 class="fw-bolder fs-5 mb-4">Company Blog</h1> -->
+                     <!-- headContentsList -->
                     <div class="card border-0 shadow rounded-3 overflow-hidden">
                         <div class="card-body p-0">
                             <div class="swiper mySwiper">
                                 <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <div class="row gx-0">
-                                            <div class="col-lg-6 col-xl-5 py-lg-5">
-                                                <div class="p-4 p-md-5 slider s1">
-                                                    <div class="h2 fw-bolder">헤드 컨텐츠1</div>
-                                                    <p>내용 작성1</p>
-                                                    <a class="stretched-link text-decoration-none" href="#!">
-                                                        More
-                                                        <i class="bi bi-arrow-right"></i>
-                                                    </a>
+                                    <c:forEach items="${headContentsList}" var="items">
+                                        <div class="swiper-slide">
+                                            <div class="row gx-0">
+                                                <div class="col-lg-6 col-xl-5 py-lg-5">
+                                                    <div class="p-4 p-md-5 slider s1">
+                                                        <div class="h2 fw-bolder"><c:out value='${items.title}'/></div>
+                                                        <p><c:out value='${items.cntnt}'/></p>
+                                                        <a class="stretched-link text-decoration-none" href="<c:url value='${items.connectUrl}'/>">
+                                                            More
+                                                            <i class="bi bi-arrow-right"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-xl-7">
+                                                    <div class="bg-featured-blog" style='background-image: url("/image/display/${items.imgFileId}")'></div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-xl-7">
-                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
-                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="row gx-0">
-                                            <div class="col-lg-6 col-xl-5 py-lg-5">
-                                                <div class="p-4 p-md-5 slider s1">
-                                                    <div class="h2 fw-bolder">헤드 컨텐츠2</div>
-                                                    <p>내용 작성2</p>
-                                                    <a class="stretched-link text-decoration-none" href="#!">
-                                                        More
-                                                        <i class="bi bi-arrow-right"></i>
-                                                    </a>
+                                    </c:forEach>
+                                    <c:if test="${fn:length(headContentsList) < 3}">
+                                        <c:forEach var="i" begin="${fn:length(headContentsList)}" end="2" step="1">
+                                            <div class="swiper-slide">
+                                                <div class="row gx-0">
+                                                    <div class="col-lg-6 col-xl-5 py-lg-5">
+                                                        <div class="p-4 p-md-5 slider s1">
+                                                            <div class="h2 fw-bolder">헤드 컨텐츠<c:out value='${i}'/></div>
+                                                            <p>내용 작성<c:out value='${i}'/></p>
+                                                            <a class="stretched-link text-decoration-none" href="#!">
+                                                                More
+                                                                <i class="bi bi-arrow-right"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-xl-7">
+                                                        <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 col-xl-7">
-                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="row gx-0">
-                                            <div class="col-lg-6 col-xl-5 py-lg-5">
-                                                <div class="p-4 p-md-5 slider s1">
-                                                    <div class="h2 fw-bolder">헤드 컨텐츠3</div>
-                                                    <p>내용 작성3</p>
-                                                    <a class="stretched-link text-decoration-none" href="#!">
-                                                        More
-                                                        <i class="bi bi-arrow-right"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-xl-7">
-                                                <div class="bg-featured-blog" style="background-image: url('https://dummyimage.com/700x350/343a40/6c757d')"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        </c:forEach>
+                                    </c:if>
                                 </div>
                                 <!-- If we need pagination -->
                                 <div class="swiper-pagination"></div>

@@ -18,6 +18,11 @@ public class HeadContentService implements HeadContentServiceImpl{
     HeadContentMapper headContentMapper;
 
     @Override
+    public List<HeadContentVO> getMainHeadContents(HashMap<String,Object> reqMap){
+        return headContentMapper.getMainHeadContents(reqMap);
+    }
+
+    @Override
     public List<HeadContentVO> getHeadContents(HashMap<String,Object> reqMap){
 
         return headContentMapper.getHeadContents(reqMap);

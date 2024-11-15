@@ -9,6 +9,7 @@ import com.sarang.model.HeadContentVO;
 
 @Mapper
 public interface HeadContentMapper {
+    List<HeadContentVO> getMainHeadContents(HashMap<String,Object> reqMap);
     List<HeadContentVO> getHeadContents(HashMap<String,Object> reqMap);
     HashMap<String,Object> getHeadContentsPageInfo(HashMap<String,Object> reqMap);
     Integer insertHeadContent(HeadContentVO headContentVO);

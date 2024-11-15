@@ -123,7 +123,7 @@
                         </c:if>
                     </button>
                     <c:if test="${status eq 'update'}">
-                        <a href="<c:url value=/admin/deleteHeadContent/${headContentInfo.contentSeq}" class="btn btn-warning text-center">삭제</a>
+                        <a href="<c:url value='/admin/deleteHeadContent/${headContentInfo.contentSeq}' />" class="btn btn-warning text-center">삭제</a>
                     </c:if>
                     <a href='<c:url value="/admin/headContent.do"/>' class="btn btn-danger text-center">취소</a>
                 </div>

@@ -2,6 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sarang.mapper.HeadContentMapper">
+
+    <select id="getMainHeadContents" resultType="com.sarang.model.HeadContentVO">
+        SELECT 
+            CONTENT_SEQ,
+            TITLE,
+            CNTNT,
+            IMG_FILE_ID,
+            CONNECT_URL,
+            (SELECT USER_NM FROM TUSR00100 B WHERE A.CRET_USER = B.SEQ) AS CRET_USER_NM
+        FROM THCT00100 A
+		WHERE DATE_FORMAT(NOW(),'%Y%m%d') BETWEEN STR_DATE AND END_DATE
+          AND DEL_YN = 'N'
+    </select>
+
     <select id="getHeadContents" resultType="com.sarang.model.HeadContentVO">
 		SELECT 
             CONTENT_SEQ,
