@@ -3,9 +3,11 @@ package com.sarang.model;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class BoardVO {
     private Integer boardId;         //게시판ID
     @NonNull

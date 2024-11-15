@@ -8,16 +8,17 @@
             TITLE,
             CNTNT,
             IMG_FILE_ID,
+            CONNECT_URL,
             STR_DATE,
             END_DATE,
-            DEL_YN,
-            CRET_USER,
-            CRET_DATE,
-            CRET_TIME,
-            CHG_USER,
-            CHG_DATE,
-            CHG_TIME
-        FROM THCT00100
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME,
+            (SELECT USER_NM FROM TUSR00100 B WHERE A.CRET_USER = B.SEQ) AS CRET_USER_NM
+        FROM THCT00100 A
 		WHERE 1=1
         <if test='contentSeq != null and !contentSeq.equals("")'>
             AND CONTENT_SEQ LIKE CONCAT('%',#{contentSeq},'%')
@@ -26,7 +27,7 @@
             AND TITLE like concat('%', #{title} ,'%')
         </if>
         <if test="!''.equals(delYn) and delYn != null">
-            AND DEL_YN = #{delYn}
+            DEL_YN = #{delYn}
         </if>
 		ORDER BY CONTENT_SEQ desc LIMIT #{start}, #{size}
 	</select>
@@ -47,4 +48,68 @@
             AND DEL_YN = #{delYn}
         </if>
 	</select>
+
+    <insert id="insertHeadContent" parameterType="com.sarang.model.HeadContentVO" useGeneratedKeys="true" keyProperty="contentSeq" keyColumn="CONTENT_SEQ">
+	INSERT INTO THCT00100(
+			TITLE,
+            CNTNT,
+            IMG_FILE_ID,
+            CONNECT_URL,
+            STR_DATE,
+            END_DATE,
+			CRET_USER,
+			CRET_DATE,
+			CRET_TIME,
+			CHG_USER,
+			CHG_DATE,
+			CHG_TIME
+		) VALUES (
+			#{title},
+			#{cntnt},
+			#{imgFileId},
+            #{connectUrl},
+            #{strDate},
+            #{endDate},
+            #{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s'),
+			#{cretUser},
+			DATE_FORMAT(NOW(),'%Y%m%d'),
+			DATE_FORMAT(NOW(),'%H%i%s')
+		)
+	</insert>
+
+    <select id="getHeadContentDetail" resultType="com.sarang.model.HeadContentVO">
+        SELECT 
+            CONTENT_SEQ,
+            TITLE,
+            CNTNT,
+            IMG_FILE_ID,
+            CONNECT_URL,
+            STR_DATE,
+            END_DATE,
+            (SELECT FILE_NAME FROM TBRD00101 B WHERE A.IMG_FILE_ID = B.FILE_ID) AS FILE_NAME
+        FROM THCT00100 A
+		WHERE CONTENT_SEQ = ${contentSeq}
+    </select>
+
+    <update id="updateHeadContent" parameterType="com.sarang.model.HeadContentVO">
+        UPDATE THCT00100 SET
+            TITLE = #{title},
+            CNTNT = #{cntnt},
+            IMG_FILE_ID = #{imgFileId},
+            CONNECT_URL = #{connectUrl},
+            STR_DATE = #{strDate},
+            END_DATE = #{endDate},
+            CHG_USER = #{chgUser},
+            CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+            CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+        WHERE CONTENT_SEQ = #{contentSeq}
+    </update>
+
+    <update id="deleteHeadContent" parameterType="Integer">
+        UPDATE THCT00100 SET
+            DEL_YN = 'Y'
+        WHERE CONTENT_SEQ = #{contentSeq}
+    </update>
 </mapper>

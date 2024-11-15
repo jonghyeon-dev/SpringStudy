@@ -58,7 +58,7 @@
                                 <!-- 이미지 정보 -->
                                 <p>
                                     <input type="hidden" name="imgFileId" value="${headContentInfo.imgFileId}">
-                                    ${headContentFile.fileName}
+                                    ${headContentInfo.fileName}
                                     <button type="button" class="btn-close" onclick="javascript:deleteUploadFile(this);"></button>
                                 </p>
                             </c:if>
@@ -94,7 +94,20 @@
                                 연결URL&nbsp;:&nbsp;
                             </span>
                         </div>
-                        <input type="text" class="form-control" name="conectUrl" disabled="true"></input>
+
+                        <input type="text" class="form-control" name="connectUrl" <c:if test="${status eq 'insert'}"> disabled="true" </c:if>></input>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                시작일자&nbsp;:&nbsp;
+                            </span>
+                            <input type="date" class="form-control datepicker" id="strDate" name="strDate" placeholder="시작일자"/>
+                            <span class="input-group-text">
+                                종료일자&nbsp;:&nbsp;
+                            </span>
+                            <input type="date" class="form-control datepicker" id="endDate" name="endDate" placeholder="종료일자"/>
+                        </div>
                     </div>
                     <div class="form-control">
                         <textarea class="form-control" name="cntnt"></textarea>
@@ -109,12 +122,10 @@
                             수정
                         </c:if>
                     </button>
-                    <c:if test="${status eq 'insert'}">
-                        <a href='<c:url value="/admin/headContent.do"/>' class="btn btn-danger text-center">취소</a>
-                    </c:if>
                     <c:if test="${status eq 'update'}">
-                        <a href='<c:url value="/admin/headContentDetail/${headContentInfo.contentSeq}"/>' class="btn btn-danger text-center">취소</a>
+                        <a href="<c:url value=/admin/deleteHeadContent/${headContentInfo.contentSeq}" class="btn btn-warning text-center">삭제</a>
                     </c:if>
+                    <a href='<c:url value="/admin/headContent.do"/>' class="btn btn-danger text-center">취소</a>
                 </div>
             </form>
         </div>
@@ -126,18 +137,26 @@
  var boardInsertPage = (function(){
         let ckeditor;
         var init = function(){
-            // ckeditor = CKEDITOR.replace('ckeditor',{
-            //     filebrowserUploadUrl:'<c:url value="/file/imageUpload?type=Images"/>'
-            // });
-
             const pageStatus = '<c:out value="${status}"/>';
 
             if(pageStatus === "update"){
-                const headContentTitle = `<c:out value='${headCOntentInfo.title}'/>`;
-                const headContentdCntnt = `<c:out value='${headCOntentInfo.cntnt}'/>`;
+                const headContentTitle = `<c:out value='${headContentInfo.title}'/>`;
+                const headContentdCntnt = `<c:out value='${headContentInfo.cntnt}'/>`;
+                const connectUrl = `<c:out value='${headContentInfo.connectUrl}'/>`;
+                const strDate = `<c:out value='${headContentInfo.strDate}'/>`;
+                const endDate = `<c:out value='${headContentInfo.endDate}'/>`;
+
                 $("#headContentInsertForm input[name='title']").val(headContentTitle);
                 $("#headContentInsertForm textarea[name='cntnt']").text(headContentdCntnt);
-                // ckeditor.setData(unescapeHtml(headContentdCntnt));
+                $("#headContentInsertForm input[name='connectUrl']").val(connectUrl);
+                $("#strDate").val(dateConvert(strDate));
+                $("#endDate").val(dateConvert(endDate));
+            }
+            function dateConvert(yyyyMMdd){
+                let yyyy = yyyyMMdd.substring(0,4);
+                let mm = yyyyMMdd.substring(4,6);
+                let dd = yyyyMMdd.substring(6,8);
+                return yyyy + "-" + mm  + "-" + dd;
             }
         };
 

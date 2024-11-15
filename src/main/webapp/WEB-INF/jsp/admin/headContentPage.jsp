@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -39,15 +40,13 @@
             <table class="table table-bordered table-hover">
                 <colgroup>
                     <col width="5%">
-                    <col width="10%">
-                    <col width="30%">
+                    <col width="45%">
                     <col width="15%">
-                    <col width="20%">
-                    <col width="20%">
+                    <col width="15%">
+                    <col width="15%">
                 </colgroup>
                 <thead>
                     <tr class="text-center">
-                        <th class="table-info"><input type="checkBox" id="checkAll"></th>
                         <th class="table-info">번호</th>
                         <th class="table-info">제목</th>
                         <th class="table-info">작성자</th>
@@ -58,12 +57,19 @@
                 <tbody id="tbodyHeadContentsList">
                     <c:forEach items="${totalContents.headContentsList}" var="items">
                     <tr>
-                        <td class='delCheck'><input type="checkbox" name="delCheck" value="${items.seq}"></td>
-                        <td><c:out value="${items.contentSeq}"/></td>
-                        <td><c:out value="${items.title}"/></td>
-                        <td><c:out value="${items.userNm}"/></td>
-                        <td><c:out value="${items.strDate}"/></td>
-                        <td><c:out value="${items.endDate}"/></td>
+                        <td class='delCheck text-center'><c:out value="${items.contentSeq}"/></td>
+                        <td><a href="<c:url value='/admin/headContentModify/${items.contentSeq}'/>"><c:out value="${items.title}"/></a></td>
+                        <td><c:out value="${items.cretUserNm}"/></td>
+                        <td>
+                            <fmt:parseDate value="${items.strDate}" var="startDate" pattern="yyyyMMdd"/>
+                            <fmt:formatDate value="${startDate}" var="strDate" pattern="yyyy-MM-dd"/>
+                            <c:out value="${strDate}"/>
+                        </td>
+                        <td>
+                            <fmt:parseDate value="${items.endDate}" var="endedDate" pattern="yyyyMMdd"/>
+                            <fmt:formatDate value="${endedDate}" var="endDate" pattern="yyyy-MM-dd"/>
+                            <c:out value="${endDate}"/>
+                        </td>
                     </tr>
                     </c:forEach>
                 </tbody>
@@ -113,173 +119,140 @@
 <script>
     var adminAccountPage = (function(){
         var init = function(){
-
+            
         };
         //사용자 데이터 출력
-        // var searchHeadContents = function(seq,userId,paging){
-        //     $.ajax({
-        //             url: '<c:url value="/admin/getHeadContents.do"/>',
-        //             type: "GET",
-        //             dataType: "json",
-        //             traditional:true,
-        //             data: {"seq":seq,
-        //                     "userId":userId,
-        //                     "page":paging},
-        //             success: response=>{
-        //                 if(response.isSucceed){
-        //                     $("#checkAll").prop('checked',false);
-        //                     let data = response.data.adminInfoList;
-        //                     let dataText = "";
-        //                     for(i=0;i<data.length;i++){
-        //                         dataText = dataText + "<tr>";
-        //                         dataText = dataText + "<td class='delCheck'><input type='checkbox' name='delCheck' value="+data[i].seq+"></td>";
-        //                         dataText = dataText + "<td>"+data[i].seq+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].userId+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].userNm+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].userGrant+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].celph+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].email+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].cretDate+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].cretTime+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].chgDate+"</td>";
-        //                         dataText = dataText + "<td>"+data[i].chgTime+"</td>";
-        //                         dataText = dataText + "<tr>";
-        //                     }
-        //                     if(data.length<10){
-        //                         for(i=0;i<(10 - data.length);i++){
-        //                             dataText = dataText + "<tr>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<td>&nbsp;</td>";
-        //                             dataText = dataText + "<tr>";
-        //                         }
-        //                     }
-        //                     $("#tbodyAdminInfoList").empty();
-        //                     if(dataText != ""){
-        //                         $("#tbodyAdminInfoList").append(dataText);
-        //                     }
-
-        //                     // paging 처리
-        //                     let totalPages = response.data.totalPages;
-        //                     let pageText = "";
-        //                     if(Number(paging)>0){
-        //                         pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>'
-        //                     }else{
-        //                         pageText = pageText + '<li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>'
-        //                     }
-        //                     if(totalPages > 10){
-        //                         if(Number(paging)<5){
-        //                             for(page=0;page<10;page++){
-        //                                 if(Number(paging)===page){
-        //                                     pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }else{
-        //                                     pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }
-        //                             }
-        //                         }else if(Number(paging) >= (Number(totalPages) - 5)){
-        //                             for(page=(Number(totalPages) - 10);page<Number(totalPages);page++){
-        //                                 if(Number(paging)===page){
-        //                                     pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }else{
-        //                                     pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }
-        //                             }
-        //                         }else{
-        //                             for(page=Number(paging)-5;page<(5+Number(paging));page++){
-        //                                 if(Number(paging)===page){
-        //                                     pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }else{
-        //                                     pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }
-        //                             }
-        //                         }
-        //                     }else{
-        //                         for(page=0;page<Number(totalPages);page++){
-        //                                 if(Number(paging)===page){
-        //                                     pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }else{
-        //                                     pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
-        //                                 }
-        //                             }
-        //                     }
-        //                     if(Number(paging) < (Number(totalPages)-1)){
-        //                         pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>'
-        //                     }else{
-        //                         pageText = pageText + '<li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>'
-        //                     }
-        //                     $("#adminInfoPagination").empty();
-        //                     if(pageText != null){
-        //                         $("#adminInfoPagination").append(pageText);
-        //                         $("#adminInfoPagination li:not(.disabled.active)").on("click",function(){
-        //                             let selectedPage=$(this).find("input[name='page']").val();
-        //                             let oldData;
-        //                             if(selectedPage === "prev"){
-        //                                 $("#adminInfoPagination li").each(function(){
-        //                                     let pageData = $(this).find("input[name='page']").val();
-        //                                     if(oldData === "prev"){
-        //                                         if(Number(pageData) === 0){
-        //                                             selectedPage = pageData;
-        //                                         }else{
-        //                                             selectedPage = Number(pageData)-1;
-        //                                         }
-        //                                         return false;
-        //                                     }else{
-        //                                         oldData = pageData;
-        //                                     }
-        //                                 });
-        //                             }else if(selectedPage === "next"){
-        //                                 $("#adminInfoPagination li").each(function(){
-        //                                     let pageData = $(this).find("input[name='page']").val();
-        //                                     if(pageData === "next"){
-        //                                         if(Number(oldData) === (Number(totalPages)-1)){
-        //                                             selectedPage = Number(oldData);
-        //                                         }else{
-        //                                             selectedPage = Number(oldData)+1;
-        //                                         }
-        //                                         return false;
-        //                                     }else{
-        //                                         oldData = pageData;
-        //                                     }
-        //                                 });
-        //                             }
-        //                             searchAdminInfo(seq,userId,selectedPage);
-        //                         })
-        //                     }
-        //                 }
-        //             },
-        //             error: e=>{
-        //                 console.log("Get AdminInfoList Ajax Get Data Error :: ", e);
-        //             }
-        //         })
-        // };
-
-        //ENO 데이터 삭제
-        var deleteHeadContents = function(delList){
+        var searchHeadContents = function(contentSeq,title,delYn,paging){
             $.ajax({
-                url:"<c:url value='/admin/deleteHeadContents.do'/>",
-                type:"POST",
-                dataType:"json",
-                traditional:true,
-                data:{"delList": delList},
-                success: response=>{
-                    let seq=$("#searchHeadContentsForm input[name='seq']").val();
-                    let eno=$("#searchHeadContentsForm input[name='title']").val();
-                    searchHeadContents(seq,eno,0);
-                    $("#checkAll").prop('checked',false);
-                },
-                error: e=>{
-                    console.log("Delete Admin Ajax Get Data Error :: ", e);
-                }
-            })
-        }
+                    url: '<c:url value="/admin/getHeadContents.do"/>',
+                    type: "GET",
+                    dataType: "json",
+                    traditional:true,
+                    data: {"contentSeq":contentSeq,
+                            "title":title,
+                            "delYn":delYn,
+                            "page":paging},
+                    success: response=>{
+                        if(response.isSucceed){
+                            let data = response.data.headContentsList;
+                            let dataText = "";
+                            for(i=0;i<data.length;i++){
+                                dataText = dataText + "<tr>";
+                                dataText = dataText + "<td>"+data[i].contentSeq+"</td>";
+                                dataText = dataText + "<td>"+data[i].title+"</td>";
+                                dataText = dataText + "<td>"+data[i].certUserNm+"</td>";
+                                dataText = dataText + "<td>"+data[i].strDate+"</td>";
+                                dataText = dataText + "<td>"+data[i].endDate+"</td>";
+                                dataText = dataText + "<tr>";
+                            }
+                            if(data.length<10){
+                                for(i=0;i<(10 - data.length);i++){
+                                    dataText = dataText + "<tr>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
+                                    dataText = dataText + "<td>&nbsp;</td>";
+                                    dataText = dataText + "<tr>";
+                                }
+                            }
+                            $("#tbodyHeadContentsList").empty();
+                            if(dataText != ""){
+                                $("#tbodyHeadContentsList").append(dataText);
+                            }
+                            // paging 처리
+                            let totalPages = response.data.totalPages;
+                            let pageText = "";
+                            if(Number(paging)>0){
+                                pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>'
+                            }else{
+                                pageText = pageText + '<li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="prev">&laquo;</a></li>'
+                            }
+                            if(totalPages > 10){
+                                if(Number(paging)<5){
+                                    for(page=0;page<10;page++){
+                                        if(Number(paging)===page){
+                                            pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }else{
+                                            pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }
+                                    }
+                                }else if(Number(paging) >= (Number(totalPages) - 5)){
+                                    for(page=(Number(totalPages) - 10);page<Number(totalPages);page++){
+                                        if(Number(paging)===page){
+                                            pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }else{
+                                            pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }
+                                    }
+                                }else{
+                                    for(page=Number(paging)-5;page<(5+Number(paging));page++){
+                                        if(Number(paging)===page){
+                                            pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }else{
+                                            pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }
+                                    }
+                                }
+                            }else{
+                                for(page=0;page<Number(totalPages);page++){
+                                        if(Number(paging)===page){
+                                            pageText = pageText + '<li class="page-item active"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }else{
+                                            pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="'+Number(page)+'">'+(Number(page)+1)+'</a></li>';
+                                        }
+                                    }
+                            }
+                            if(Number(paging) < (Number(totalPages)-1)){
+                                pageText = pageText + '<li class="page-item"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>'
+                            }else{
+                                pageText = pageText + '<li class="page-item disabled"><a class="page-link" href="#"><input type="hidden" name="page" value="next">&raquo;</a></li>'
+                            }
+                            $("#headContentsPagination").empty();
+                            if(pageText != null){
+                                $("#headContentsPagination").append(pageText);
+                                $("#headContentsPagination li:not(.disabled.active)").on("click",function(){
+                                    let selectedPage=$(this).find("input[name='page']").val();
+                                    let oldData;
+                                    if(selectedPage === "prev"){
+                                        $("#headContentsPagination li").each(function(){
+                                            let pageData = $(this).find("input[name='page']").val();
+                                            if(oldData === "prev"){
+                                                if(Number(pageData) === 0){
+                                                    selectedPage = pageData;
+                                                }else{
+                                                    selectedPage = Number(pageData)-1;
+                                                }
+                                                return false;
+                                            }else{
+                                                oldData = pageData;
+                                            }
+                                        });
+                                    }else if(selectedPage === "next"){
+                                        $("#headContentsPagination li").each(function(){
+                                            let pageData = $(this).find("input[name='page']").val();
+                                            if(pageData === "next"){
+                                                if(Number(oldData) === (Number(totalPages)-1)){
+                                                    selectedPage = Number(oldData);
+                                                }else{
+                                                    selectedPage = Number(oldData)+1;
+                                                }
+                                                return false;
+                                            }else{
+                                                oldData = pageData;
+                                            }
+                                        });
+                                    }
+                                    searchAdminInfo(contentSeq,title,delYn,selectedPage);
+                                })
+                            }
+                        }
+                    },
+                    error: e=>{
+                        console.log("Get AdminInfoList Ajax Get Data Error :: ", e);
+                    }
+                })
+        };
 
         var registerEvent = function(){
             //초기화 버튼 클릭 시
@@ -350,6 +323,14 @@
             }
         }
     }());
+
+    function dateConvert(yyyymmdd){
+        let yyyy = yyyymmdd.substring(0,4);
+        let mm = yyyymmdd.substring(4,6);
+        let dd = yyyymmdd.substring(6,8);
+
+        return yyyy+"-"+mm+"-"+dd;
+    }
 
     $(document).ready(e=>{
         adminAccountPage.init();

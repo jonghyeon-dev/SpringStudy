@@ -158,212 +158,100 @@ public class FileUtils {
         }
         try{
             // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
-                // 원본 파일명(확장자 포함)
-                String fileName = uploadFile.getOriginalFilename();
-                
-                // 확장자를 제외한 파일명
-                String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
+            // 원본 파일명(확장자 포함)
+            String fileName = uploadFile.getOriginalFilename();
+            
+            // 확장자를 제외한 파일명
+            String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
 
-                // 확장자
-                String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1);
+            // 확장자
+            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1);
 
-                // 실제 서버에 저장될 파일명
-                String saveFileName = UUID.randomUUID().toString();
-                
-                // 저장될 경로와 파일명
-                String saveFilePath = filePath + File.separator + saveFileName + '.' + fileExt;
+            // 실제 서버에 저장될 파일명
+            String saveFileName = UUID.randomUUID().toString();
+            
+            // 저장될 경로와 파일명
+            String saveFilePath = filePath + File.separator + saveFileName + '.' + fileExt;
 
-                // filePath에 해당되는 파일의 File 객체를 생성
-                File fileFolder = new File(filePath);
+            // filePath에 해당되는 파일의 File 객체를 생성
+            File fileFolder = new File(filePath);
 
-                if(!fileFolder.exists()){
-                    // 부모 폴더까지 포함하여 경로에 폴더 생성
-                    if(fileFolder.mkdirs()){
-                        logger.info("[file.mkdir] : Success");
-                    }else{
-                        logger.error("[file.mkdir] : Fail");
-                    }
+            if(!fileFolder.exists()){
+                // 부모 폴더까지 포함하여 경로에 폴더 생성
+                if(fileFolder.mkdirs()){
+                    logger.info("[file.mkdir] : Success");
+                }else{
+                    logger.error("[file.mkdir] : Fail");
                 }
-
-                File saveFile = new File(saveFilePath);
-                // saveFile이 File이면 true, 아니면 false
-                // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
-                if(saveFile.isFile()){
-                    boolean _exist = true;
-
-                    int index = 0;
-
-                    // 동일한 파일명이 존재하지 않을때가지 반복한다.
-                    while(_exist){
-                        index++;
-
-                        String dictFile = filePath + File.separator + saveFileName + "("+ index+ ")." + fileExt;
-
-                        _exist = new File(dictFile).isFile();
-
-                        if(!_exist){
-                            saveFilePath = dictFile;
-                        }
-                    }
-                    saveFile = new File(saveFilePath);
-                    // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
-                    uploadFile.transferTo(saveFile);
-
-                    //Mimetype Check
-                    if(checkFileMimeType(saveFile)){
-                        if(saveFile.exists()){
-                            if(saveFile.delete()){
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#FileUpload Interception Check MimeType Diffrent");
-                                }
-                            }else{
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
-                                }
-                            }
-                        }
-                        return fileVO;
-                    };
-                } else{
-                    uploadFile.transferTo(saveFile);
-
-                    //Mimetype Check
-                    if(checkFileMimeType(saveFile)){
-                        if(saveFile.exists()){
-                            if(saveFile.delete()){
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#FileUpload Interception Check MimeType Diffrent");
-                                }
-                            }else{
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
-                                }
-                            }
-                        }
-                        return fileVO;
-                    };
-                }
-
-                fileVO.setFileName(fileName);
-                fileVO.setFileCutName(fileCutName);
-                fileVO.setSaveFileName(saveFileName);
-                fileVO.setFileExt(fileExt);
-                fileVO.setFilePath(filePath);
-                fileVO.setCretUser(loginVO.getUserId());
-
-                fileMapper.insertUploadedFileInfo(fileVO);
-            return fileVO;
-        } catch(Exception e){
-            if(logger.isErrorEnabled()){
-                logger.error("#FileUpload Exception Message : {}", e.getMessage());
             }
-            return fileVO;
-        }
-    }
 
-    public FileVO headContentsFileUpload(HttpSession session,Integer boardId, MultipartFile uploadFile){
-        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
-        // DB에 저장될 정보
-        FileVO fileVO = new FileVO();
-        if(ObjectUtils.isEmpty(loginVO)){
-            return fileVO;
-        }
-        try{
-            // 읽어 올 요소가 있으면 true, 없으면 false를 반환한다.
-                // 원본 파일명(확장자 포함)
-                String fileName = uploadFile.getOriginalFilename();
-                
-                // 확장자를 제외한 파일명
-                String fileCutName = fileName.substring(0, fileName.lastIndexOf("."));
+            File saveFile = new File(saveFilePath);
+            // saveFile이 File이면 true, 아니면 false
+            // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
+            if(saveFile.isFile()){
+                boolean _exist = true;
 
-                // 확장자
-                String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1);
+                int index = 0;
 
-                // 실제 서버에 저장될 파일명
-                String saveFileName = UUID.randomUUID().toString();
-                
-                // 저장될 경로와 파일명
-                String saveFilePath = filePath + File.separator + saveFileName + '.' + fileExt;
+                // 동일한 파일명이 존재하지 않을때가지 반복한다.
+                while(_exist){
+                    index++;
 
-                // filePath에 해당되는 파일의 File 객체를 생성
-                File fileFolder = new File(filePath);
+                    String dictFile = filePath + File.separator + saveFileName + "("+ index+ ")." + fileExt;
 
-                if(!fileFolder.exists()){
-                    // 부모 폴더까지 포함하여 경로에 폴더 생성
-                    if(fileFolder.mkdirs()){
-                        logger.info("[file.mkdir] : Success");
-                    }else{
-                        logger.error("[file.mkdir] : Fail");
+                    _exist = new File(dictFile).isFile();
+
+                    if(!_exist){
+                        saveFilePath = dictFile;
                     }
                 }
+                saveFile = new File(saveFilePath);
+                // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
+                uploadFile.transferTo(saveFile);
 
-                File saveFile = new File(saveFilePath);
-                // saveFile이 File이면 true, 아니면 false
-                // 파일명이 중복일 경우 파일명(1).확장자, 파일명(2).확장자와 같은 형태로 생성한다.
-                if(saveFile.isFile()){
-                    boolean _exist = true;
-
-                    int index = 0;
-
-                    // 동일한 파일명이 존재하지 않을때가지 반복한다.
-                    while(_exist){
-                        index++;
-
-                        String dictFile = filePath + File.separator + saveFileName + "("+ index+ ")." + fileExt;
-
-                        _exist = new File(dictFile).isFile();
-
-                        if(!_exist){
-                            saveFilePath = dictFile;
+                //Mimetype Check
+                if(checkFileMimeType(saveFile)){
+                    if(saveFile.exists()){
+                        if(saveFile.delete()){
+                            if(logger.isErrorEnabled()){
+                                logger.error("#FileUpload Interception Check MimeType Diffrent");
+                            }
+                        }else{
+                            if(logger.isErrorEnabled()){
+                                logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
+                            }
                         }
                     }
-                    saveFile = new File(saveFilePath);
-                    // 생성한 파일 객체를 업로드 처리하지 않으면 임시파일에 저장된 파일이 자동적으로 삭제되기 때문에 transferTo(File f) 메서를 이용해서 업로드 처리한다.
-                    uploadFile.transferTo(saveFile);
+                    return fileVO;
+                };
+            } else{
+                uploadFile.transferTo(saveFile);
 
-                    //Mimetype Check
-                    if(checkFileMimeType(saveFile)){
-                        if(saveFile.exists()){
-                            if(saveFile.delete()){
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#FileUpload Interception Check MimeType Diffrent");
-                                }
-                            }else{
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
-                                }
+                //Mimetype Check
+                if(checkFileMimeType(saveFile)){
+                    if(saveFile.exists()){
+                        if(saveFile.delete()){
+                            if(logger.isErrorEnabled()){
+                                logger.error("#FileUpload Interception Check MimeType Diffrent");
+                            }
+                        }else{
+                            if(logger.isErrorEnabled()){
+                                logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
                             }
                         }
-                        return fileVO;
-                    };
-                } else{
-                    uploadFile.transferTo(saveFile);
+                    }
+                    return fileVO;
+                };
+            }
 
-                    //Mimetype Check
-                    if(checkFileMimeType(saveFile)){
-                        if(saveFile.exists()){
-                            if(saveFile.delete()){
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#FileUpload Interception Check MimeType Diffrent");
-                                }
-                            }else{
-                                if(logger.isErrorEnabled()){
-                                    logger.error("#MimeType Check False FileDelete Error FileName : {}.{}", saveFileName,fileExt);
-                                }
-                            }
-                        }
-                        return fileVO;
-                    };
-                }
+            fileVO.setFileName(fileName);
+            fileVO.setFileCutName(fileCutName);
+            fileVO.setSaveFileName(saveFileName);
+            fileVO.setFileExt(fileExt);
+            fileVO.setFilePath(filePath);
+            fileVO.setCretUser(loginVO.getUserId());
 
-                fileVO.setFileName(fileName);
-                fileVO.setFileCutName(fileCutName);
-                fileVO.setSaveFileName(saveFileName);
-                fileVO.setFileExt(fileExt);
-                fileVO.setFilePath(filePath);
-                fileVO.setCretUser(loginVO.getUserId());
-
-                fileMapper.insertUploadedFileInfo(fileVO);
+            fileMapper.insertUploadedFileInfo(fileVO);
             return fileVO;
         } catch(Exception e){
             if(logger.isErrorEnabled()){

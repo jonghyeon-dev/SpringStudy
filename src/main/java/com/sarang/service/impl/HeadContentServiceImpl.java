@@ -8,4 +8,8 @@ import com.sarang.model.HeadContentVO;
 public interface HeadContentServiceImpl {
     List<HeadContentVO> getHeadContents(HashMap<String,Object> reqMap);
     HashMap<String,Object> getHeadContentsPageInfo(HashMap<String,Object> reqMap);
+    Integer insertHeadContent(HeadContentVO headContentVO);
+    HeadContentVO getHeadContentDetail(HashMap<String,Object> reqMap);
+    Integer updateHeadContent(HeadContentVO headContentVO);
+    Integer deleteHeadContent(Integer contentSeq);
 }

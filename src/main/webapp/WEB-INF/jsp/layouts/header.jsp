@@ -22,6 +22,11 @@
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="<c:url value='/css/styles.css'/>" rel="stylesheet" />
 <link href="<c:url value='/css/main.css?styleVer=1'/>" rel="stylesheet" />
+<!-- BootStrap DatePicker 1.9.0 -->
+<script src='<c:url value="/assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js"/>'></script>
+<link href="<c:url value='/assets/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'/>" rel="stylesheet"/>
+<script src='<c:url value="/assets/bootstrap-datepicker/locales/bootstrap-datepicker.ko.min.js"/>'></script>
+
 <script>
     document.oncontextmenu=function(){return false;}
 </script>

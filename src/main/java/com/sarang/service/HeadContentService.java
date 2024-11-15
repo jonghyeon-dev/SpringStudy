@@ -27,4 +27,24 @@ public class HeadContentService implements HeadContentServiceImpl{
     public HashMap<String,Object> getHeadContentsPageInfo(HashMap<String,Object> reqMap){
          return headContentMapper.getHeadContentsPageInfo(reqMap);
     }
+
+    @Override
+    public Integer insertHeadContent(HeadContentVO headContentVO){
+        return headContentMapper.insertHeadContent(headContentVO);
+    }
+
+    @Override
+    public HeadContentVO getHeadContentDetail(HashMap<String,Object> reqMap){
+        return headContentMapper.getHeadContentDetail(reqMap);
+    }
+
+    @Override
+    public Integer updateHeadContent(HeadContentVO headContentVO){
+        return headContentMapper.updateHeadContent(headContentVO);
+    }
+
+    @Override
+    public Integer deleteHeadContent(Integer contentSeq){
+        return headContentMapper.deleteHeadContent(contentSeq);
+    }
 }

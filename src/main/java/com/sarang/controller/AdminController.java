@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +28,7 @@ import com.sarang.config.SecureUtil;
 import com.sarang.model.BoardVO;
 import com.sarang.model.HeadContentVO;
 import com.sarang.model.UserVO;
+import com.sarang.model.common.FileVO;
 import com.sarang.model.common.ResponseData;
 import com.sarang.service.BoardService;
 import com.sarang.service.HeadContentService;
@@ -303,6 +306,7 @@ public class AdminController {
     , HttpServletResponse response , Model model) throws Exception {
 		logger.info("headContentMain Page View");
         HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("delYn","N");
         reqMap.put("start",0);
         reqMap.put("size",pageSize);
         List<HeadContentVO> headContentsList = headContentService.getHeadContents(reqMap);
@@ -316,6 +320,32 @@ public class AdminController {
         return "admin/headContentPage";
 	}
 
+    @ResponseBody
+    @GetMapping(value="/admin/getHeadContents.do")
+    public ResponseData getHeadContents(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Integer contentSeq, String title, String delYn, Integer page){
+        logger.info("getHeadContents Ajax");
+        HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("contentSeq", contentSeq);
+        reqMap.put("title",title);
+        reqMap.put("delYn",delYn);
+        reqMap.put("start",page);
+        reqMap.put("size",pageSize);
+
+        List<HeadContentVO> headContentsList = headContentService.getHeadContents(reqMap);
+        HashMap<String,Object> pageInfo = headContentService.getHeadContentsPageInfo(reqMap);
+        
+        HashMap<String,Object> resMap = new HashMap<>();
+        resMap.put("headContentsList",headContentsList);
+        resMap.put("totalPages", pageInfo.get("totalPage"));
+
+        ResponseData js = new ResponseData();
+        js.setIsSucceed(true);
+        js.setMessage("Succeed");
+        js.setData(resMap);
+        return js;
+    }
+
     @GetMapping(value="/admin/headContentWrite.do")
     public String headContentWrite(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model) throws Exception {
@@ -326,9 +356,14 @@ public class AdminController {
 
     @PostMapping(value="/admin/insertHeadContent.do")
     public String insertHeadContent(HttpSession session, MultipartHttpServletRequest request
-    , HttpServletResponse response , Model model, HeadContentVO headContentVO, MultipartFile uploadImage, String createNotice) throws Exception {
-		logger.info("insertHeadContent Page View");
+    , HttpServletResponse response , RedirectAttributes redirectAttributes
+    , HeadContentVO headContentVO, MultipartFile uploadImage, String createNotice) throws Exception {
+		logger.info("insertHeadContent");
         UserVO userVO = (UserVO)session.getAttribute("userLogin");
+
+        headContentVO.setStrDate(headContentVO.getStrDate().replaceAll("-", ""));
+        headContentVO.setEndDate(headContentVO.getEndDate().replaceAll("-", ""));
+        // 공지사항 자동생성 첨부파일은 같이 올라가지 않음 제목과 내용만 올라감
         if(createNotice != null && !createNotice.isEmpty()){
             BoardVO createBoardVO = new BoardVO();
             createBoardVO.setBoardTitle(headContentVO.getTitle());
@@ -336,26 +371,73 @@ public class AdminController {
             createBoardVO.setBoardCntnt(headContentVO.getCntnt());
             createBoardVO.setCretUser(userVO.getSeq().toString());
             boardService.insertBoardDetailInfo(createBoardVO);
-            Integer boardId = createBoardVO.getBoardId();
-            if(uploadImage != null){
-                try{
-                    fileUtils.headContentsFileUpload(session, boardId, uploadImage);
-                }catch(Exception e){
-                    logger.error("Board File Upload Error : {}",e.getMessage());
-                    return "redirect:/error";
-                }
-            }
-        }else{
-            if(headContentVO.getConnectUrl() == null || "".equals(headContentVO.getConnectUrl().trim())){
-                if (request.getHeader("Referer") != null) {
-                    return "redirect:"+ request.getHeader("Referer");
-                }else{
-                    return "redirect:/admin/headContent.do";
-                }
-
+            headContentVO.setConnectUrl("/board/notice/detail/"+createBoardVO.getBoardId());
+        }
+        FileVO retFileVO = fileUtils.FileUpload(session, uploadImage);
+        if(retFileVO.getFileId() == null){
+            if (request.getHeader("Referer") != null) {
+                redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                return "redirect:"+ request.getHeader("Referer");
+            }else{
+                redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                return "redirect:/admin/headContent.do";
             }
         }
-        // return "redirect:/admin/headContentDetail/"+contentSeq;
+        headContentVO.setImgFileId(retFileVO.getFileId());
+        headContentVO.setCretUser(userVO.getSeq().toString());
+        headContentVO.setChgUser(userVO.getSeq().toString());
+        headContentService.insertHeadContent(headContentVO);
+
         return "redirect:/admin/headContent.do";
 	}
+
+    @GetMapping(value="/admin/headContentModify/{headContentId}")
+    public String headContentModify(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model
+    , @PathVariable("headContentId") Integer headContentId) throws Exception {
+		logger.info("headContentWrite Page View");
+        HashMap<String,Object> reqMap = new HashMap<>();
+        reqMap.put("contentSeq",headContentId);
+        HeadContentVO headContentVO = headContentService.getHeadContentDetail(reqMap);
+        model.addAttribute("headContentInfo", headContentVO);
+        model.addAttribute("status","update");
+        return "admin/headContentWritePage";
+	}
+
+    @PostMapping(value="/admin/updateHeadContent/{contentSeq}")
+    public String updateHeadContent(HttpSession session, MultipartHttpServletRequest request
+    , HttpServletResponse response , RedirectAttributes redirectAttributes
+    , HeadContentVO headContentVO, MultipartFile uploadImage) throws Exception{
+        logger.info("updateHeadContent");
+        UserVO userVO = (UserVO)session.getAttribute("userLogin");
+        headContentVO.setStrDate(headContentVO.getStrDate().replaceAll("-", ""));
+        headContentVO.setEndDate(headContentVO.getEndDate().replaceAll("-", ""));
+        if(uploadImage != null && !uploadImage.isEmpty()){
+            FileVO retFileVO = fileUtils.FileUpload(session, uploadImage);
+            if(retFileVO.getFileId() == null){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                    return "redirect:/admin/headContent.do";
+                }
+            }
+            headContentVO.setImgFileId(retFileVO.getFileId());
+        }
+        headContentVO.setChgUser(userVO.getSeq().toString());
+        headContentService.updateHeadContent(headContentVO);
+
+        return "redirect:/admin/headContent.do";
+    }
+
+    @GetMapping(value="/admin/deleteHeadContent/{contentSeq}")
+    public String headContentDelete(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , RedirectAttributes redirectAttributes
+    , @PathVariable("contentSeq") Integer contentSeq) throws Exception {
+        logger.info("headContentDelete");
+        headContentService.deleteHeadContent(contentSeq);
+        redirectAttributes.addFlashAttribute("errorMsg","헤드콘텐츠를 삭제 하였습니다.");
+        return "redirect:/admin/headContent.do";
+    }
 }
