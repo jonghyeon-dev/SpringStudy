@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sarang.mapper.BoardMapper;
 import com.sarang.model.BoardComntVO;
@@ -14,6 +15,7 @@ import com.sarang.model.BoardViewVO;
 import com.sarang.model.common.FileVO;
 import com.sarang.service.impl.BoardServiceImpl;
 
+@Transactional
 @Service
 public class BoardService implements BoardServiceImpl{
     @Autowired
