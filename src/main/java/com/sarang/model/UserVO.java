@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -19,7 +23,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Entity(name="TUSR00100")
 public class UserVO {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer seq;         // 일련번호
     @NonNull
     private String userId;      // 사용자아이디

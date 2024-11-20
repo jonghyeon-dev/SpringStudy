@@ -45,8 +45,8 @@
                                                 <div class="row gx-0">
                                                     <div class="col-lg-6 col-xl-5 py-lg-5">
                                                         <div class="p-4 p-md-5 slider s1">
-                                                            <div class="h2 fw-bolder">헤드 컨텐츠<c:out value='${i}'/></div>
-                                                            <p>내용 작성<c:out value='${i}'/></p>
+                                                            <div class="h2 fw-bolder">헤드 콘텐츠<c:out value='${i+1}'/></div>
+                                                            <p>내용 작성<c:out value='${i+1}'/></p>
                                                             <a class="stretched-link text-decoration-none" href="#!">
                                                                 More
                                                                 <i class="bi bi-arrow-right"></i>

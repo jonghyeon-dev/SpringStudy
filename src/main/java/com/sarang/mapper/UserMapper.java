@@ -19,4 +19,8 @@ public interface UserMapper {
 
     Integer insertUserInfo(UserVO userVO);
     Integer deleteUserInfo(List<String> deleteList);
+    Integer updateUserInfo(UserVO userVO);
+
+    UserVO checkUserPass(HashMap<String,Object> reqMap);
+    Integer updateUserPass(HashMap<String,Object> reqMap);
 }

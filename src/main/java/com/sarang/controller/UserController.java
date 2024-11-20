@@ -41,7 +41,8 @@ public class UserController {
 
     @GetMapping(value="/login.do")
     public String loginPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model, @RequestParam(value="errorMsg", required=false) String errorMsg) {
+    , HttpServletResponse response , Model model
+    , @RequestParam(value="errorMsg", required=false) String errorMsg) throws Exception {
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(!ObjectUtils.isEmpty(loginVO)){
             return "redirect:/main.do";
@@ -55,7 +56,7 @@ public class UserController {
 
     @GetMapping(value="/logout.do")
     public String logout(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model){
+    , HttpServletResponse response , Model model) throws Exception {
         logger.info("Logout Process");
         session.invalidate();
         return "redirect:/main.do";
@@ -63,7 +64,7 @@ public class UserController {
 
     @GetMapping(value="/createAccount.do")
     public String createAccount(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model) {
+    , HttpServletResponse response , Model model) throws Exception {
         logger.info("createAccountPage View");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(!ObjectUtils.isEmpty(loginVO)){
@@ -74,7 +75,7 @@ public class UserController {
 
     @GetMapping(value="/myPage.do")
     public String myPage(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response , Model model){
+    , HttpServletResponse response , Model model) throws Exception {
         logger.info("MyPage View");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(ObjectUtils.isEmpty(loginVO)){
@@ -85,33 +86,43 @@ public class UserController {
 
     @PostMapping(value="/checkUser.do")
     public String checkLogin(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response, RedirectAttributes redirectAttributes){
+    , HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
         logger.info("Check User Login Process");
         String userId = request.getParameter("userId");
         String userPwd = request.getParameter("userPwd");
-        HashMap<String,Object> reqMap = new HashMap<String,Object>();
-        reqMap.put("userId",userId);
-        try {
-            reqMap.put("userPwd",secureutil.encryptSHA256(userPwd));
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
-            reqMap.put("userPwd","");
-        }
+        // Mybatis
+        // HashMap<String,Object> reqMap = new HashMap<String,Object>();
+        // reqMap.put("userId",userId);
+        // try {
+        //     reqMap.put("userPwd",secureutil.encryptSHA256(userPwd));
+        // } catch (NoSuchAlgorithmException e) {
+        //     logger.error("I'm sorry, but SHA256 is not a valid message digest algorithm");
+        //     reqMap.put("userPwd","");
+        // }
         
-        UserVO userVO = userService.checkUserLogin(reqMap);
-        if(ObjectUtils.isEmpty(userVO)){
+        // UserVO userVO = userService.checkUserLogin(reqMap);
+        // if(ObjectUtils.isEmpty(userVO)){
+        //     redirectAttributes.addFlashAttribute("errorMsg"
+        //         , "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다.");
+        //     return "redirect:/login.do";
+        // }
+
+        // JPA
+        UserVO userVO = userService.findByUserId(userId);
+        if(userVO != null && userVO.getUserPwd().equals(secureutil.encryptSHA256(userPwd))){
+            session.setAttribute("userLogin", userVO);
+            return "redirect:/main.do";
+        }else{
             redirectAttributes.addFlashAttribute("errorMsg"
                 , "등록되지 않은 아이디이거나 아이디 또는 비밀번호를 잘못 입력했습니다.");
             return "redirect:/login.do";
         }
-        session.setAttribute("userLogin", userVO);
-        return "redirect:/main.do";
     }
 
     @ResponseBody
     @RequestMapping(value="/checkUserDup.do",method=RequestMethod.POST)
     public ResponseData checkUserDuplication(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response, String userId) {
+    , HttpServletResponse response, String userId) throws Exception {
         ResponseData js = new ResponseData();
         String checkId = userService.checkUserDuplication(userId);
         if(checkId == null || "".equals(checkId)){
@@ -127,11 +138,11 @@ public class UserController {
 
     @PostMapping(value="/insertUser.do")
     public String addUser(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    , HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
         logger.info("Add User Process");
         String userId = request.getParameter("userId").trim();
         String userPwd = request.getParameter("userPwd").trim();
-        String pwdCheck = request.getParameter("userPwdCheck").trim();
+        String pwdCheck = request.getParameter("pwdCheck").trim();
         String userNm = request.getParameter("userNm").trim();
         String celph = request.getParameter("celph").trim();
         String email = request.getParameter("email").trim();
@@ -202,9 +213,191 @@ public class UserController {
             return "redirect:/login.do";
         }
         redirectAttributes.addFlashAttribute("successMsg"
-                , "가입을 완료하였습니다.<br>가입한 아이디로 로그인 해주세요.");
+            , "가입을 완료하였습니다.<br>가입한 아이디로 로그인 해주세요.");
         return "redirect:/login.do";
     }
+
+    @GetMapping(value="/changeMyData.do")
+    public String changeMyDataPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception {
+        logger.info("changeMyData Page View");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
+        return "user/changeMyData";
+    }
+
+    @GetMapping(value="/changeMyPass.do")
+    public String changeMyPassPage(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , Model model) throws Exception {
+        logger.info("changeMyPass Page View");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
+        return "user/changeMyPass";
+    }
     
+    @PostMapping(value="/updateUser.do")
+    public String updateUserInfo(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , RedirectAttributes redirectAttributes
+    , String userNm, String celph, String email) throws Exception {
+        logger.info("changeMyData");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
+        try{
+            if(userNm == null || "".equals(userNm) ){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        , "닉네임은 필수 값 입니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        ,"사용자정보 변경에 실패하였습니다.");
+                    return "redirect:/main.do";
+                }
+            }
+            String regPhone = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$"; // 한국 휴대폰 번호 정규식
+            if(celph != null && !"".equals(celph)){
+                if(Pattern.matches(regPhone, celph) == false){
+                    if (request.getHeader("Referer") != null) {
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            , "휴대폰번호를 형식에 맞게 정확히 입력해 주세요.");
+                        return "redirect:"+ request.getHeader("Referer");
+                    }else{
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            ,"사용자정보 변경에 실패하였습니다.");
+                        return "redirect:/main.do";
+                    }
+                }
+                celph = celph.replaceAll("-", "");// celph 안에 하이픈 전체 공백으로 치환
+            }
+            UserVO userVO = new UserVO();
+            userVO.setSeq(loginVO.getSeq());
+            userVO.setUserId(loginVO.getUserId());
+            userVO.setUserNm(userNm);
+            userVO.setCelph(celph);
+            userVO.setEmail(email);
+            userService.updateUserInfo(userVO);
+
+            // 세션값 재세팅
+            loginVO.setUserNm(userNm);
+            loginVO.setCelph(celph);
+            loginVO.setEmail(email);
+            session.setAttribute("userLogin", loginVO);
+        }catch(Exception e){
+            logger.error("User Information Update Error: {}", e.getMessage());
+            if (request.getHeader("Referer") != null) {
+                redirectAttributes.addFlashAttribute("errorMsg"
+                    , "사용자정보 변경에 실패하였습니다.");
+                return "redirect:"+ request.getHeader("Referer");
+            }else{
+                redirectAttributes.addFlashAttribute("errorMsg"
+                    ,"사용자정보 변경에 실패하였습니다.");
+                return "redirect:/main.do";
+            }
+        }
+        return "redirect:/myPage.do";
+    }
+
+    @PostMapping(value="/updateUserPass.do")
+    public String updateUserPass(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , RedirectAttributes redirectAttributes
+    , String oldUserPwd, String userPwd, String pwdCheck) throws Exception {
+        logger.info("updateUserPass");
+        UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+        if(ObjectUtils.isEmpty(loginVO)){
+            return "redirect:/main.do";
+        }
+        try{
+            String regPwd = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$";
+            if(oldUserPwd == null || "".equals(oldUserPwd)){
+                    if (request.getHeader("Referer") != null) {
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            , "현재 패스워드 값은 필수 값 입니다.");
+                        return "redirect:"+ request.getHeader("Referer");
+                    }else{
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            ,"비밀번호 변경에 실패하였습니다.");
+                        return "redirect:/main.do";
+                    }
+            }else if(userPwd == null || "".equals(userPwd) ){
+                    if (request.getHeader("Referer") != null) {
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            , "새 패스워드 값은 필수 값 입니다.");
+                        return "redirect:"+ request.getHeader("Referer");
+                    }else{
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            ,"비밀번호 변경에 실패하였습니다.");
+                        return "redirect:/main.do";
+                    }
+            }else if(pwdCheck == null || "".equals(pwdCheck) ){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        , "새 패스워드 확인 값은 필수 값 입니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        ,"비밀번호 변경에 실패하였습니다.");
+                    return "redirect:/main.do";
+                }
+            }else if(oldUserPwd == userPwd){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        , "현재 패스워드와 새 패스워드 값이 같습니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg"
+                        ,"비밀번호 변경에 실패하였습니다.");
+                    return "redirect:/main.do";
+                }
+            }
+            if(userPwd != null && !"".equals(userPwd)){
+                if(Pattern.matches(regPwd, userPwd) == false){
+                    if (request.getHeader("Referer") != null) {
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            , "비밀번호는 영문, 숫자, 특수문자 조합의 8글자 이상 25글자 이하입니다.");
+                        return "redirect:"+ request.getHeader("Referer");
+                    }else{
+                        redirectAttributes.addFlashAttribute("errorMsg"
+                            ,"비밀번호 변경에 실패하였습니다.");
+                        return "redirect:/main.do";
+                    }
+                }
+            }
+
+            HashMap<String, Object> reqMap = new HashMap<>();
+            reqMap.put("seq",loginVO.getSeq());
+            reqMap.put("userId",loginVO.getUserId());
+            reqMap.put("oldUserPwd",secureutil.encryptSHA256(oldUserPwd).toString());
+            reqMap.put("userPwd",secureutil.encryptSHA256(userPwd).toString());
+
+            UserVO checkUserVO = userService.checkUserPass(reqMap);
+            if(checkUserVO == null){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg","입력한 현재 비밀번호가 맞지 않습니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg","비밀번호 변경에 실패하였습니다.");
+                    return "redirect:/main.do";
+                }
+            }
+
+            userService.updateUserPass(reqMap);
+        }catch(Exception e){
+            logger.error("User Password Update Error:{}", e.getMessage());
+            if (request.getHeader("Referer") != null) {
+                redirectAttributes.addFlashAttribute("errorMsg","비밀번호 변경에 실패하였습니다.");
+                return "redirect:"+ request.getHeader("Referer");
+            }else{
+                redirectAttributes.addFlashAttribute("errorMsg","비밀번호 변경에 실패하였습니다.");
+                return "redirect:/main.do";
+            }
+        }
+        return "redirect:/myPage.do";
+    }
 }
 

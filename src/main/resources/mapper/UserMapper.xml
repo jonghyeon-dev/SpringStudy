@@ -83,17 +83,6 @@
       </choose>
 	</select>
 
-  <update id="updateUserInfo" parameterType="com.sarang.model.UserVO">
-    UPDATE TUSR00100 SET
-        USER_ID = #{userId},
-        USER_PWD = #{userPwd},
-        CELPH = #{celph},
-        EMAIL = #{email},
-        CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
-        CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
-    WHERE SEQ = #{seq}
-  </update>
-
   <update id="resetUserPw" parameterType="com.sarang.model.UserVO">
     UPDATE TUSR00100 SET
         USER_PWD = #{userPwd},
@@ -135,4 +124,31 @@
 			#{item}
 		</foreach>
 	</delete>
+
+  <update id="updateUserInfo" parameterType="com.sarang.model.UserVO">
+    UPDATE TUSR00100 SET
+      USER_NM = #{userNm}
+      ,CELPH = #{celph}
+      ,EMAIL = #{email}
+      ,CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d')
+      ,CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+    WHERE SEQ = #{seq}
+      AND USER_ID = #{userId}
+  </update>
+
+  <select id="checkUserPass" resultType="com.sarang.model.UserVO">
+    SELECT 
+      *
+    FROM TUSR00100 
+    WHERE USER_ID = #{userId}
+      AND USER_PWD = #{oldUserPwd}
+  </select>
+
+  <update id="updateUserPass" parameterType="HashMap">
+    UPDATE TUSR00100 SET
+      USER_PWD = #{userPwd}
+    WHERE SEQ = #{seq}
+      AND USER_ID = #{userId}
+      AND USER_PWD = #{oldUserPwd}
+  </update>
 </mapper>

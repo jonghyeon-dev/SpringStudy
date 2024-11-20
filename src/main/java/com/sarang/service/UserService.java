@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sarang.mapper.UserMapper;
 import com.sarang.model.UserVO;
+import com.sarang.repository.UserRepository;
 import com.sarang.service.impl.UserServiceImpl;
 
 @Transactional
@@ -16,6 +17,9 @@ import com.sarang.service.impl.UserServiceImpl;
 public class UserService implements UserServiceImpl{
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public UserVO checkAdminLogin(HashMap<String,Object> reqMap){
@@ -25,6 +29,12 @@ public class UserService implements UserServiceImpl{
     @Override
     public UserVO checkUserLogin(HashMap<String,Object> reqMap){
         return userMapper.checkUserLogin(reqMap);
+    }
+
+    @Override
+    public UserVO findByUserId(String userId){
+        UserVO userVO = userRepository.findByUserId(userId);
+        return userVO;
     }
 
     @Override
@@ -50,6 +60,21 @@ public class UserService implements UserServiceImpl{
     @Override
     public Integer deleteUserInfo(List<String> deleteList){
         return userMapper.deleteUserInfo(deleteList);
+    }
+
+    @Override
+    public Integer updateUserInfo(UserVO userVO){
+        return userMapper.updateUserInfo(userVO);
+    }
+
+    @Override
+    public UserVO checkUserPass(HashMap<String,Object> reqMap){
+        return userMapper.checkUserPass(reqMap);
+    }
+    
+    @Override
+    public Integer updateUserPass(HashMap<String,Object> reqMap){
+        return userMapper.updateUserPass(reqMap);
     }
 }
 

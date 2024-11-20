@@ -23,6 +23,16 @@ spring:
         hiddenmethod:
             filter:
                 enabled: true
+    #jpa Setting
+    jpa:
+        show-sql: true          # JPA SQL문을 콘솔로 출력
+        hibernate:
+            ddl-auto: update
+        properties:
+           hibernate:
+                # "[show_sql]": true          # 하이버네이트가 실행한 모든 SQL문을 콘솔로 출력
+                "[format_sql]": true        # SQL문을 가독성 있게 표현
+                # "[use_sql_comments]": true  # 디버깅 정보 출력
     #thymeleaf
     thymeleaf:
         cache: false
