@@ -10,7 +10,7 @@ spring:
         active: ${server.Active} # jvm arguments 사용, 환경 별 설정파일 세팅용
     #DataBase Setting
     # datasource:
-    #     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy # [Logging용] 일반 DB driver 운용 시 변경 => com.mysql.cj.jdbc.Driver 
+    #     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy # [Logging용] 일반 DB driver, Mysql 운용 시 변경 => com.mysql.cj.jdbc.Driver 
     #     url: jdbc:log4jdbc:mysql://ip:port/dbName(Schema)?characterEncoding=UTF-8&serverTimezone=Asia/Seoul # [Logging용] 일반 DB url 운용 시 :log4jdbc 삭제
     #     username: id
     #     password: pw
@@ -26,8 +26,8 @@ spring:
     #jpa Setting
     jpa:
         show-sql: true          # JPA SQL문을 콘솔로 출력
-        hibernate:
-            ddl-auto: update
+        # hibernate:            #hibernate가 데이터베이스 스키마 자동생성 설정
+        #     ddl-auto: update  # 엔티티 클래스와 일치하도록 데이터베이스 스키마를 자동으로 업데이트. 새 테이블, 열 및 제약 조건을 추가하지만 기존 스키마에서 아무것도 제거하지 않음.
         properties:
            hibernate:
                 # "[show_sql]": true          # 하이버네이트가 실행한 모든 SQL문을 콘솔로 출력
