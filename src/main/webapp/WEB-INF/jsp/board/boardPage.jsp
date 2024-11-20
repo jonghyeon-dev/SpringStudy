@@ -20,8 +20,15 @@
                     <col width="50%">
                     <col width="15%">
                     <col width="15%">
-                    <col width="5%">
-                    <col width="5%">
+                    <c:choose>
+                        <c:when test="${category ne 'notice' && category ne 'news'}">
+                            <col width="5%">
+                            <col width="5%">
+                        </c:when>
+                        <c:otherwise>
+                            <col width="10%">
+                        </c:otherwise>
+                    </c:choose>
                 </colgroup>
                 <thead class="text-center">
                     <th>번호</th>
@@ -29,7 +36,9 @@
                     <th>작성자</th>
                     <th>작성일시</th>
                     <th>조회수</th>
-                    <th>추천수</th>
+                    <c:if test="${category ne 'notice' && category ne 'news'}">
+                        <th>추천수</th>
+                    </c:if>
                 </thead>
                 <tbody id="tbodyBoardList">
                     <c:forEach items="${totalContents.boardList}" var="items">
@@ -47,7 +56,9 @@
                             <fmt:parseDate value="${items.cretDate}" var="dateFmt" pattern="yyyyMMdd"/>
                             <td class="text-center"><fmt:formatDate value="${dateFmt}" pattern="yyyy-MM-dd"/></td>
                             <td class="text-center">${items.viewCnt}</td>
-                            <td class="text-center">${items.likeChuCnt}</td>
+                            <c:if test="${category ne 'notice' && category ne 'news'}">
+                                <td class="text-center">${items.likeChuCnt}</td>
+                            </c:if>
                         </tr>
                     </c:forEach>
                     <c:if test="${fn:length(totalContents.boardList) < 10}">
@@ -58,7 +69,9 @@
                                 <td>&nbsp;</td>
                                 <td class="text-center">&nbsp;</td>
                                 <td class="text-center">&nbsp;</td>
-                                <td class="text-center">&nbsp;</td>
+                                <c:if test="${category ne 'notice' && category ne 'news'}">
+                                    <td class="text-center">&nbsp;</td>
+                                </c:if>
                             </tr>
                         </c:forEach>
                     </c:if>

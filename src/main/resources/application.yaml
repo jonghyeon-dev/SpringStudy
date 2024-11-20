@@ -11,7 +11,7 @@ spring:
     #DataBase Setting
     # datasource:
     #     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy # [Logging용] 일반 DB driver 운용 시 변경 => com.mysql.cj.jdbc.Driver 
-    #     url: jdbc:log4jdbc:mysql://ip:port/dbName(Schema)?characterEncoding=UTF-8&serverTimezone=UTC # [Logging용] 일반 DB url 운용 시 :log4jdbc 삭제
+    #     url: jdbc:log4jdbc:mysql://ip:port/dbName(Schema)?characterEncoding=UTF-8&serverTimezone=Asia/Seoul # [Logging용] 일반 DB url 운용 시 :log4jdbc 삭제
     #     username: id
     #     password: pw
     #JSP Setting

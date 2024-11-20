@@ -42,85 +42,87 @@
                     <div class="form-control ck-content">
                         <c:out value='${boardInfo.boardCntnt}' escapeXml="false"/>
                     </div>
-                    <c:choose>
-                        <c:when test="${userLogin ne null}">
-                            <div class="d-flex justify-content-center mt-2 mb-2">
-                                <strong>추천&nbsp;</strong>
-                                <c:choose>
-                                    <c:when test="${retRecomInfo ne null && retRecomInfo.likeChu eq '1'}">
-                                        <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:red; cursor:pointer" id="recom">
-                                            <input type="hidden" name="like" value="${retRecomInfo.likeChu}">
-                                            <strong style="color:black;">${recomCnt}</strong>
-                                        </span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue; cursor:pointer" id="recom">
-                                            <input type="hidden" name="like" value="0">
-                                            <c:choose>
-                                                <c:when test="${recomCnt ne null}">
-                                                    <strong style="color:black;">${recomCnt}</strong>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <strong style="color:black;">0</strong>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                            <script>
-                                $("#recom").click(()=>{
-                                    let likeChu = 0;
-                                    const like = $("#recom").find("input[name='like']").val();
-                                    const boardId = '${boardId}';
-                                    if(like === "0"){
-                                        $("#recom").find("input[name='like']").val("1");
-                                        $("#recom").css("color","red");
-                                        likeChu = 1;
-                                    }else{
-                                        $("#recom").find("input[name='like']").val("0");
-                                        $("#recom").css("color","blue");
-                                    }
-                                    $.ajax({
-                                        url: '<c:url value="/board/${category}/recom"/>',
-                                        type: "POST",
-                                        dataType: "json",
-                                        traditional:true,
-                                        data: {
-                                                "boardId":boardId,
-                                                "likeChu":likeChu
-                                            },
-                                        success: response=>{
-                                            if(response.isSucceed){
-                                                let data = response.data;
-                                                $("#recom").find("strong").text(data.recomCnt);
-                                            }else{
-                                                console.log(response.message);
-                                            }
-                                        },error: e=>{
-                                            console.log("Ajax Get Data Error :: ", e);
-                                        }
-                                    });
-                                    
-                                })
-                            </script>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="d-flex justify-content-center mt-2 mb-2">
-                                <strong>추천&nbsp;</strong>
-                                <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue;">
+                    <c:if test="${category ne 'notice' && category ne 'news'}">
+                        <c:choose>
+                            <c:when test="${userLogin ne null}">
+                                <div class="d-flex justify-content-center mt-2 mb-2">
+                                    <strong>추천&nbsp;</strong>
                                     <c:choose>
-                                        <c:when test="${recomCnt ne null}">
-                                            <strong style="color:black;">${recomCnt}</strong>
+                                        <c:when test="${retRecomInfo ne null && retRecomInfo.likeChu eq '1'}">
+                                            <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:red; cursor:pointer" id="recom">
+                                                <input type="hidden" name="like" value="${retRecomInfo.likeChu}">
+                                                <strong style="color:black;">${recomCnt}</strong>
+                                            </span>
                                         </c:when>
                                         <c:otherwise>
-                                            <strong style="color:black;">0</strong>
+                                            <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue; cursor:pointer" id="recom">
+                                                <input type="hidden" name="like" value="0">
+                                                <c:choose>
+                                                    <c:when test="${recomCnt ne null}">
+                                                        <strong style="color:black;">${recomCnt}</strong>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <strong style="color:black;">0</strong>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </span>
                                         </c:otherwise>
                                     </c:choose>
-                                </span>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
+                                </div>
+                                <script>
+                                    $("#recom").click(()=>{
+                                        let likeChu = 0;
+                                        const like = $("#recom").find("input[name='like']").val();
+                                        const boardId = '${boardId}';
+                                        if(like === "0"){
+                                            $("#recom").find("input[name='like']").val("1");
+                                            $("#recom").css("color","red");
+                                            likeChu = 1;
+                                        }else{
+                                            $("#recom").find("input[name='like']").val("0");
+                                            $("#recom").css("color","blue");
+                                        }
+                                        $.ajax({
+                                            url: '<c:url value="/board/${category}/recom"/>',
+                                            type: "POST",
+                                            dataType: "json",
+                                            traditional:true,
+                                            data: {
+                                                    "boardId":boardId,
+                                                    "likeChu":likeChu
+                                                },
+                                            success: response=>{
+                                                if(response.isSucceed){
+                                                    let data = response.data;
+                                                    $("#recom").find("strong").text(data.recomCnt);
+                                                }else{
+                                                    console.log(response.message);
+                                                }
+                                            },error: e=>{
+                                                console.log("Ajax Get Data Error :: ", e);
+                                            }
+                                        });
+                                        
+                                    })
+                                </script>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="d-flex justify-content-center mt-2 mb-2">
+                                    <strong>추천&nbsp;</strong>
+                                    <span class="bg-white border-2 shadow rounded-1 bi bi-heart" style="color:blue;">
+                                        <c:choose>
+                                            <c:when test="${recomCnt ne null}">
+                                                <strong style="color:black;">${recomCnt}</strong>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <strong style="color:black;">0</strong>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
                 </div>
             <c:if test="${category ne 'notice' && category ne 'news'}">
                 <div class="list-body white-bg" id="comntInsertArea">
