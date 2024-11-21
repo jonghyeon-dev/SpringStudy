@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class BoardController {
@@ -297,7 +298,7 @@ public class BoardController {
 	, @PathVariable("boardId") String boardId) throws Exception {
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
-			return "redirect:/board"+category;
+			return "redirect:/board/"+category;
 		};
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
@@ -341,6 +342,42 @@ public class BoardController {
 			}
 		}
 		return "redirect:/board/"+category+"/detail/"+boardId;
+	}
+
+	@PostMapping(value="/board/{category}/boardDelete/{boardId}")
+	public String boardDelete(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
+	, @PathVariable("boardId") String boardId,  @PathVariable("category") String category, RedirectAttributes redirectAttributes) throws Exception{
+		logger.info("boardDelete");
+		UserVO userVO = (UserVO) session.getAttribute("userLogin");
+		if(checkBoardLogin(userVO,category)){
+			return "redirect:/board/"+category+"/detail/"+boardId;
+		};
+		try{
+			System.out.println("isrun?1");
+			System.out.println("boardId : "+boardId);
+			System.out.println("userId : "+userVO.getUserId());
+			System.out.println("userGrant : "+userVO.getUserGrant());
+			BoardVO reqBoardVO = new BoardVO();
+			reqBoardVO.setBoardId(Integer.parseInt(boardId));
+			if("0".equals(userVO.getUserGrant())){
+				System.out.println("isrun?1-1");
+				reqBoardVO.setCretUser("0");
+			}else{
+				System.out.println("isrun?1-2");
+				reqBoardVO.setCretUser(userVO.getSeq().toString());
+			}
+			reqBoardVO.setChgUser(userVO.getSeq().toString());
+			int updateCnt = boardService.deleteBoardInfo(reqBoardVO);
+			System.out.println("updateCnt : " + updateCnt);
+			if(updateCnt <= 0){
+				redirectAttributes.addFlashAttribute("errorMsg","게시글 삭제에 실패하였습니다.");
+				return "redirect:/board/"+category+"/detail/"+boardId;
+			}
+		}catch(Exception e){
+			logger.error("Board Delete Failed : {}", e.getMessage());
+			return "redirect:/board/"+category;
+		}
+		return "redirect:/board/"+category;
 	}
 
 	@ResponseBody
@@ -423,8 +460,14 @@ public class BoardController {
 			BoardComntVO comntVO = new BoardComntVO();
 			comntVO.setBoardId(boardId);
 			comntVO.setComntId(comntId);
+			comntVO.setCretUser(userVO.getSeq().toString());
 			if(!"0".equals(userVO.getUserGrant())){
-				comntVO.setCretUser(userVO.getSeq().toString());
+				BoardComntVO checkComntVO = boardService.checkDelComment(comntVO);
+				if(checkComntVO == null){
+					js.setIsSucceed(false);
+					js.setMessage("본인이 작성한 댓글이 아닙니다.");
+					return js;
+				}
 			}
 			boardService.deleteBoardComment(comntVO);
 			js.setIsSucceed(true);

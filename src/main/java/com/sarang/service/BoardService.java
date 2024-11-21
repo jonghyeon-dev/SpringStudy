@@ -117,7 +117,17 @@ public class BoardService implements BoardServiceImpl{
     }
 
     @Override
+    public BoardComntVO checkDelComment(BoardComntVO comntVO){
+        return boardMapper.checkDelComment(comntVO);
+    }
+
+    @Override
     public Integer deleteBoardComment(BoardComntVO comntVO){
         return boardMapper.deleteBoardComment(comntVO);
+    }
+
+    @Override
+    public Integer deleteBoardInfo(BoardVO boardVO){
+        return boardMapper.deleteBoardInfo(boardVO);
     }
 }

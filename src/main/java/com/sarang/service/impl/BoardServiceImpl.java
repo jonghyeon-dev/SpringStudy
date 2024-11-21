@@ -33,5 +33,8 @@ public interface BoardServiceImpl {
 
     Integer insertBoardComment(BoardComntVO comntVO);
     Integer updateBoardComment(BoardComntVO comntVO);
+    BoardComntVO checkDelComment(BoardComntVO comntVO);
     Integer deleteBoardComment(BoardComntVO comntVO);
+
+    Integer deleteBoardInfo(BoardVO boardVO);
 }

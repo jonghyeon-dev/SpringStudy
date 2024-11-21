@@ -270,6 +270,15 @@
 		  AND CRET_USER = #{cretUser}
 	</update>
 
+	<select id="checkDelComment" parameterType="com.sarang.model.BoardComntVO">
+		SELECT 
+			*
+		FROM TBRD00110 
+		WHERE COMNT_ID=#{comntId}
+		  AND BOARD_ID=#{boardId}
+		  AND CRET_USER=#{cretUser} 
+	</select>
+
 	<update id="deleteBoardComment" parameterType="com.sarang.model.BoardComntVO">
 		UPDATE TBRD00110 SET
 		DEL_YN = 'Y'
@@ -304,6 +313,18 @@
 		WHERE BOARD_ID = #{boardId}
 		  AND ORIGIN_ID = #{originId} 
 		  AND GROUP_STEP  <![CDATA[ > ]]>  ${groupStep} 
+	</update>
+
+	<update id="deleteBoardInfo" parameterType="com.sarang.model.BoardVO">
+		UPDATE TBRD00100 SET
+			DEL_YN = 'Y',
+			CHG_USER = #{chgUser},
+			CHG_DATE = DATE_FORMAT(NOW(),'%Y%m%d'),
+			CHG_TIME = DATE_FORMAT(NOW(),'%H%i%s')
+		WHERE BOARD_ID = #{boardId}
+		  <if test="cretUser != 0">
+		  	AND CRET_USER = #{cretUser}
+		  </if>
 	</update>
 	
 </mapper>

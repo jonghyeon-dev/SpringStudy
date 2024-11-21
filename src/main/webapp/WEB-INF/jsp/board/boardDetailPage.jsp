@@ -140,18 +140,22 @@
                                             ${items.boardComnt}
                                         </p>
                                         <c:if test="${userLogin ne null}">
-                                            <c:if test="${items.cretUser eq userLogin.seq}">
+                                            <c:if test="${items.cretUser eq userLogin.seq || userLogin.userGrant eq '0'}">
                                                 <c:set var="modifyComntCount" value="${modifyComntCount+1}"/> 
-                                                <form class="form-box comntModifyArea" style="display:none" method="POST" action="/board/${category}/boardModifyComnt">
-                                                    <input type="hidden" name="boardId" value="${boardInfo.boardId}">
-                                                    <input type="hidden" name="comntId" value="${items.comntId}">
-                                                    <input class="form-control" type="text" name="boardComnt" value="${items.boardComnt}">
-                                                    <button type="submit" class="btn btn-outline-success float-end">수정</button>
-                                                    <button type="button" class="btn btn-outline-warning ms-2 float-end comntModifyCancle">취소</button>
-                                                </form>
+                                                <c:if test="${items.cretUser eq userLogin.seq || userLogin.userGrant ne '0'}">
+                                                    <form class="form-box comntModifyArea" style="display:none" method="POST" action="/board/${category}/boardModifyComnt">
+                                                        <input type="hidden" name="boardId" value="${boardInfo.boardId}">
+                                                        <input type="hidden" name="comntId" value="${items.comntId}">
+                                                        <input class="form-control" type="text" name="boardComnt" value="${items.boardComnt}">
+                                                        <button type="submit" class="btn btn-outline-success float-end">수정</button>
+                                                        <button type="button" class="btn btn-outline-warning ms-2 float-end comntModifyCancle">취소</button>
+                                                    </form>
+                                                </c:if>
                                                 <div class="col comntBtnArea">
                                                     <a class="btn btn-sm btn-danger float-end comntDelete" data-id="${items.comntId}">삭제</a>
-                                                    <a class="btn btn-sm btn-success float-end comntModify">수정</a>
+                                                    <c:if test="${items.cretUser eq userLogin.seq || userLogin.userGrant ne '0'}">
+                                                        <a class="btn btn-sm btn-success float-end comntModify">수정</a>
+                                                    </c:if>
                                                 </div>
                                             </c:if>
                                         </c:if>
@@ -275,28 +279,49 @@
                     <c:when test="${category eq 'community'}">
                         <c:if test="${userLogin.seq eq boardInfo.cretUser}">
                             <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
+                            <button type="button" class="btn btn-outline-danger text-center" id="boardDeleteBtn">삭제</button>
+                        </c:if>
+                        <c:if test="${userLogin.userGrant eq '0' && userLogin.seq ne boardInfo.cretUser}">
+                            <button type="button" class="btn btn-outline-danger text-center" id="boardDeleteBtn">삭제</button>
                         </c:if>
                     </c:when>
                     <c:otherwise>
                         <c:if test="${userLogin.seq eq boardInfo.cretUser && userLogin.userGrant eq '0'}">
                             <a href='<c:url value="/board/${category}/boardModify/${boardId}"/>' class="btn btn-outline-warning text-center">수정</a>
+                            <button type="button" class="btn btn-outline-danger text-center" id="boardDeleteBtn">삭제</button>
                         </c:if>
                     </c:otherwise>
                 </c:choose>
             </div>
         </div>
-            
+        <input type="hidden" id="errorMsg" value="${errorMsg}">
         <%@include file="../layouts/bottom.jsp"%>
     </div>
 </body>
 <script>
  var boardDetailPage = (function(){
         var init = function(){
+            const errorMsg = $("#errorMsg").val()
+            $("#modalTitle").empty();
+            $("#modalContent").empty();
+            if(errorMsg != null && errorMsg != ""){
+                $("#modalTitle").append("Error");
+                $("#modalContent").append(errorMsg);
+                $("#modalInfo").show();
+            }
 
         };
 
         var registerEvent = function(){
-           
+           $("#boardDeleteBtn").click((e)=>{
+                let f = document.createElement('form');
+                f.setAttribute('method', 'post');
+                f.setAttribute('action','<c:url value="/board/${category}/boardDelete/${boardId}"/>');
+                f.setAttribute('enctype','multipart/form-data');
+                document.body.appendChild(f);
+                f.submit();
+
+           });
         };
 
         return {
