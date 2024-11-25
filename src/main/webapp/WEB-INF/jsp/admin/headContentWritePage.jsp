@@ -45,7 +45,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 <label for="uploadImage">
-                                    <div class="btn btn-primary">파일첨부</div>
+                                    <div class="btn btn-primary">이미지첨부</div>
                                 </label>
                             </span>
                         </div>
