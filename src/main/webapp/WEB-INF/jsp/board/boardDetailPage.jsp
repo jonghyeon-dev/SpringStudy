@@ -309,7 +309,6 @@
                 $("#modalContent").append(errorMsg);
                 $("#modalInfo").show();
             }
-
         };
 
         var registerEvent = function(){
