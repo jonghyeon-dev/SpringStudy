@@ -22,7 +22,7 @@
                         <div class="col-lg-6 col-xl-5 py-lg-5">
                             <div class="p-4 p-md-5 text-start">
                                 <div class="h2 fw-bolder prevHead">
-                                    헤드 컨텐츠1
+                                    헤드 콘텐츠1
                                 </div>
                                 <p class="prevText">
                                     내용 작성1
