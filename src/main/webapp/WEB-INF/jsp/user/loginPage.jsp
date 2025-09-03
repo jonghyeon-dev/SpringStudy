@@ -56,7 +56,22 @@
 
         };
 
+        const dokakaoLogin = function(){
+                const clientId = "${kakao.clientId}";
+                const redirectUrl = "${kakao.redirectUrl}";
+                const kakaoUrl = 'https://kauth.kakao.com/oauth/authorize?client_id=' +
+                    clientId +
+                    '&redirect_uri=' +
+                    redirectUrl +
+                    '&response_type=code';
+                location.href=kakaoUrl;
+            }
+
         var registerEvent = function(){
+            $("#kakaoLogin").click(function(){
+                console.log("onclick?");
+                dokakaoLogin();
+            });
         };
 
         return {

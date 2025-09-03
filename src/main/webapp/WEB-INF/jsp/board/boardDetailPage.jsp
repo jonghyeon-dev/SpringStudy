@@ -129,7 +129,7 @@
                     <c:set var="modifyComntCount" value="0"/>
                     <c:if test="${comntList ne null}">
                         <c:forEach var="items" items="${comntList}">
-                            <div class="list-box" style='<c:if test="${items.groupLayer > 0}">padding-left:${((items.groupLayer-1)*1.2)+1.5}rem;</c:if>'>
+                            <div class="list-box" style=`<c:if test="${items.groupLayer > 0}">padding-left:${((items.groupLayer-1)*1.2)+1.5}rem;</c:if>`>
                                 <c:choose>
                                     <c:when test="${items.delYn eq 'N'}">
                                     <span>

@@ -78,3 +78,13 @@ logging:
             audit: off # ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 보여준다. 상당히 많은 양의 로그가 나오기 때문에 권장하지 않음.
             resultset: off # ResultSet 을 포함한 모든 JDBC 호출 정보를 로그로 보여준다. audit 처럼 많은 로그가 나오기 때문에 권장하지 않음.
             connection: off # DB 연결, 연결 해제와 관련된 로그를 보여준다
+# kakao API KEY
+# kakao:
+#     appkey:
+#         nativeAppKey: 
+#         restApiKey: 
+#         javaScriptKey: 
+#         adminKey: 
+#     redirectUri: 
+#     accessTokenUri: 
+#     getUserInfoUri: 

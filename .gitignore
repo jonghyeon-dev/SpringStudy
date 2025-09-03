@@ -5,8 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 **/templates/
+**/application-*.yaml
 application-*.yaml
-application-*.yaml
+Dockerfile
 
 ### STS ###
 .apt_generated

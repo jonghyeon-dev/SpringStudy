@@ -1,12 +1,12 @@
 plugins {
 	id 'java'
 	// id 'org.springframework.boot' version '2.7.18'
-	id 'org.springframework.boot' version '3.3.5' // 3.0.6
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE' // 1.1.0
+	id 'org.springframework.boot' version '3.3.6' // 3.0.6
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE' // 1.1.7
 }
 
 group = 'com.sarang'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.1'
 sourceCompatibility = '17' // java version --springboot 2 = 11
 apply plugin: 'war'
 
@@ -35,7 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
 	implementation 'org.json:json:20231013'
-	implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
 	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	implementation 'org.apache.commons:commons-text:1.11.0'
 	implementation 'org.apache.tika:tika-core:2.9.1' //파일 위변조 체크용
@@ -57,8 +57,16 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add("-parameters")
+}
+
 bootWar{
 	archiveName("popol.war")
+}
+
+bootJar{
+	archiveName("popol.jar")
 }
 
 test {

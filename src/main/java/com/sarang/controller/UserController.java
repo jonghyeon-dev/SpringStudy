@@ -1,7 +1,19 @@
 package com.sarang.controller;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,10 +23,14 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sarang.config.SecureUtil;
 import com.sarang.model.UserVO;
 import com.sarang.model.common.ResponseData;
@@ -39,6 +55,9 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
+    @Value("${kakao.appkey.javaScriptKey}")
+    private String clientId;
+
     @GetMapping(value="/login.do")
     public String loginPage(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , Model model
@@ -51,6 +70,10 @@ public class UserController {
         if(errorMsg != null && !errorMsg.isEmpty()){
             model.addAttribute("errorMsg", errorMsg);
         }
+        Map<String,String> kakao = new HashMap<>(); 
+        kakao.put("clientId",clientId);
+        kakao.put("redirectUrl",redirectUri);
+        model.addAttribute("kakao",kakao);
         return "user/loginPage";
     }
 
@@ -108,7 +131,7 @@ public class UserController {
         // }
 
         // JPA
-        UserVO userVO = userService.findByUserId(userId);
+        UserVO userVO = userService.findByUserIdAndUserGrant(userId,"9");
         if(userVO != null && userVO.getUserPwd().equals(secureutil.encryptSHA256(userPwd))){
             session.setAttribute("userLogin", userVO);
             return "redirect:/main.do";
@@ -122,7 +145,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value="/checkUserDup.do",method=RequestMethod.POST)
     public ResponseData checkUserDuplication(HttpSession session, HttpServletRequest request
-    , HttpServletResponse response, String userId) throws Exception {
+    , HttpServletResponse response, @RequestParam(value="userId",required=true) String userId) throws Exception {
         ResponseData js = new ResponseData();
         String checkId = userService.checkUserDuplication(userId);
         if(checkId == null || "".equals(checkId)){
@@ -242,7 +265,9 @@ public class UserController {
     @PostMapping(value="/updateUser.do")
     public String updateUserInfo(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , RedirectAttributes redirectAttributes
-    , String userNm, String celph, String email) throws Exception {
+    , @RequestParam(value="userNm",required=true) String userNm
+    , @RequestParam(value="celph",required=false) String celph
+    , @RequestParam(value="email",required=false) String email) throws Exception {
         logger.info("changeMyData");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(ObjectUtils.isEmpty(loginVO)){
@@ -306,7 +331,9 @@ public class UserController {
     @PostMapping(value="/updateUserPass.do")
     public String updateUserPass(HttpSession session, HttpServletRequest request
     , HttpServletResponse response , RedirectAttributes redirectAttributes
-    , String oldUserPwd, String userPwd, String pwdCheck) throws Exception {
+    , @RequestParam(value="oldUserPwd",required=true) String oldUserPwd
+    , @RequestParam(value="userPwd",required=true) String userPwd
+    , @RequestParam(value="pwdCheck",required=true) String pwdCheck) throws Exception {
         logger.info("updateUserPass");
         UserVO loginVO = (UserVO) session.getAttribute("userLogin");
         if(ObjectUtils.isEmpty(loginVO)){
@@ -398,6 +425,172 @@ public class UserController {
             }
         }
         return "redirect:/myPage.do";
+    }
+
+    @GetMapping(value="/kakaoLogin.do")
+    public String kakaoOauthLoginTest(HttpSession session, HttpServletRequest request
+    , HttpServletResponse response , RedirectAttributes redirectAttributes) throws Exception{
+      logger.info("kakaoLogin Test Start");
+      UserVO loginVO = (UserVO) session.getAttribute("userLogin");
+      if(!ObjectUtils.isEmpty(loginVO)){
+          return "redirect:/main.do";
+      }
+      String code = request.getParameter("code");
+      System.out.println("code: "+ code);
+      String accessToken = getToken(code);
+      JsonObject userInfo = getKakaoUser(accessToken);
+      String id = userInfo.get("id").getAsString() +"fromkakao";
+
+      JsonObject properties = userInfo.get("properties").getAsJsonObject();
+      String userNm = properties.get("nickname").getAsString();
+
+      UserVO userVO = userService.findByUserIdAndUserGrant(id,"8");
+      if(userVO != null){
+        session.setAttribute("userLogin", userVO);
+      }else{
+        try{
+            // 중복ID 체크 루틴
+            String checkDup = userService.checkUserDuplication(id);
+            if(checkDup != null){
+                redirectAttributes.addFlashAttribute("errorMsg"
+                    , "중복되는 ID가 있습니다.");
+                return "redirect:/main.do";
+            }
+            userVO = new UserVO();
+            userVO.setUserId(id);
+            userVO.setUserPwd("loginfromkakao");
+            userVO.setUserNm(userNm);
+            userVO.setCelph("");
+            userVO.setEmail("");
+            userVO.setUserGrant("8");
+            userService.insertUserInfo(userVO);
+        }catch(Exception e){
+            logger.info("Error Is : {}",e.getMessage());
+            redirectAttributes.addAttribute("errorCode", "ER001");
+            redirectAttributes.addAttribute("errorMsg", "addUser Error Check The Server Log");
+            return "redirect:/errorPage.do";
+        }
+        session.setAttribute("userLogin", userVO);
+      }
+
+      return "redirect:/main.do";
+    }
+
+    @Value("${kakao.appkey.restApiKey}")
+    private String restApiKey;
+    @Value("${kakao.redirectUri}")
+    private String redirectUri;
+    @Value("${kakao.accessTokenUri}")
+    private String accessTokenUri;
+
+    private String getToken(String authorize_code) throws IOException{
+      String accessToken = null;
+      String contentType = "application/x-www-form-urlencoded;charset=utf-8;";
+      HttpURLConnection connection = postConnection(accessTokenUri,contentType);
+      OutputStream outputStream = connection.getOutputStream();
+      BufferedWriter bw = new BufferedWriter(new OutputStreamWriter((outputStream)));
+      StringBuilder sb = new StringBuilder();
+      sb.append("grant_type=authorization_code");
+      sb.append("&client_id="+restApiKey);
+      sb.append("&redirect_uri="+redirectUri);
+      sb.append("&code="+authorize_code);
+      bw.write(sb.toString());
+      bw.flush();
+
+      int responseCode = connection.getResponseCode();
+      logger.info("getToken response code : {}",responseCode);
+      if(responseCode == HttpURLConnection.HTTP_OK){
+            String resultString = getResultString(connection.getInputStream());
+            JsonObject jsonObject = JsonParser.parseString(resultString).getAsJsonObject();
+            accessToken = jsonObject.get("access_token").toString();
+      }else{
+            logger.info("code: {}"+responseCode);
+            logger.info("message: {}",connection.getResponseMessage());
+      }
+      return accessToken;
+    }
+
+    @Value("${kakao.appkey.adminKey}")
+    private String adminKey;
+    @Value("${kakao.getUserInfoUri}")
+    private String getUserInfoUri;
+
+    private JsonObject getKakaoUser(String accessToken) throws IOException{
+      JsonObject userInfo = new JsonObject();
+      String contentType = "application/x-www-form-urlencoded;charset=utf-8;";
+      Map<String,String> requestHeaders = new HashMap<>();
+      requestHeaders.put("Authorization","Bearer " + accessToken);
+      HttpURLConnection connection = postConnection(getUserInfoUri, requestHeaders, contentType);
+      
+      int responseCode = connection.getResponseCode();
+      if(responseCode == HttpURLConnection.HTTP_OK){
+            String resultString = getResultString(connection.getInputStream());
+            Gson gson = new Gson();
+            userInfo = gson.fromJson(resultString,JsonObject.class);
+      }else{
+            logger.info("code: {}"+responseCode);
+            logger.info("message: {}",connection.getResponseMessage());
+      }
+      return userInfo;
+    }
+
+    private String getResultString(InputStream inputStream){
+      StringBuilder resultString = new StringBuilder();
+      String readLine;
+      try{
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+            while((readLine = bufferedReader.readLine()) != null){
+                  resultString.append(readLine);
+            }
+      }catch(UnsupportedEncodingException e){
+            logger.error("getResultString UnsupportedEncodingException Error : {}",e.getMessage());
+      }catch(IOException e){
+            logger.error("getResultString IOExceptionError: {}",e.getMessage());
+      }
+      return resultString.toString();
+    }
+
+    private HttpURLConnection postConnection(String url, String contentType){
+      URL connUrl = null;
+      HttpURLConnection conn = null;
+      int connTimeout = 5000;
+      try{
+            connUrl = new URL(url);
+            conn = (HttpURLConnection)connUrl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(connTimeout);
+            conn.setRequestProperty("Content-Type", contentType);
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(true);
+      } catch(MalformedURLException e){
+            logger.error("HttpURLConnection MalformedURL Error : {}",e.getMessage());
+      } catch(IOException e){
+            logger.error("HttpURLConnection I/O Error : {}",e.getMessage());
+      }
+      return conn;
+    }
+
+    private HttpURLConnection postConnection(String url, Map<String,String> requestHeaders, String contentType){
+      URL connUrl = null;
+      HttpURLConnection conn = null;
+      int connTimeout = 5000;
+      try{
+            connUrl = new URL(url);
+            conn = (HttpURLConnection)connUrl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(connTimeout);
+            conn.setRequestProperty("Content-Type", contentType);
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                  conn.setRequestProperty(header.getKey(), header.getValue());
+            }
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(true);
+      } catch(MalformedURLException e){
+            logger.error("HttpURLConnection MalformedURL Error : {}",e.getMessage());
+      } catch(IOException e){
+            logger.error("HttpURLConnection I/O Error : {}",e.getMessage());
+      }
+      return conn;
     }
 }
 

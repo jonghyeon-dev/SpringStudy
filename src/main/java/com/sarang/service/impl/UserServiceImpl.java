@@ -8,6 +8,7 @@ import com.sarang.model.UserVO;
 public interface UserServiceImpl{
     UserVO checkUserLogin(HashMap<String,Object> reqMap);
     UserVO findByUserId(String userId);
+    UserVO findByUserIdAndUserGrant(String userId,String userGrant);
     UserVO checkAdminLogin(HashMap<String,Object> reqMap);
     List<UserVO> getUserInfo(HashMap<String,Object> reqMap);
     HashMap<String,Object> getUserPageInfo(HashMap<String,Object> reqMap);

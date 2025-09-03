@@ -94,8 +94,8 @@ public class FileController {
 			FileVO fileVO = fileMapper.getDownloadFileInfo(fileId);
 
 			// 경로와 파일명으로 파일 객체를 생성한다.
-			File dFile  = new File(fileVO.getFilePath(), fileVO.getSaveFileName() + "." + fileVO.getFileExt());
-				
+			// File dFile  = new File(fileVO.getFilePath(), fileVO.getSaveFileName() + "." + fileVO.getFileExt()); // 저장된 파일경로로 파일 호출
+			File dFile  = new File(filePath, fileVO.getSaveFileName() + "." + fileVO.getFileExt());	 // yaml에 지정된 파일경로로 파일 호출
 			// 파일 길이를 가져온다.
 			int fSize = (int) dFile.length();
 			

@@ -130,7 +130,7 @@ public class AdminController {
     public String insertAdmin(HttpSession session, HttpServletRequest request
     , HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
 		logger.info("insertAdmin Data");
-        UserVO UserVO = new UserVO();
+        UserVO userVO = new UserVO();
         String userId = request.getParameter("userId").trim();
         String userPwd = request.getParameter("userPwd").trim();
         String userPwdCheck = request.getParameter("userPwdCheck").trim();
@@ -175,13 +175,13 @@ public class AdminController {
             }
             celph = celph.replaceAll("-", "");// celph 안에 하이픈 전체 공백으로 치환
         }
-        UserVO.setUserId(userId);
-        UserVO.setUserPwd(secureutil.encryptSHA256(userPwd));
-        UserVO.setUserNm(userNm);
-        UserVO.setUserGrant("0");
-        UserVO.setCelph(celph);
-        UserVO.setEmail(email);
-        userService.insertUserInfo(UserVO);
+        userVO.setUserId(userId);
+        userVO.setUserPwd(secureutil.encryptSHA256(userPwd));
+        userVO.setUserNm(userNm);
+        userVO.setUserGrant("0");
+        userVO.setCelph(celph);
+        userVO.setEmail(email);
+        userService.insertUserInfo(userVO);
 
         return "redirect:/admin/adminAccount.do";
 	}
@@ -356,7 +356,8 @@ public class AdminController {
     @PostMapping(value="/admin/insertHeadContent.do")
     public String insertHeadContent(HttpSession session, MultipartHttpServletRequest request
     , HttpServletResponse response , RedirectAttributes redirectAttributes
-    , HeadContentVO headContentVO, MultipartFile uploadImage, String createNotice) throws Exception {
+    , HeadContentVO headContentVO, @RequestParam(value="uploadImage",required=false) MultipartFile uploadImage
+    , @RequestParam(value="createNotice",required=false) String createNotice) throws Exception {
 		logger.info("insertHeadContent");
         UserVO userVO = (UserVO)session.getAttribute("userLogin");
 
@@ -372,17 +373,19 @@ public class AdminController {
             boardService.insertBoardDetailInfo(createBoardVO);
             headContentVO.setConnectUrl("/board/notice/detail/"+createBoardVO.getBoardId());
         }
-        FileVO retFileVO = fileUtils.FileUpload(session, uploadImage);
-        if(retFileVO.getFileId() == null){
-            if (request.getHeader("Referer") != null) {
-                redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
-                return "redirect:"+ request.getHeader("Referer");
-            }else{
-                redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
-                return "redirect:/admin/headContent.do";
+        if(!uploadImage.isEmpty()){
+            FileVO retFileVO = fileUtils.FileUpload(session, uploadImage);
+            if(retFileVO.getFileId() == null){
+                if (request.getHeader("Referer") != null) {
+                    redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                    return "redirect:"+ request.getHeader("Referer");
+                }else{
+                    redirectAttributes.addFlashAttribute("errorMsg","파일 등록에 실패하였습니다.");
+                    return "redirect:/admin/headContent.do";
+                }
             }
+            headContentVO.setImgFileId(retFileVO.getFileId());
         }
-        headContentVO.setImgFileId(retFileVO.getFileId());
         headContentVO.setCretUser(userVO.getSeq().toString());
         headContentVO.setChgUser(userVO.getSeq().toString());
         headContentService.insertHeadContent(headContentVO);
@@ -406,7 +409,7 @@ public class AdminController {
     @PostMapping(value="/admin/updateHeadContent/{contentSeq}")
     public String updateHeadContent(HttpSession session, MultipartHttpServletRequest request
     , HttpServletResponse response , RedirectAttributes redirectAttributes
-    , HeadContentVO headContentVO, MultipartFile uploadImage) throws Exception{
+    , HeadContentVO headContentVO, @RequestParam(value="uploadImage", required=false)MultipartFile uploadImage) throws Exception{
         logger.info("updateHeadContent");
         UserVO userVO = (UserVO)session.getAttribute("userLogin");
         headContentVO.setStrDate(headContentVO.getStrDate().replaceAll("-", ""));

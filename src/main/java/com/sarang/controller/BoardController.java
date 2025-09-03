@@ -33,6 +33,7 @@ import com.sarang.service.BoardService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -221,15 +222,19 @@ public class BoardController {
 
 	@PostMapping(value="/board/{category}/boardInsert")
 	public String insertBoardInfo(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
-	, List<MultipartFile> uploadFiles, @PathVariable("category") String category) throws Exception {
+	, @RequestParam(value="uploadFiles",required=false) List<MultipartFile> uploadFiles
+	, @PathVariable("category") String category) throws Exception {
+		logger.info("insertBoardInfo Start");
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board/"+category;
 		};
+		logger.info("isrun1?");
 		String boardTitle = request.getParameter("boardTitle");
 		String boardCntnt = request.getParameter("boardCntnt");
 		String boardCate = category;
 		String cretUser ="";
+		logger.info("isrun2?");
 		cretUser = userVO.getSeq().toString();
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBoardCate(boardCate);
@@ -239,6 +244,7 @@ public class BoardController {
 		boardVO.setChgUser(cretUser);
 
 		boardService.insertBoardDetailInfo(boardVO);
+		logger.info("isrun3?");
 		Integer boardId = boardVO.getBoardId();
 		if(!CollectionUtils.isEmpty(uploadFiles)){
 			try{
@@ -294,7 +300,9 @@ public class BoardController {
 
 	@PostMapping(value="/board/{category}/boardUpdate/{boardId}")
 	public String modifyBoardInfo(HttpSession session, MultipartHttpServletRequest request
-    , HttpServletResponse response, List<MultipartFile> uploadFiles, @PathVariable("category") String category
+    , HttpServletResponse response
+	, @RequestParam(value="uploadFiles",required=false) List<MultipartFile> uploadFiles
+	, @PathVariable("category") String category
 	, @PathVariable("boardId") String boardId) throws Exception {
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
@@ -346,29 +354,24 @@ public class BoardController {
 
 	@PostMapping(value="/board/{category}/boardDelete/{boardId}")
 	public String boardDelete(HttpSession session, MultipartHttpServletRequest request, HttpServletResponse response
-	, @PathVariable("boardId") String boardId,  @PathVariable("category") String category, RedirectAttributes redirectAttributes) throws Exception{
+	, RedirectAttributes redirectAttributes
+	, @PathVariable("boardId") String boardId
+	, @PathVariable("category") String category) throws Exception{
 		logger.info("boardDelete");
 		UserVO userVO = (UserVO) session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
 			return "redirect:/board/"+category+"/detail/"+boardId;
 		};
 		try{
-			System.out.println("isrun?1");
-			System.out.println("boardId : "+boardId);
-			System.out.println("userId : "+userVO.getUserId());
-			System.out.println("userGrant : "+userVO.getUserGrant());
 			BoardVO reqBoardVO = new BoardVO();
 			reqBoardVO.setBoardId(Integer.parseInt(boardId));
 			if("0".equals(userVO.getUserGrant())){
-				System.out.println("isrun?1-1");
 				reqBoardVO.setCretUser("0");
 			}else{
-				System.out.println("isrun?1-2");
 				reqBoardVO.setCretUser(userVO.getSeq().toString());
 			}
 			reqBoardVO.setChgUser(userVO.getSeq().toString());
 			int updateCnt = boardService.deleteBoardInfo(reqBoardVO);
-			System.out.println("updateCnt : " + updateCnt);
 			if(updateCnt <= 0){
 				redirectAttributes.addFlashAttribute("errorMsg","게시글 삭제에 실패하였습니다.");
 				return "redirect:/board/"+category+"/detail/"+boardId;
@@ -383,7 +386,9 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value="/board/{category}/recom",method=RequestMethod.POST)
 	public ResponseData putBoardRecom(HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	,  @PathVariable("category") String category, String boardId, String likeChu)throws Exception{
+	, @PathVariable("category") String category
+	, @RequestParam(value="boardId",required=true) String boardId
+	, @RequestParam(value="likeChu",required=true) String likeChu) throws Exception{
 		ResponseData js = new ResponseData();
 		UserVO userVO = (UserVO)session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
@@ -420,8 +425,13 @@ public class BoardController {
 
 	@PostMapping(value="/board/{category}/boardComnt")
 	public String insertBoardComment(HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	,  @PathVariable("category") String category, Integer boardId, String boardComnt, Integer parntId
-	, Integer originId, Integer groupStep, Integer groupLayer)throws Exception{
+	, @PathVariable("category") String category
+	, @RequestParam(value="boardId",required=true) Integer boardId
+	, @RequestParam(value="boardComnt",required=true) String boardComnt
+	, @RequestParam(value="parntId",required=false) Integer parntId
+	, @RequestParam(value="originId",required=false) Integer originId
+	, @RequestParam(value="groupStep",required=false) Integer groupStep
+	, @RequestParam(value="groupLayer",required=false) Integer groupLayer)throws Exception{
 		logger.info("POST insertBoardComment");
 		BoardComntVO comntVO = new BoardComntVO();
 		try{
@@ -448,7 +458,9 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value="/board/{category}/deleteComnt",method=RequestMethod.DELETE)
 	public ResponseData deleteComntInfo (HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	,  @PathVariable("category") String category, Integer boardId, Integer comntId)throws Exception{
+	, @PathVariable("category") String category
+	, @RequestParam(value="boardId", required=true) Integer boardId
+	, @RequestParam(value="comntId", required=true) Integer comntId)throws Exception{
 		ResponseData js = new ResponseData();
 		UserVO userVO = (UserVO)session.getAttribute("userLogin");
 		if(checkBoardLogin(userVO,category)){
@@ -483,7 +495,10 @@ public class BoardController {
 
 	@PostMapping(value="/board/{category}/boardModifyComnt")
 	public String modifyBoardComnt(HttpSession session, HttpServletRequest request, HttpServletResponse response 
-	,  @PathVariable("category") String category, Integer boardId, Integer comntId, String boardComnt)throws Exception{
+	, @PathVariable("category") String category
+	, @RequestParam(value="boardId",required=false) Integer boardId
+	, @RequestParam(value="comntId",required=false) Integer comntId
+	, @RequestParam(value="boardComnt",required=false) String boardComnt)throws Exception{
 		UserVO userVO = (UserVO)session.getAttribute("userLogin");
 		try{
 			BoardComntVO comntVO = new BoardComntVO();

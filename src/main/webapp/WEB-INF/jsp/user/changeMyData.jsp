@@ -20,7 +20,16 @@
                 <tr>
                     <th><span>ID : </span></th>
                     <td>
-                        <span id="userId">${userLogin.userId}</span>
+                        <span id="userId">
+                        <c:choose>
+                            <c:when test="${userLogin.userGrant ne '8'}">
+                                <c:out value="${userLogin.userId}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="카카오로그인"/>
+                            </c:otherwise>
+                        </c:choose>
+                        </span>
                     </td>
                     <th><span>닉네임<span style="color:red">*</span> :</span></th>
                     <td><input class="form-control" type="text" name="userNm" value="${userLogin.userNm}" required="true"></td>

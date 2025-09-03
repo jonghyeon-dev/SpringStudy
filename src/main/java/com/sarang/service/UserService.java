@@ -21,6 +21,7 @@ public class UserService implements UserServiceImpl{
     @Autowired
     UserRepository userRepository;
 
+    // Mybatis
     @Override
     public UserVO checkAdminLogin(HashMap<String,Object> reqMap){
         return userMapper.checkAdminLogin(reqMap);
@@ -29,12 +30,6 @@ public class UserService implements UserServiceImpl{
     @Override
     public UserVO checkUserLogin(HashMap<String,Object> reqMap){
         return userMapper.checkUserLogin(reqMap);
-    }
-
-    @Override
-    public UserVO findByUserId(String userId){
-        UserVO userVO = userRepository.findByUserId(userId);
-        return userVO;
     }
 
     @Override
@@ -75,6 +70,19 @@ public class UserService implements UserServiceImpl{
     @Override
     public Integer updateUserPass(HashMap<String,Object> reqMap){
         return userMapper.updateUserPass(reqMap);
+    }
+
+    // JPA
+    @Override
+    public UserVO findByUserId(String userId){
+        UserVO userVO = userRepository.findByUserId(userId);
+        return userVO;
+    }
+
+    @Override
+    public UserVO findByUserIdAndUserGrant(String userId,String userGrant){
+        UserVO userVO = userRepository.findByUserIdAndUserGrant(userId,userGrant);
+        return userVO;
     }
 }
 

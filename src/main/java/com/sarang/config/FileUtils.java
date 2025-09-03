@@ -24,7 +24,7 @@ import com.sarang.model.common.FileVO;
 public class FileUtils {
     private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
     
-    // 파일d 경로를 지정한다.
+    // 파일 경로를 지정한다.
     @Value("${spring.servlet.multipart.location}")
     private String filePath;
 

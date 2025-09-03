@@ -47,6 +47,7 @@ public class WebConfiguration implements WebMvcConfigurer{
     public FilterRegistrationBean<CustomXssFilter> xssFilter() {
         FilterRegistrationBean<CustomXssFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new CustomXssFilter());
+        // 필터를 적용할 특정 URL 설정
         // registrationBean.addUrlPatterns("/url/urlPattern1",
         //                             "/url/urlPattern2",
         //                             "/url/urlPattern3",

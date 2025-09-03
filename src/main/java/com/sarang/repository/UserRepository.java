@@ -6,4 +6,5 @@ import com.sarang.model.UserVO;
 
 public interface UserRepository extends JpaRepository<UserVO,Long>{
     UserVO findByUserId(String userId);
+    UserVO findByUserIdAndUserGrant(String userId, String userGrant);
 }

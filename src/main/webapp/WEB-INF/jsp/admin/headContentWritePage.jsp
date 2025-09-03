@@ -79,9 +79,9 @@
                                 $("#createNotice").change((e)=>{
                                     let checked = $("#createNotice").is(":checked");
                                     if(checked){
-                                        $("#headContentInsertForm input[name='conectUrl']").attr("disabled",true);
+                                        $("#headContentInsertForm input[name='connectUrl']").attr("disabled",true);
                                     }else{
-                                        $("#headContentInsertForm input[name='conectUrl']").removeAttr("disabled");
+                                        $("#headContentInsertForm input[name='connectUrl']").removeAttr("disabled");
                                     }
                                 })
                             </script>

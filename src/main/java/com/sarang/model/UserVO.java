@@ -15,7 +15,7 @@ import lombok.ToString;
 
 /** 
  * @Class UserVO
- * @Description 관리자정보 객체
+ * @Description 사용자정보 객체
  * 
  * @author 박종현
  * 

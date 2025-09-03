@@ -29,18 +29,31 @@
                 </thead>
                 <tbody class="text-center">
                     <tr>
-                        <td><c:out value="${userLogin.userId}"/></td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${userLogin.userGrant ne '8'}">
+                                    <c:out value="${userLogin.userId}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:out value="카카오로그인"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td><c:out value="${userLogin.userNm}"/></td>
-                        <c:choose>
-                            <c:when test="${fn:length(userLogin.celph) eq 10}">
-                                <fmt:formatNumber var="celPhNo" value="${userLogin.celph}" pattern="###,###,####"/>
-                                <td>0<c:out value='${fn:replace(celPhNo,",","-")}'/></td>
-                            </c:when>
-                            <c:otherwise>
-                                <fmt:formatNumber var="celPhNo" value="${userLogin.celph}" pattern="###,####,####"/>
-                                <td>0<c:out value='${fn:replace(celPhNo,",","-")}'/></td>
-                            </c:otherwise>
-                        </c:choose>
+                        <td>
+                            <c:if test="${userLogin.celph ne null and userLogin.celph ne ''}">
+                                <c:choose>
+                                    <c:when test="${fn:length(userLogin.celph) eq 10}">
+                                        <fmt:formatNumber var="celPhNo" value="${userLogin.celph}" pattern="###,###,####"/>
+                                        0<c:out value='${fn:replace(celPhNo,",","-")}'/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:formatNumber var="celPhNo" value="${userLogin.celph}" pattern="###,####,####"/>
+                                        0<c:out value='${fn:replace(celPhNo,",","-")}'/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </td>
                         <td><c:out value="${userLogin.email}"/></td>
                     </tr>
                 </tbody>
@@ -48,7 +61,9 @@
         </header>
         <div class="buttonArea d-flex justify-content-center mb-2">
             <a href='<c:out value="/changeMyData.do"/>' class="btn btn-primary text-center">내정보수정</a>
-            <a href='<c:out value="/changeMyPass.do"/>' class="btn btn-primary text-center ms-2">비밀번호변경</a>
+            <c:if test="${userLogin.userGrant ne '8'}">
+                <a href='<c:out value="/changeMyPass.do"/>' class="btn btn-primary text-center ms-2">비밀번호변경</a>
+            </c:if>
         </div>
         <%@include file="../layouts/bottom.jsp"%>
     </div>
